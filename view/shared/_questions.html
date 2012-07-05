@@ -1,0 +1,45 @@
+<div class='joins joins_<?=count($fields)?> clearfix'>
+  <div class='existing_fields clearfix' id="custom_form_existing_field">
+    <div class='field clearfix multipleselect' data-type="multipleselect" data-origin-class="<?=$model_class?>" data-origin-primval="<?=$model->primval?>" data-destination-class="<?=$join_class?>">
+    <h3>Questions</h3>
+    <ul class='existing_field'>
+      <?$name = "fields";?>
+      <?foreach($model->fields->scope("live")->all() as $i=>$row):?>
+        <?
+        $row->table = "fields[$i]";
+        $mini_form = new WaxForm($row);
+        ?>
+      <li class='clearfix join-option'>
+        <input type='hidden' id="<?=$name?>_<?=$row->primval?>_hidden" name='joins[<?=$name?>][<?=$row->primval?>][<?=$row->primary_key?>]' value="0">
+        <?=$mini_form->order->render();?>
+        <span class='cf checkbox'><input type='checkbox' id="<?=$name?>_<?=$row->primval?>" name='joins[<?=$name?>][<?=$row->primval?>][<?=$row->primary_key?>]' value="<?=$row->primval?>" checked="checked"></span>
+        <input type="hidden" name="fields[<?=$i?>][primval]" value="<?=$row->primval?>">
+        <span class='cf title'><?=$mini_form->title->render(array('placeholder'=>'title'));?></span>
+        <span class='cf field_type'><?=$mini_form->field_type->render();?></span>
+        <span class='cf subtext'><?=$mini_form->subtext->render(array('placeholder'=>'sub text'));?></span>
+        <span class='cf field_group'><?=$mini_form->field_group->render(array('placeholder'=>'group'));?></span>
+        <span class='cf required'><?=$mini_form->required->render();?></span>
+        <span class='cf choices<?if($row->field_type == "SelectInput" || $row->field_type == "RadioInput"):?> choices_forced<?endif?>'><?=$mini_form->choices->render();?></span>
+      </li>
+      <?endforeach?>
+    </ul>
+    <a href="#custom_form_existing_field" id="add_custom_form_field" class='preview button preview-button'>+ Add New Field</a>
+    </div>
+    <div class='hidden newfield'>
+      <?
+      $tmp = new Question;
+      $tmp->table = "%s";
+      $mini_form = new WaxForm($tmp);
+      ?>
+      <div class='clearfix join-option cloneme'>
+        <?=$mini_form->order->render();?>
+        <span class='cf title'><?=$mini_form->title->render(array('placeholder'=>'title'));?></span>
+        <span class='cf field_type'><?=$mini_form->field_type->render();?></span>
+        <span class='cf subtext'><?=$mini_form->subtext->render(array('placeholder'=>'sub text'));?></span>
+        <span class='cf field_group'><?=$mini_form->field_group->render(array('placeholder'=>'group'));?></span>
+        <span class='cf required'><?=$mini_form->required->render();?></span>
+        <span class='cf choices'><?=$mini_form->choices->render();?></span>
+      </div>
+    </div>
+  </div>
+</div>
