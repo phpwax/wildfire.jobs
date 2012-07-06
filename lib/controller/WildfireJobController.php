@@ -7,6 +7,11 @@ class WildfireJobController extends ApplicationController{
   public function __job(){
     $content_class = $this->cms_content_class;
     $content = new $content_class($this->job_primval);
+    //track this via a cookie
+    if(!$this->session_id){
+      $this->session_id = Session::get_hash();
+      Cookie::set("hashed", $this->session_id);
+    }
     //get / set the application model
     $application = new Application($this->application_primval);
     if(!$this->application_primval || !($application->primval == $this->application_primval) ){
