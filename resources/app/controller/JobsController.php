@@ -1,0 +1,3 @@
+<?
+class JobsController extends WildfireJobController{}
+?>

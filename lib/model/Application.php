@@ -10,5 +10,10 @@ class Application extends WaxModel{
     $this->define("session", "CharField");
     $this->define("status", "BooleanField", array('default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"Not completed",1=>"completed")));
   }
+
+  public function before_save(){
+    if(!$this->date_start) $this->date_start = date("Y-m-d H:i:s");
+    if(!$this->status) $this->status = 0;
+  }
 }
 ?>
