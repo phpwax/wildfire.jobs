@@ -1,0 +1,32 @@
+<?foreach($answer_forms as $i=>$form):?>
+  <form action="" class='job_form wax_form clearfix' method="post" enctype="multipart/form-data">
+    <?#this field is used as a bot check on the form and will be hidden via js?>
+    <fieldset class='check-in'>
+      <label for='check-in'>Check in</label>
+      <input type="text" class='input_field text_field' name='check-in[<?=date("Y-m-d")?>]' id="check-in" value="">
+    </fieldset>
+
+    <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
+      <input type="hidden" name="<?=$form->handler->bound_to_model->table?>[id]" value="<?=$form->handler->bound_to_model->primval?>">
+    <?else:?>
+      <input type="hidden" name="_form" value="<?=$i?>">
+      <?=$form->application->render();?>
+      <?=$form->question->render();?>
+    <?endif?>
+    <fieldset>
+      <h3><?=$form->question_text->value?></h3>
+      <p><?=$form->question_subtext->value?></p>
+      <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
+        <span>Your answer: <strong><?=$form->answer->value?></strong></span>
+      <?else:?>
+        <?=$form->answer->render(array('label'=>false))?>
+      <?endif?>
+    </fieldset>
+    <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
+
+    <?else:?>
+      <fieldset class='clearfix submit'><input type="submit" class='submit_button button submit_input' value='Submit'></fieldset>
+    <?endif?>
+  </form>
+
+<?endforeach?>
