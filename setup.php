@@ -6,7 +6,6 @@ if(!defined("CONTENT_MODEL")){
   define("CONTENT_MODEL", $con->cms_content_class);
 }
 
-
 WaxEvent::add(CONTENT_MODEL.".setup", function(){
   $model = WaxEvent::data();
   if($model->columns['forms']) unset($model->columns['forms']);
