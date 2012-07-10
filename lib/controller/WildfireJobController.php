@@ -2,7 +2,7 @@
 class WildfireJobController extends ApplicationController{
 
   public $answer_forms = array(); //array of forms that need to be answered
-
+  public $active_form = 0;
   //from a job id, generate the form
   public function __job(){
     $content_class = $this->cms_content_class;
@@ -29,12 +29,17 @@ class WildfireJobController extends ApplicationController{
         $this->answer_forms[] = $form;
       }
     }
+    //check existsing saves to increase the position counter
+    foreach($this->answer_forms as $k=>$form){
+      if($form->handler->bound_to_model && $form->handler->bound_to_model->primval) $this->active_form = $k+1;
+    }
     //handle saves
     $posted = Request::param("_form");
     if(($posted !== false) && ($form = $this->answer_forms[$posted])){
       $saved = $form->save();
       $application->answers = $saved;
       $this->answer_forms[$posted] = new WaxForm($saved);
+      $this->active_form = $posted + 1;
     }
 
   }
