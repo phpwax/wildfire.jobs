@@ -1,8 +1,9 @@
 <?
 class Question extends WildfireCustomField{
 
-  public function field_types(){
-    return array(''=>'-- Select field type --', 'TextInput'=>'Text field', 'EmailInput'=>'Email field', 'TextareaInput'=>'Message Field', 'CheckboxInput'=>'Check box', 'RadioInput'=>'Radio button', 'SelectInput'=>'Drop down list', 'DateInput'=>'Date Picker');
+  public function setup(){
+    parent::setup();
+    $this->define("required", "IntegerField", array('choices'=>array('Optional', 'Required', 'Deadend')));
   }
   public function get_column_name($test=false){
     if(!$test) $test = Inflections::underscore(str_replace("/","_",trim($this->title)));
