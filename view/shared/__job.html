@@ -17,15 +17,17 @@
           <?=$form->application->render();?>
           <?=$form->question->render();?>
         <?endif?>
-        <fieldset>
+        <fieldset class='clearfix'>
           <h3><?=$form->question_text->value?></h3>
           <p><?=$form->question_subtext->value?></p>
           <?=$form->errors()?>
-          <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0 && $form->answer->value):?>
-            <span>Your answer: <strong><?=$form->answer->value?></strong></span>
-          <?else:?>
-            <?=$form->answer->render(array('label'=>false))?>
-          <?endif?>
+          <div class='clearfix questions'>
+            <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0 && $form->answer->value):?>
+              <span>Your answer: <strong><?=$form->answer->value?></strong></span>
+            <?else:?>
+              <?=$form->answer->render(array('label'=>false))?>
+            <?endif?>
+          </div>
         </fieldset>
         <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
 
