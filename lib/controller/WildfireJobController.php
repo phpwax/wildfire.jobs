@@ -3,6 +3,7 @@ class WildfireJobController extends ApplicationController{
 
   public $answer_forms = array(); //array of forms that need to be answered
   public $active_form = 0;
+  public $total_questions = 0;
   public $setform;
   //from a job id, generate the form
   public function __job(){
@@ -22,14 +23,16 @@ class WildfireJobController extends ApplicationController{
       $application->answers = $saved;
       $this->answer_forms[$posted] = new WaxForm($saved);
     }
-    //this allows a manual override of the active form
-    if($this->setform) $this->active_form = $this->setform;
-    else if($posted !== null) $this->active_form = $posted + 1;
 
     //check existsing saves to increase the position counter
     foreach($this->answer_forms as $k=>$form){
       if($form->handler->bound_to_model && $form->handler->bound_to_model->primval) $this->active_form = $k+1;
     }
+
+    //this allows a manual override of the active form
+    if($this->setform) $this->active_form = $this->setform;
+    else if($posted !== null) $this->active_form = $posted + 1;
+
     Cookie::set($this->job_primval."-current", $this->active_form);
   }
 
@@ -83,6 +86,7 @@ class WildfireJobController extends ApplicationController{
     $a->columns['question_subtext'][1]['widget'] = $a->columns['question_text'][1]['widget'] = "HiddenInput";
     //make it a required field
     if($q->required == 1 || $q->required == 2) $a->columns['answer'][1]['required'] = true;
+    if($q->required == 2) $a->columns['answer'][1]['deadend'] = true;
     //change the answer
     $a->columns['answer'][1]['widget'] = $q->field_type;
     if($q->choices){
