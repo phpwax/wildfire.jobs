@@ -20,7 +20,9 @@
         <fieldset class='clearfix'>
           <h3><?=$form->question_text->value?></h3>
           <p><?=$form->question_subtext->value?></p>
-          <?=$form->errors()?>
+          <div class='error_box'>
+            <?=$form->errors()?>
+          </div>
           <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0 && $form->answer->value):?>
           <div class='answered'>
             <span>Your current answer: <strong><?=$form->answer->value?></strong></span>
