@@ -10,6 +10,7 @@ class Answer extends WaxModel{
     $this->define("question_subtext", "CharField");
     $this->define("answer", "TextField");
     $this->define("submitted_at", "DateTimeField", array('editable'=>false));
+    $this->define("deadend_copy", "CharField");
   }
 
   public function before_save(){
