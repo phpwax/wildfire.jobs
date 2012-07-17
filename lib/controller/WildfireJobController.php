@@ -7,14 +7,16 @@ class WildfireJobController extends ApplicationController{
   public $setform;
   //from a job id, generate the form
   public function __job(){
+    WaxEvent::run("job.start", $this);
     $content_class = $this->cms_content_class;
     $content = new $content_class($this->job_primval);
 
     $this->session_id = $this->session_cookie();
+    WaxEvent::run("job.session", $this);
     $this->application_primval = $this->get_application($content, $this->job_primval, Session::get('application'), $this->session_id);
-
+    WaxEvent::run("job.application", $this);
     $this->answer_forms = $this->get_forms($content);
-
+    WaxEvent::run("job.answer_forms", $this);
     $cookie = $this->job_primval."-current";
 
     //if form is being posted & its within range
@@ -23,17 +25,19 @@ class WildfireJobController extends ApplicationController{
       $application->answers = $saved;
       $this->answer_forms[$posted] = new WaxForm($saved);
     }
-
+    WaxEvent::run("job.save", $this);
+    WaxEvent::run("job.active_form.before", $this);
     //check existsing saves to increase the position counter
     foreach($this->answer_forms as $k=>$form){
       if($form->handler->bound_to_model && $form->handler->bound_to_model->primval) $this->active_form = $k+1;
     }
-
+    WaxEvent::run("job.active_form.questions", $this);
     //this allows a manual override of the active form
     if($this->setform !== null) $this->active_form = $this->setform;
     else if($posted !== null) $this->active_form = $posted + 1;
-
+    WaxEvent::run("job.active_form.after", $this);
     Cookie::set($this->job_primval."-current", $this->active_form);
+    WaxEvent::run("job.end", $this);
   }
 
   protected function session_cookie(){
