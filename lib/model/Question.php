@@ -3,7 +3,7 @@ class Question extends WildfireCustomField{
 
   public function setup(){
     parent::setup();
-    $this->define("required", "IntegerField", array('choices'=>array('Optional', 'Required', 'Deadend')));
+    $this->define("required", "IntegerField", array('widget'=>'SelectInput','choices'=>array('Optional', 'Required', 'Deadend')));
   }
   public function get_column_name($test=false){
     if(!$test) $test = Inflections::underscore(str_replace("/","_",trim($this->title)));
