@@ -37,10 +37,10 @@ class WildfireJobController extends ApplicationController{
     //check for errors - empty fields that are require
     if($to_save && ($errors = $to_save->errors())) $this->error_forms[$posted] = $errors;
     //check for deadends
-    if($dead = $this->deadend($to_save)){
-      $this->deadend = true;
-      $application->update_attributes(array('deadend'=>1, 'completed'=>1, 'date_completed'=>date("Y-m-d H:i:s")));
-    }
+    if($dead = $this->deadend($to_save)) $application->update_attributes(array('deadend'=>1));
+    else $application->update_attributes(array('deadend'=>0));
+
+    $this->deadend = $application->deadend;
 
     WaxEvent::run("job.save", $this);
     WaxEvent::run("job.active_form.before", $this);
@@ -48,9 +48,9 @@ class WildfireJobController extends ApplicationController{
     foreach($this->answer_forms as $k=>$form){
       if($form->handler->bound_to_model && $form->handler->bound_to_model->primval){
         $this->active_form = $k+1;
-        if($this->active_form == count($this->answer_forms)){
+        if($this->active_form == count($this->answer_forms) && !$this->deadend){
           $application->update_attributes(array('completed'=>1));
-          $this->completed = false;
+          $this->completed = true;
         }
       }
     }
@@ -125,6 +125,7 @@ class WildfireJobController extends ApplicationController{
       //set the title
       $a->question_text = $q->title;
       $a->question_subtext = $q->subtext;
+      $a->deadend_copy = $q->deadend_copy;
     }
     $a->columns['question_subtext'][1]['widget'] = $a->columns['question_text'][1]['widget'] = "HiddenInput";
     //make it a required field
