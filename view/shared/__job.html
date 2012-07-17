@@ -1,5 +1,7 @@
 <?if(!$active_form) $active_form = 0;?>
-
+<?
+$total = count($answer_forms);
+?>
 
   <?foreach($answer_forms as $i=>$form):?>
     <form action="<?(($form_action)? str_replace("%s%", $i, $form_action) : "#wf_form_".$i)?>" id="wf_form_<?=$i?>" class='job_form wax_form clearfix <?if($i == $active_form):?>active_form<?endif?>' method="post" enctype="multipart/form-data">
@@ -37,7 +39,7 @@
             <p><?=$form->deadend_copy->value?></p>
           </div>
         </fieldset>
-        <fieldset class='clearfix submit'><input type="submit" class='submit_button button submit_input' value='Confirm'></fieldset>
+        <fieldset class='clearfix submit'><input type="submit" class='submit_button button submit_input' value='Confirm' name="<?if($i+1 == $total):?>completed_application<?else:?>submitted_q<?endif?>"></fieldset>
       </div>
     </form>
 
