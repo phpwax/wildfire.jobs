@@ -18,8 +18,10 @@
           <?=$form->question->render();?>
         <?endif?>
         <fieldset class='clearfix'>
-          <h3><?=$form->question_text->value?></h3>
-          <p><?=$form->question_subtext->value?></p>
+          <div class='job_content'>
+            <h3><?=$form->question_text->value?></h3>
+            <p><?=$form->question_subtext->value?></p>
+          </div>
           <div class='error_box'>
             <?=$form->errors()?>
           </div>
@@ -31,12 +33,11 @@
           <div class='clearfix questions'>
             <?=$form->answer->render(array('label'=>false))?>
           </div>
+          <div class='warning clearfix'>
+            <p><?=$form->deadend_copy->value?></p>
+          </div>
         </fieldset>
-        <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
-
-        <?else:?>
-          <fieldset class='clearfix submit'><input type="submit" class='submit_button button submit_input' value='SUBMIT'></fieldset>
-        <?endif?>
+        <fieldset class='clearfix submit'><input type="submit" class='submit_button button submit_input' value='Confirm'></fieldset>
       </div>
     </form>
 
