@@ -43,7 +43,10 @@ class WildfireJobController extends ApplicationController{
   protected function session_cookie(){
     if(!$session_id = Cookie::get("hashed")){
       $session_id = Session::get_hash();
-      Cookie::set("hashed", $session_id);
+      //set the cookie for a year
+      Cookie::set("hashed", $session_id, (60*60*24*365));
+      //cookie wont set until next header, so return the value
+      return $session_id;
     }
     return Cookie::get("hashed");
   }
