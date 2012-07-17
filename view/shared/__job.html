@@ -11,11 +11,11 @@ $total = count($answer_forms);
           <label for='check-in'>Check in</label>
           <input type="text" class='input_field text_field' name='check-in[<?=date("Y-m-d")?>]' id="check-in" value="">
         </fieldset>
+        <input type="hidden" name="_form" value="<?=$i?>">
 
         <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
           <input type="hidden" name="<?=$form->handler->bound_to_model->table?>[id]" value="<?=$form->handler->bound_to_model->primval?>">
         <?else:?>
-          <input type="hidden" name="_form" value="<?=$i?>">
           <?=$form->application->render();?>
           <?=$form->question->render();?>
         <?endif?>
