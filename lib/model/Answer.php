@@ -11,6 +11,11 @@ class Answer extends WaxModel{
     $this->define("answer", "TextField");
     $this->define("submitted_at", "DateTimeField", array('editable'=>false));
   }
+
+  public function before_save(){
+    parent::before_save();
+    if(!$this->submitted_at) $this->submitted_at = date("Y-m-d H:i:s");
+  }
 }
 
 ?>
