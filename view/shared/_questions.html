@@ -19,6 +19,7 @@
         <span class='cf subtext'><?=$mini_form->subtext->render(array('placeholder'=>'sub text'));?></span>
         <span class='cf field_group'><?=$mini_form->field_group->render(array('placeholder'=>'group'));?></span>
         <span class='cf required'><?=$mini_form->required->render();?></span>
+        <span class='cf deadend'><?=$mini_form->deadend_copy->render(array('placeholder'=>'copy for deadend'));?></span>
         <span class='cf choices<?if($row->field_type == "SelectInput" || $row->field_type == "RadioInput"):?> choices_forced<?endif?>'><?=$mini_form->choices->render();?></span>
       </li>
       <?endforeach?>
@@ -38,6 +39,7 @@
         <span class='cf subtext'><?=$mini_form->subtext->render(array('placeholder'=>'sub text'));?></span>
         <span class='cf field_group'><?=$mini_form->field_group->render(array('placeholder'=>'group'));?></span>
         <span class='cf required'><?=$mini_form->required->render();?></span>
+        <span class='cf deadend'><?=$mini_form->deadend_copy->render(array('placeholder'=>'copy for deadend'));?></span>
         <span class='cf choices'><?=$mini_form->choices->render();?></span>
       </div>
     </div>
