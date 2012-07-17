@@ -30,7 +30,7 @@ class WildfireJobController extends ApplicationController{
     }
 
     //this allows a manual override of the active form
-    if($this->setform) $this->active_form = $this->setform;
+    if($this->setform !== null) $this->active_form = $this->setform;
     else if($posted !== null) $this->active_form = $posted + 1;
 
     Cookie::set($this->job_primval."-current", $this->active_form);
