@@ -16,6 +16,7 @@ class Answer extends WaxModel{
   public function before_save(){
     parent::before_save();
     if(!$this->submitted_at) $this->submitted_at = date("Y-m-d H:i:s");
+    $this->answer = stripslashes($this->answer);
   }
 }
 

@@ -64,8 +64,8 @@ class WildfireJobController extends ApplicationController{
   protected function saving($application){
     //if form is being posted & its within range
     $this->posted_form = $posted = Request::param('_form');
-    foreach($this->answer_forms[$posted] as $to_save){
-      if($posted !== null && $to_save && ($saved = $to_save->save())){
+    foreach($this->answer_forms[$posted] as $i=>$to_save){
+      if($to_save && ($saved = $to_save->save())){
         $application->answers = $saved;
         $this->answer_forms[$posted] = new WaxForm($saved);
         $this->saved_forms[$posted] = $saved;
@@ -103,8 +103,9 @@ class WildfireJobController extends ApplicationController{
     if($content && $content->primval && ($questions = $content->fields) && $questions->count()){
       foreach($questions->order('`order` ASC')->all() as $k=>$q){
         $a = $this->setup_answer($q);
-        $form = new WaxForm($a, false, array('prefix'=>'answer_'.$k));
-        $answer_forms[$q->title][] = $form;
+        $prefix = "answer-".$q->url()."-".$k;
+        $form = new WaxForm($a, false, array('prefix'=>$prefix));
+        $answer_forms[$q->url()][$k] = $form;
       }
     }
     return $answer_forms;

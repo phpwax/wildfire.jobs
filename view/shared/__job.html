@@ -4,7 +4,8 @@ $total = count($answer_forms);
 $i = 0;
 ?>
 
-  <?foreach($answer_forms as $question=>$forms):?>
+  <?foreach($answer_forms as $question_url=>$forms):?>
+    <?$errors = $header = false;?>
     <form action="#wf_form_<?=$i?>" id="wf_form_<?=$i?>" class='job_form wax_form clearfix <?if($i == $active_form):?>active_form<?endif?>' method="post" enctype="multipart/form-data">
       <div class='form_content clearfix'>
         <?if($i == 0):?>
@@ -15,24 +16,30 @@ $i = 0;
         </fieldset>
         <?endif?>
 
-        <input type="hidden" name="_form" value="<?=$question?>">
-        <h3><?=$question?></h3>
+        <input type="hidden" name="_form" value="<?=$question_url?>">
 
-        <?foreach($forms as $form):?>
+        <?foreach($forms as $i=>$form):?>
 
           <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
-            <input type="hidden" name="<?=$form->handler->bound_to_model->table?>[id]" value="<?=$form->handler->bound_to_model->primval?>">
+            <input type="hidden" name="<?=$form->handler->bound_to_model->table?>-<?=$question_url?>-<?=$i?>[id]" value="<?=$form->handler->bound_to_model->primval?>">
           <?else:?>
-            <?=$form->application->render();?>
-            <?=$form->question->render();?>
+            <?=$form->application->render(array('name'=>'answer-'.$question_url.'-'.$i.'[application]'));?>
+            <?=$form->question->render(array('name'=>'answer-'.$question_url.'-'.$i.'[question]'));?>
           <?endif?>
           <fieldset class='clearfix'>
             <div class='job_content'>
-              <p><?=$form->question_subtext->value?></p>
+              <?if(!$header):?>
+              <h3><?=$form->question_text->value?></h3>
+              <?$header = true;?>
+              <?endif?>
+              <p><?=stripslashes($form->question_subtext->value)?></p>
             </div>
+            <?if(!$errors):?>
             <div class='error_box'>
-              <?=$form->errors()?>
+              <?=$error_forms[$question_url];?>
             </div>
+              <?$errors = true;?>
+            <?endif?>
             <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0 && $form->answer->value && $form->answer instanceOf RadioInput):?>
             <div class='answered'>
               <span>Your current answer: <strong><?=stripslashes($form->answer->value)?></strong></span>
@@ -41,9 +48,9 @@ $i = 0;
             <div class='clearfix questions'>
               <?if($form->answer->choices && ($form->answer instanceOf RadioInput)):?>
                 <?$tmp = $form->answer->choices; arsort($tmp);?>
-                <?=$form->answer->render(array('label'=>false, 'name'=>'answer_'.$i.'[answer]', 'choices'=>$tmp))?>
+                <?=$form->answer->render(array('label'=>false, 'name'=>'answer-'.$question_url.'-'.$i.'[answer]', 'choices'=>$tmp))?>
               <?else:?>
-                <?=$form->answer->render(array('label'=>false, 'name'=>'answer_'.$i.'[answer]'))?>
+                <?=$form->answer->render(array('label'=>false, 'name'=>'answer-'.$question_url.'-'.$i.'[answer]'))?>
               <?endif?>
             </div>
             <div class='warning clearfix'>

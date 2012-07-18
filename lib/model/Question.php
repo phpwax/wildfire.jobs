@@ -14,5 +14,9 @@ class Question extends WildfireCustomField{
     else return $test;
     return $test;
   }
+
+  public function url(){
+    return Inflections::to_url($this->title);
+  }
 }
 ?>
