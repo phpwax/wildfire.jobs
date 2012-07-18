@@ -5,7 +5,8 @@ class Question extends WildfireCustomField{
     parent::setup();
     $this->define("subtext", "TextField");
     $this->define("required", "IntegerField", array('widget'=>'SelectInput','choices'=>array('Optional', 'Required', 'Deadend')));
-    $this->define("deadend_copy", "CharField", array('label'=>'Copy for deadend'));
+    $this->define("deadend_copy", "TextField", array('label'=>'Copy for deadend'));
+    $this->define("extra_class", "CharField", array('widget'=>'SelectInput', 'choices'=>array(''=>'Normal', 'small'=>'small', 'large'=>'large')));
   }
   public function get_column_name($test=false){
     if(!$test) $test = Inflections::underscore(str_replace("/","_",trim($this->title)));

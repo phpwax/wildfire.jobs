@@ -26,7 +26,7 @@ $i = 0;
             <?=$form->application->render(array('name'=>'answer-'.$question_url.'-'.$i.'[application]'));?>
             <?=$form->question->render(array('name'=>'answer-'.$question_url.'-'.$i.'[question]'));?>
           <?endif?>
-          <fieldset class='clearfix'>
+          <fieldset class='clearfix question_set'>
             <div class='job_content'>
               <?if(!$header):?>
               <h3><?=$form->question_text->value?></h3>

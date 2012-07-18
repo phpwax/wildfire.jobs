@@ -31,21 +31,17 @@ class WildfireJobController extends ApplicationController{
     $this->deadend = $application->deadend;
     WaxEvent::run("job.save", $this);
     WaxEvent::run("job.active_form.before", $this);
-    $answered = 0;
-    //check existsing saves to increase the position counter
-    foreach($this->answer_forms as $k=>$form){
-      if($form->handler->bound_to_model && $form->handler->bound_to_model->primval){
-        $this->active_form = $k+1;
-        $answered ++;
-      }
-    }
+    //work out totals
+    if(($answers = $application->answers) && $answers && $answers->count()) $answered = $answers->count();
+    if(($all_questions = $content->fields) && $all_questions && $all_questions->count()) $this->total_questions = $all_questions->count();
+
     WaxEvent::run("job.active_form.questions", $this);
     //this allows a manual override of the active form
     if($this->setform !== null) $this->active_form = $this->setform;
     else if($posted !== null) $this->active_form = $posted + 1;
 
     //if completed in the post data force it to be
-    if(Request::param("completed_application") && !$this->deadend && $answered == count($this->answer_forms)){
+    if(Request::param("completed_application") && !$this->deadend && $answered == $this->total_questions){
       $this->completed = true;
       $application = $application->update_attributes(array('completed'=>1, 'date_completed'=>date("Y-m-d H:i:s")));
     }
