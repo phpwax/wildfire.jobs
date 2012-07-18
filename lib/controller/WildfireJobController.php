@@ -37,7 +37,9 @@ class WildfireJobController extends ApplicationController{
     }
     //check for errors - empty fields that are require
     if($to_save && ($errors = $to_save->errors())) $this->error_forms[$posted] = $errors;
-
+    if($dead = $this->deadend($to_save)) $application->update_attributes(array('deadend'=>$posted));
+    //deadend var
+    $this->deadend = $application->deadend;
     WaxEvent::run("job.save", $this);
     WaxEvent::run("job.active_form.before", $this);
     $answered = 0;
@@ -48,23 +50,21 @@ class WildfireJobController extends ApplicationController{
         $answered ++;
       }
     }
-
-    $this->deadend = $application->deadend;
-
     WaxEvent::run("job.active_form.questions", $this);
     //this allows a manual override of the active form
     if($this->setform !== null) $this->active_form = $this->setform;
     else if($posted !== null) $this->active_form = $posted + 1;
 
     //if completed in the post data force it to be
-    if(Request::param("completed_application") && !$this->deadend){
+    if(Request::param("completed_application") && !$this->deadend && $answered == count($this->answer_forms)){
       $this->completed = true;
-      $application = $application->update_attributes(array('completed'=>1));
+      $application = $application->update_attributes(array('completed'=>1, 'date_completed'=>date("Y-m-d H:i:s")));
     }
     //check for reset params
     if($this->reset_application && !$application->locked){
       $application->update_attributes(array('completed'=>0, 'deadend'=>0));
       $this->deadend = $this->completed = false;
+      $this->active_form = 0;
     }
 
     WaxEvent::run("job.active_form.after", $this);
