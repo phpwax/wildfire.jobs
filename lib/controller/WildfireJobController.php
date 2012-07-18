@@ -19,12 +19,13 @@ class WildfireJobController extends ApplicationController{
 
     $this->session_id = $this->session_cookie();
     WaxEvent::run("job.session", $this);
+
     $this->application_primval = $this->get_application($content, $this->job_primval, Session::get('application'), $this->session_id);
     $application = new Application($this->application_primval);
     WaxEvent::run("job.application", $this);
+
     $this->answer_forms = $this->get_forms($content);
     WaxEvent::run("job.answer_forms", $this);
-    $cookie = $this->job_primval."-current";
 
     //if form is being posted & its within range
     $this->posted_form = $posted = Request::param('_form');
@@ -47,25 +48,23 @@ class WildfireJobController extends ApplicationController{
         $answered ++;
       }
     }
-    //check for deadends
-    if($dead = $this->deadend($to_save)) $application->update_attributes(array('deadend'=>1, 'completed'=>0));
-    else $application->update_attributes(array('deadend'=>0));
 
     $this->deadend = $application->deadend;
 
     WaxEvent::run("job.active_form.questions", $this);
     //this allows a manual override of the active form
-    if($this->setform !== null){
-      $this->completed = false;
-      $this->active_form = $this->setform;
-    }else if($posted !== null){
-      $this->completed = false;
-      $this->active_form = $posted + 1;
-    }
+    if($this->setform !== null) $this->active_form = $this->setform;
+    else if($posted !== null) $this->active_form = $posted + 1;
+
     //if completed in the post data force it to be
     if(Request::param("completed_application") && !$this->deadend){
       $this->completed = true;
       $application = $application->update_attributes(array('completed'=>1));
+    }
+    //check for reset params
+    if($this->reset_application && !$application->locked){
+      $application->update_attributes(array('completed'=>0, 'deadend'=>0));
+      $this->deadend = $this->completed = false;
     }
 
     WaxEvent::run("job.active_form.after", $this);
