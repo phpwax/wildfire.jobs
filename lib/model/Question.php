@@ -3,6 +3,7 @@ class Question extends WildfireCustomField{
 
   public function setup(){
     parent::setup();
+    $this->define("subtext", "TextField");
     $this->define("required", "IntegerField", array('widget'=>'SelectInput','choices'=>array('Optional', 'Required', 'Deadend')));
     $this->define("deadend_copy", "CharField", array('label'=>'Copy for deadend'));
   }

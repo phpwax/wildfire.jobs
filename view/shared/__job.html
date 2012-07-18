@@ -1,48 +1,60 @@
 <?if(!$active_form) $active_form = 0;?>
 <?
 $total = count($answer_forms);
+$i = 0;
 ?>
 
-  <?foreach($answer_forms as $i=>$form):?>
-    <form action="<?(($form_action)? str_replace("%s%", $i, $form_action) : "#wf_form_".$i)?>" id="wf_form_<?=$i?>" class='job_form wax_form clearfix <?if($i == $active_form):?>active_form<?endif?>' method="post" enctype="multipart/form-data">
+  <?foreach($answer_forms as $question=>$forms):?>
+    <form action="#wf_form_<?=$i?>" id="wf_form_<?=$i?>" class='job_form wax_form clearfix <?if($i == $active_form):?>active_form<?endif?>' method="post" enctype="multipart/form-data">
       <div class='form_content clearfix'>
+        <?if($i == 0):?>
         <?#this field is used as a bot check on the form and will be hidden via js?>
         <fieldset class='check-in'>
           <label for='check-in'>Check in</label>
           <input type="text" class='input_field text_field' name='check-in[<?=date("Y-m-d")?>]' id="check-in" value="">
         </fieldset>
-        <input type="hidden" name="_form" value="<?=$i?>">
-
-        <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
-          <input type="hidden" name="<?=$form->handler->bound_to_model->table?>[id]" value="<?=$form->handler->bound_to_model->primval?>">
-        <?else:?>
-          <?=$form->application->render();?>
-          <?=$form->question->render();?>
         <?endif?>
-        <fieldset class='clearfix'>
-          <div class='job_content'>
-            <h3><?=$form->question_text->value?></h3>
-            <p><?=$form->question_subtext->value?></p>
-          </div>
-          <div class='error_box'>
-            <?=$form->errors()?>
-          </div>
-          <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0 && $form->answer->value):?>
-          <div class='answered'>
-            <span>Your current answer: <strong><?=$form->answer->value?></strong></span>
-          </div>
+
+        <input type="hidden" name="_form" value="<?=$question?>">
+        <h3><?=$question?></h3>
+
+        <?foreach($forms as $form):?>
+
+          <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
+            <input type="hidden" name="<?=$form->handler->bound_to_model->table?>[id]" value="<?=$form->handler->bound_to_model->primval?>">
+          <?else:?>
+            <?=$form->application->render();?>
+            <?=$form->question->render();?>
           <?endif?>
-          <div class='clearfix questions'>
-            <?=$form->answer->render(array('label'=>false))?>
-          </div>
-          <div class='warning clearfix'>
-            <h3>Sorry</h3>
-            <p><?=$form->deadend_copy->value?></p>
-          </div>
-        </fieldset>
+          <fieldset class='clearfix'>
+            <div class='job_content'>
+              <p><?=$form->question_subtext->value?></p>
+            </div>
+            <div class='error_box'>
+              <?=$form->errors()?>
+            </div>
+            <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0 && $form->answer->value && $form->answer instanceOf RadioInput):?>
+            <div class='answered'>
+              <span>Your current answer: <strong><?=stripslashes($form->answer->value)?></strong></span>
+            </div>
+            <?endif?>
+            <div class='clearfix questions'>
+              <?if($form->answer->choices && ($form->answer instanceOf RadioInput)):?>
+                <?$tmp = $form->answer->choices; arsort($tmp);?>
+                <?=$form->answer->render(array('label'=>false, 'name'=>'answer_'.$i.'[answer]', 'choices'=>$tmp))?>
+              <?else:?>
+                <?=$form->answer->render(array('label'=>false, 'name'=>'answer_'.$i.'[answer]'))?>
+              <?endif?>
+            </div>
+            <div class='warning clearfix'>
+              <h3>Sorry</h3>
+              <p><?=stripslashes($form->deadend_copy->value)?></p>
+            </div>
+          </fieldset>
+        <?endforeach?>
         <fieldset class='clearfix submit'><input type="submit" class='submit_button button submit_input' value='Confirm' name="<?if($i+1 == $total):?>completed_application<?else:?>submitted_q<?endif?>"></fieldset>
       </div>
     </form>
-
+    <?$i++;?>
   <?endforeach?>
 

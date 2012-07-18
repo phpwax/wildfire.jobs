@@ -26,18 +26,7 @@ class WildfireJobController extends ApplicationController{
 
     $this->answer_forms = $this->get_forms($content);
     WaxEvent::run("job.answer_forms", $this);
-
-    //if form is being posted & its within range
-    $this->posted_form = $posted = Request::param('_form');
-    $to_save = $this->answer_forms[$posted];
-    if($posted !== null && $to_save && ($saved = $to_save->save())){
-      $application->answers = $saved;
-      $this->answer_forms[$posted] = new WaxForm($saved);
-      $this->saved_forms[$posted] = $saved;
-    }
-    //check for errors - empty fields that are require
-    if($to_save && ($errors = $to_save->errors())) $this->error_forms[$posted] = $errors;
-    if($dead = $this->deadend($to_save)) $application->update_attributes(array('deadend'=>$posted));
+    $this->saving($application);
     //deadend var
     $this->deadend = $application->deadend;
     WaxEvent::run("job.save", $this);
@@ -72,6 +61,20 @@ class WildfireJobController extends ApplicationController{
     WaxEvent::run("job.end", $this);
   }
 
+  protected function saving($application){
+    //if form is being posted & its within range
+    $this->posted_form = $posted = Request::param('_form');
+    foreach($this->answer_forms[$posted] as $to_save){
+      if($posted !== null && $to_save && ($saved = $to_save->save())){
+        $application->answers = $saved;
+        $this->answer_forms[$posted] = new WaxForm($saved);
+        $this->saved_forms[$posted] = $saved;
+      }
+      //check for errors - empty fields that are require
+      if($to_save && ($errors = $to_save->errors())) $this->error_forms[$posted] = $errors;
+      if($dead = $this->deadend($to_save)) $application->update_attributes(array('deadend'=>$posted));
+    }
+  }
   //if any dead end question has been answered incorrectly, then flag as a deadend
   protected function deadend($form){
     $test = $form->handler->bound_to_model;
@@ -98,10 +101,10 @@ class WildfireJobController extends ApplicationController{
   protected function get_forms($content){
     $answer_forms = array();
     if($content && $content->primval && ($questions = $content->fields) && $questions->count()){
-      foreach($questions->order('`order` ASC')->all() as $q){
+      foreach($questions->order('`order` ASC')->all() as $k=>$q){
         $a = $this->setup_answer($q);
-        $form = new WaxForm($a);
-        $answer_forms[] = $form;
+        $form = new WaxForm($a, false, array('prefix'=>'answer_'.$k));
+        $answer_forms[$q->title][] = $form;
       }
     }
     return $answer_forms;
