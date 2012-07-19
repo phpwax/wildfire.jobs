@@ -41,7 +41,7 @@ class WildfireJobController extends ApplicationController{
     else if($posted !== null) $this->active_form = $posted + 1;
 
     //if completed in the post data force it to be
-    if(Request::param("completed_application") && !$this->deadend && $answered == $this->total_questions){
+    if(Request::param("completed_application") && !$this->deadend && $answered > 0){
       $this->completed = true;
       $application = $application->update_attributes(array('completed'=>1, 'date_completed'=>date("Y-m-d H:i:s")));
     }
@@ -126,6 +126,7 @@ class WildfireJobController extends ApplicationController{
       $a = $found;
       //set them so they arent editable any more
       $a->columns['question_text'][1]['disabled'] = "disabled";
+      $a->columns['answer'][1]['label'] = $a->question_subtext;
     }else{
       //set joins to the application and question
       $a->question_id = $q->primval;
@@ -134,10 +135,16 @@ class WildfireJobController extends ApplicationController{
       $a->question_text = $q->title;
       $a->question_subtext = $q->subtext;
       $a->deadend_copy = $q->deadend_copy;
+      $a->columns['answer'][1]['label'] = $q->subtext;
+      $a->extra_class = $q->extra_class;
     }
+
     $a->columns['question_subtext'][1]['widget'] = $a->columns['question_text'][1]['widget'] = "HiddenInput";
     //make it a required field
-    if($q->required == 1 || $q->required == 2) $a->columns['answer'][1]['required'] = true;
+    if($q->required == 1 || $q->required == 2){
+      $a->columns['answer'][1]['required'] = true;
+      if($q->field_type != "RadioInput") $a->question_subtext = str_replace("<span class='answer_required'>*</span>", "", $a->question_subtext) . " <span class='answer_required'>*</span>";
+    }
     if($q->required == 2) $a->columns['answer'][1]['deadend'] = "deadend";
     //change the answer
     $a->columns['answer'][1]['widget'] = $q->field_type;
