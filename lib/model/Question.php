@@ -6,7 +6,7 @@ class Question extends WildfireCustomField{
     $this->define("subtext", "TextField");
     $this->define("required", "IntegerField", array('widget'=>'SelectInput','choices'=>array('Optional', 'Required', 'Deadend')));
     $this->define("deadend_copy", "TextField", array('label'=>'Copy for deadend'));
-    $this->define("extra_class", "CharField", array('widget'=>'SelectInput', 'choices'=>array(''=>'Normal', 'small'=>'small', 'large'=>'large')));
+    $this->define("extra_class", "CharField", array('widget'=>'SelectInput', 'choices'=>array(''=>'None', 'large'=>'large', 'xlarge'=>'extra large', 'stacked'=>'force stacked')));
   }
   public function get_column_name($test=false){
     if(!$test) $test = Inflections::underscore(str_replace("/","_",trim($this->title)));
@@ -18,6 +18,11 @@ class Question extends WildfireCustomField{
 
   public function url(){
     return Inflections::to_url($this->title);
+  }
+
+  public function before_save(){
+    parent::before_save();
+    foreach(array('title', 'subtext', 'deadend_copy') as $col) $this->$col = stripslashes($this->$col);
   }
 }
 ?>
