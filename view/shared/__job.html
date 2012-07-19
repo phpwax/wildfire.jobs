@@ -1,12 +1,24 @@
 <?if(!$active_form) $active_form = 0;?>
 <?
-$total = count($answer_forms);
+$all_total = count($answer_forms);
 $i = 0;
 ?>
 
   <?foreach($answer_forms as $question_url=>$forms):?>
-    <?$errors = $header = false;?>
-    <form action="#wf_form_<?=$i?>" id="wf_form_<?=$i?>" class='job_form wax_form clearfix <?if($i == $active_form):?>active_form<?endif?>' method="post" enctype="multipart/form-data">
+    <?
+    $errors = $header = false;
+    $cols_forms = $total = count($forms);
+    $stacked = 0;
+    $sets=0;
+    foreach($forms as $f) if($f->extra_class->value == "stacked") $stacked ++;
+    $col_forms = $total - $stacked;
+    if($col_forms == 2) $cols = 2;
+    else if($col_forms > 2) $cols = 3;
+    else $cols = 1;
+
+    ?>
+
+    <form data-total="<?=$total?>" data-stacked="<?=$stacked?>" action="#wf_form_<?=$i?>" id="wf_form_<?=$i?>" class='job_form wax_form clearfix <?if($i == $active_form):?>active_form<?endif?> form-<?=(($total > 1) ? "multi" : "single")?> form-has-<?=$cols?>' method="post" enctype="multipart/form-data">
       <div class='form_content clearfix'>
         <?if($i == 0):?>
         <?#this field is used as a bot check on the form and will be hidden via js?>
@@ -17,49 +29,57 @@ $i = 0;
         <?endif?>
 
         <input type="hidden" name="_form" value="<?=$question_url?>">
-
-        <?foreach($forms as $i=>$form):?>
-
-          <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
-            <input type="hidden" name="<?=$form->handler->bound_to_model->table?>-<?=$question_url?>-<?=$i?>[id]" value="<?=$form->handler->bound_to_model->primval?>">
-          <?else:?>
-            <?=$form->application->render(array('name'=>'answer-'.$question_url.'-'.$i.'[application]'));?>
-            <?=$form->question->render(array('name'=>'answer-'.$question_url.'-'.$i.'[question]'));?>
+        <div class='clearfix form_block form-<?=$question_url?>'>
+        <?foreach($forms as $k=>$form):?>
+          <?
+          $extra_class = "question-".strtolower(get_class($form->answer));
+          ?>
+          <?if(!$header):?>
+          <h3><?=stripslashes($form->question_text->value)?></h3>
+          <?$header = true;?>
           <?endif?>
-          <fieldset class='clearfix question_set'>
-            <div class='job_content'>
-              <?if(!$header):?>
-              <h3><?=$form->question_text->value?></h3>
-              <?$header = true;?>
-              <?endif?>
-              <p><?=stripslashes($form->question_subtext->value)?></p>
-            </div>
-            <?if(!$errors):?>
-            <div class='error_box'>
-              <?=$error_forms[$question_url];?>
-            </div>
-              <?$errors = true;?>
+          <?if(!$errors):?>
+          <div class='error_box'>
+            <?=$error_forms[$question_url];?>
+          </div>
+            <?$errors = true;?>
+          <?endif?>
+          <div class="wrap<?=$form->extra_class->value?><?=strtolower(get_class($form->answer))?>">
+            <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
+            <input type="hidden" name="<?=$form->handler->bound_to_model->table?>-<?=$question_url?>-<?=$k?>[id]" value="<?=$form->handler->bound_to_model->primval?>">
+            <?else:?>
+            <?=$form->application->render(array('name'=>'answer-'.$question_url.'-'.$k.'[application]'));?>
+            <?=$form->question->render(array('name'=>'answer-'.$question_url.'-'.$k.'[question]'));?>
             <?endif?>
-            <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0 && $form->answer->value && $form->answer instanceOf RadioInput):?>
-            <div class='answered'>
-              <span>Your current answer: <strong><?=stripslashes($form->answer->value)?></strong></span>
-            </div>
-            <?endif?>
-            <div class='clearfix questions'>
-              <?if($form->answer->choices && ($form->answer instanceOf RadioInput)):?>
-                <?$tmp = $form->answer->choices; arsort($tmp);?>
-                <?=$form->answer->render(array('label'=>false, 'name'=>'answer-'.$question_url.'-'.$i.'[answer]', 'choices'=>$tmp))?>
-              <?else:?>
-                <?=$form->answer->render(array('label'=>false, 'name'=>'answer-'.$question_url.'-'.$i.'[answer]'))?>
+
+            <fieldset class='clearfix question_set question-set-<?=$sets%$cols?> <?=$extra_class?> q<?=$k?> top<?=$form->extra_class->value?>'>
+              <div class='job_content'>
+                <p><?=str_replace("\'", "'", $form->question_subtext->value)?></p>
+              </div>
+
+              <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0 && $form->answer->value && $form->answer instanceOf RadioInput):?>
+              <div class='answered'>
+                <span>Your current answer: <strong><?=stripslashes($form->answer->value)?></strong></span>
+              </div>
               <?endif?>
-            </div>
-            <div class='warning clearfix'>
-              <h3>Sorry</h3>
-              <p><?=stripslashes($form->deadend_copy->value)?></p>
-            </div>
-          </fieldset>
+              <div class='clearfix questions question<?=$form->extra_class->value?>'>
+                <?if($form->answer->choices && ($form->answer instanceOf RadioInput)):?>
+                  <?$tmp = $form->answer->choices; arsort($tmp);?>
+                  <?=$form->answer->render(array('label'=>false, 'name'=>'answer-'.$question_url.'-'.$k.'[answer]', 'choices'=>$tmp))?>
+                <?else:?>
+                  <?=$form->answer->render(array('label'=>false, 'name'=>'answer-'.$question_url.'-'.$k.'[answer]'))?>
+                <?endif?>
+              </div>
+              <div class='warning clearfix'>
+                <h3>Sorry</h3>
+                <p><?=stripslashes($form->deadend_copy->value)?></p>
+              </div>
+            </fieldset>
+          </div>
+          <?if($form->extra_class->value != "stacked") $sets++;?>
         <?endforeach?>
-        <fieldset class='clearfix submit'><input type="submit" class='submit_button button submit_input' value='Confirm' name="<?if($i+1 == $total):?>completed_application<?else:?>submitted_q<?endif?>"></fieldset>
+        </div>
+        <fieldset class='clearfix submit'><input data-i="<?=$i?>" data-t="<?=$all_total?>" type="submit" class='submit_button button submit_input' value='Confirm' name="<?if($i+1 == $all_total):?>completed_application<?else:?>submitted_q<?endif?>"></fieldset>
       </div>
     </form>
     <?$i++;?>
