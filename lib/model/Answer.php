@@ -10,13 +10,14 @@ class Answer extends WaxModel{
     $this->define("question_subtext", "TextField");
     $this->define("answer", "TextField");
     $this->define("submitted_at", "DateTimeField", array('editable'=>false));
+    $this->define("extra_class", "CharField");
     $this->define("deadend_copy", "CharField");
   }
 
   public function before_save(){
     parent::before_save();
     if(!$this->submitted_at) $this->submitted_at = date("Y-m-d H:i:s");
-    $this->answer = stripslashes($this->answer);
+    foreach(array('answer', 'question_text', 'deadend_copy', 'question_subtext') as $col) $this->$col = stripslashes($this->$col);
   }
 }
 
