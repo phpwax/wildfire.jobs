@@ -112,7 +112,7 @@ class WildfireJobController extends ApplicationController{
     //get / set the application model
     $application = new Application($application_primval);
     if(!$this->application_primval || !($application->primval == $application_primval) ){
-      $saved = $application->update_attributes(array('session'=>$session_id, $content->table."_".$content->primary_key=>$job_primval));
+      $saved = $application->update_attributes(array('session'=>$session_id, Inflections::underscore(get_class($content))."_".$content->primary_key=>$job_primval));
       Session::set('application', $saved->primval);
       $application_primval = $saved->primval;
       return $application_primval;
