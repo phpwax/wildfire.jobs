@@ -54,6 +54,9 @@ class WildfireJobController extends ApplicationController{
     WaxEvent::run("job.active_form.after", $this);
     Cookie::set($this->job_primval."-current", $this->active_form);
     WaxEvent::run("job.end", $this);
+
+    //copy current settings to this applications answers
+    foreach($application->answers as $answer) $answer->update_attributes(array('completed'=>$application->completed, 'deadend'=>$application->deadend, 'session'=>$application->session));
   }
 
   protected function saving($application){

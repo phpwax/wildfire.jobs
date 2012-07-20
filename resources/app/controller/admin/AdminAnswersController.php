@@ -1,0 +1,3 @@
+<?
+class AdminAnswersController extends CMSAnswersController{}
+?>

@@ -13,12 +13,16 @@ class Answer extends WaxModel{
     $this->define("submitted_at", "DateTimeField", array('editable'=>false));
     $this->define("extra_class", "CharField");
     $this->define("deadend_copy", "CharField");
+    //copy from application
+    $this->define("completed", "IntegerField");
+    $this->define("deadend", "IntegerField");
+    $this->define("session", "CharField");
   }
 
   public function before_save(){
     parent::before_save();
     if(!$this->submitted_at) $this->submitted_at = date("Y-m-d H:i:s");
-    foreach(array('answer', 'question_text', 'deadend_copy', 'question_subtext') as $col) $this->$col = stripslashes($this->$col);
+    foreach(array('answer', 'question_text', 'deadend_copy', 'question_subtext') as $col) $this->$col = str_replace("<span class='answer_required'>*</span>", "", stripslashes($this->$col));
   }
 }
 
