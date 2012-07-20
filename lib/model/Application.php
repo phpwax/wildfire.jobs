@@ -3,17 +3,17 @@ class Application extends WaxModel{
 
   public function setup(){
     parent::setup();
-    $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL));
-    $this->define("answers", "HasManyField", array('target_model'=>'Answer'));
+    $this->define("answers", "HasManyField", array('target_model'=>'Answer', 'group'=>'answers'));
+    $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships'));
     $this->define("date_start", "DateTimeField");
-    $this->define("date_completed", "DateTimeField");
-    $this->define("session", "CharField");
-    $this->define("completed", "BooleanField", array('default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"Not completed",1=>"completed")));
+    $this->define("date_completed", "DateTimeField", array('scaffold'=>true, 'export'=>true));
+    $this->define("session", "CharField", array('editable'=>false));
+    $this->define("completed", "BooleanField", array('default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"Not completed",1=>"completed"), 'scaffold'=>true, 'export'=>true));
     //marks the application as a deadend
-    $this->define("deadend", "BooleanField");
+    $this->define("deadend", "BooleanField", array('scaffold'=>true, 'export'=>true, 'choices'=>array('Not dead', 'Deadend')));
     //these will be linked to the candidate models etc
-    $this->define("is_candidate", "BooleanField", array('default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
-    $this->define("is_staff", "BooleanField", array('default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
+    $this->define("is_candidate", "BooleanField", array('editable'=>false,'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
+    $this->define("is_staff", "BooleanField", array('editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
 
   }
 
