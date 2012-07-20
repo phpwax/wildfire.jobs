@@ -1,6 +1,7 @@
 <?
-//hook in to the content model and add a join
+CMSApplication::register_module("applicant", array("display_name"=>"Applications", "link"=>"/admin/applicant/"));
 
+//hook in to the content model and add a join
 if(!defined("CONTENT_MODEL")){
   $con = new ApplicationController(false, false);
   define("CONTENT_MODEL", $con->cms_content_class);
