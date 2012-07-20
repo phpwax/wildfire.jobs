@@ -1,0 +1,3 @@
+<?
+class AdminApplicantController extends CMSApplicantController{}
+?>
