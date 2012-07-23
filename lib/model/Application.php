@@ -3,7 +3,7 @@ class Application extends WaxModel{
 
   public function setup(){
     parent::setup();
-    $this->define("answers", "HasManyField", array('target_model'=>'Answer', 'group'=>'answers'));
+    $this->define("answers", "HasManyField", array('target_model'=>'Answer', 'group'=>'answers', 'editable'=>true));
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships'));
     $this->define("date_start", "DateTimeField");
     $this->define("date_completed", "DateTimeField", array('scaffold'=>true, 'export'=>true));
