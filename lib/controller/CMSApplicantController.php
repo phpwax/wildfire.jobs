@@ -23,6 +23,7 @@ class CMSApplicantController extends AdminComponent{
     protected function events(){
       $this->export_group = Inflections::underscore(CONTENT_MODEL)."_id";
       parent::events();
+
     }
 
     /**
@@ -31,11 +32,19 @@ class CMSApplicantController extends AdminComponent{
     public function export_archive_convert(){
       if($action = Request::param('action_type')) $this->redirect_to('/admin/'.$this->module_name.'/'.$action);
     }
-
-    public function archive(){
-      $this->per_page = false;
-      $this->index();
+    public function index(){
+      parent::index();
       $this->use_view = "generic_index";
+      if(($ex = Request::param('ex')) && ($action = array_shift(array_keys($ex))) && ($use = Request::param('use'))){
+        $url = '/admin/'.$this->module_name.'/'.$action."?".http_build_query($use);
+        $this->redirect_to($url);
+      }
+    }
+
+    public function export(){
+      $this->model_class = "Answer";
+      $this->export_group = "application_id";
+      parent::export();
     }
     public function export_pdf(){}
     public function candidate(){}

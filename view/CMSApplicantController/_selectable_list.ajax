@@ -37,7 +37,7 @@ if(($tc = get_class($model)) && ($pid = $current_user->restricted_tree($tc))){
         <?endif?>
       <?endforeach?>
       >
-      <td><input type="checkbox" name='use[]' value="<?=$row->primval?>" id="use_i"></td>
+      <td><input type="checkbox" name='use[primval][]' value="<?=$row->primval?>" id="use_i"></td>
       <?foreach($scaffold_columns as $col=>$info):?>
       <?$value = ((method_exists($row, "humanize"))?$row->humanize($col):$row->$col());?>
       <td class='<?=$col?> <?=Inflections::to_url($value)?>'><?if($permissions['edit']):?><a href="/<?=trim($controller,"/")?>/edit/<?=$row->primval?>/" class='<?=$col?>_link link'><?endif?><span><?=$value?></span><?if($permissions['edit']):?></a><?endif?></td>
@@ -57,9 +57,9 @@ if(($tc = get_class($model)) && ($pid = $current_user->restricted_tree($tc))){
 </table>
 <?endif?>
 <div class='pagination pagination_bottom clearfix'>
-  <input type="submit" name="archive" value="Archive" class='submit_field input_field hide preview-button'>
-  <input type="submit" name="export.zip" value="Export as CSV" class='submit_field input_field revision'>
-  <input type="submit" name="export_pf" value="Export as pdf" class='submit_field input_field revision'>
-  <input type="submit" name="candidate" value="Convert to candidate" class='submit_field input_field revision'>
+  <input type="submit" name="ex[archive]" value="Archive" class='submit_field input_field hide preview-button'>
+  <input type="submit" name="ex[export.zip]" value="Export as CSV" class='submit_field input_field revision'>
+  <input type="submit" name="ex[export_pdf]" value="Export as pdf" class='submit_field input_field revision'>
+  <input type="submit" name="ex[candidate]" value="Convert to candidate" class='submit_field input_field revision'>
 </div>
 </form>
