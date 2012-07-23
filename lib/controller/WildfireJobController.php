@@ -140,6 +140,7 @@ class WildfireJobController extends ApplicationController{
       $a->deadend_copy = $q->deadend_copy;
       $a->columns['answer'][1]['label'] = $q->subtext;
       $a->extra_class = $q->extra_class;
+      $a->question_order = $q->order;
     }
 
     $a->columns['question_subtext'][1]['widget'] = $a->columns['question_text'][1]['widget'] = "HiddenInput";

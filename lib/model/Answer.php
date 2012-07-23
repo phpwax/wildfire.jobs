@@ -17,6 +17,7 @@ class Answer extends WaxModel{
     $this->define("completed", "IntegerField");
     $this->define("deadend", "IntegerField");
     $this->define("session", "CharField");
+    $this->define("question_order", "IntegerField", array('widget'=>'HiddenInput'));
   }
 
   public function before_save(){

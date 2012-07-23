@@ -51,6 +51,7 @@ $i = 0;
             <?=$form->application->render(array('name'=>'answer-'.$question_url.'-'.$k.'[application]'));?>
             <?=$form->question->render(array('name'=>'answer-'.$question_url.'-'.$k.'[question]'));?>
             <?=$form->job->render(array('name'=>'answer-'.$question_url.'-'.$k.'[job]', 'value'=>$job_primval));?>
+            <?=$form->question_order->render(array('name'=>'answer-'.$question_url.'-'.$k.'[question_order]'));?>
             <?endif?>
 
             <fieldset class='clearfix question_set question-set-<?=$sets%$cols?> <?=$extra_class?> q<?=$k?> top<?=$form->extra_class->value?>'>
