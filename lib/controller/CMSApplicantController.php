@@ -53,7 +53,7 @@ class CMSApplicantController extends AdminComponent{
         $server = "http://".$_SERVER['HTTP_HOST'];
         $hash = date("Ymdhi");
         $folder = WAX_ROOT."tmp/export/";
-        mkdir($folder.$hash, 0777, true);
+        var_dump(mkdir($folder.$hash, 0777, true));
         echo $folder.$hash."<br>";
         shell_exec("mkdir -p ".$folder.$hash ." && chmod -Rf 0777 ".$folder.$hash);
         foreach($use as $primval){
