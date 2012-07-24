@@ -52,8 +52,8 @@ class CMSApplicantController extends AdminComponent{
       if($use = Request::param('primval')){
         $server = "http://".$_SERVER['HTTP_HOST'];
         $hash = time();
-        $folder = CACHE_DIR."pdfs/";
-        if(!is_readable($folder.$hash)) mkdir($folder.$hash, 0777, true);
+        $folder = WAX_ROOT."tmp/export/";
+        mkdir($folder.$hash, 0777, true);
         foreach($use as $primval){
           $file = $folder.$hash."/".$this->module_name."-".$primval.".pdf";
           $permalink = "/admin/".$this->module_name."/edit/".$primval."/.print?".$this->session->name."=".$this->session->id."&";
