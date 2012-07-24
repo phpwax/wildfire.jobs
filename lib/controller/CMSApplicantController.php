@@ -51,11 +51,10 @@ class CMSApplicantController extends AdminComponent{
       $this->use_view = $this->use_layout = false;
       if($use = Request::param('primval')){
         $server = "http://".$_SERVER['HTTP_HOST'];
-        $hash = date("Ymdhi")."/";
+        $hash = date("Ymdh")."/";
         $folder = WAX_ROOT."tmp/export/";
         var_dump(mkdir($folder.$hash, 0777, true));
-        echo $folder.$hash."<br>";
-        shell_exec("mkdir -p ".$folder.$hash ." && chmod -Rf 0777 ".$folder.$hash);
+        echo "<br>".$folder.$hash."<br>";
         foreach($use as $primval){
           $file = $folder.$hash."/".$this->module_name."-".$primval.".pdf";
           $permalink = "/admin/".$this->module_name."/edit/".$primval."/.print?".$this->session->name."=".$this->session->id."&";
