@@ -55,6 +55,7 @@ class CMSApplicantController extends AdminComponent{
         $folder = WAX_ROOT."tmp/export/";
         var_dump(mkdir($folder.$hash, 0777, true));
         echo "<br>".$folder.$hash."<br>";
+
         foreach($use as $primval){
           $file = $folder.$hash."/".$this->module_name."-".$primval.".pdf";
           $permalink = "/admin/".$this->module_name."/edit/".$primval."/.print?".$this->session->name."=".$this->session->id."&";
@@ -75,9 +76,9 @@ class CMSApplicantController extends AdminComponent{
           header("Expires: 0");
         }
         //tidy up
-        unlink($folder.$hash.".zip");
-        foreach(glob($folder.$hash."/*") as $f) unlink($f);
-        rmdir($folder.$hash);
+        //unlink($folder.$hash.".zip");
+        //foreach(glob($folder.$hash."/*") as $f) unlink($f);
+        //rmdir($folder.$hash);
         echo $content;
       }
     }
