@@ -51,7 +51,7 @@ class CMSApplicantController extends AdminComponent{
       $this->use_view = $this->use_layout = false;
       if($use = Request::param('primval')){
         $server = "http://".$_SERVER['HTTP_HOST'];
-        $hash = time();
+        $hash = date("Ymdhi");
         $folder = WAX_ROOT."tmp/export/";
         mkdir($folder.$hash, 0777, true);
         foreach($use as $primval){
