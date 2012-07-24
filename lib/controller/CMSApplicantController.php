@@ -54,6 +54,7 @@ class CMSApplicantController extends AdminComponent{
         $hash = date("Ymdhi");
         $folder = WAX_ROOT."tmp/export/";
         mkdir($folder.$hash, 0777, true);
+        shell_exec("mkdir -p ".$folder.$hash ." && chmod -Rf 0777 ".$folder.$hash);
         foreach($use as $primval){
           $file = $folder.$hash."/".$this->module_name."-".$primval.".pdf";
           $permalink = "/admin/".$this->module_name."/edit/".$primval."/.print?".$this->session->name."=".$this->session->id."&";
