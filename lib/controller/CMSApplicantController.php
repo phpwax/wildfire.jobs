@@ -46,7 +46,36 @@ class CMSApplicantController extends AdminComponent{
       $this->export_group = "application_id";
       parent::export();
     }
-    public function export_pdf(){}
+
+    public function export_pdf(){
+      if($use = Request::param('primval')){
+        $server = "http://".$_SERVER['HTTP_HOST'];
+        $hash = date("Ymdh").rand(100,999);
+        $folder = CACHE_DIR."pdfs/";
+        foreach($use as $primval){
+          $file = $folder.$hash."/".$this->module_name."-".$primval.".pdf";
+          $permalink = "/admin/".$this->module_name."/edit/".$primval."/.print?".$this->session->name."=".$this->session->id."&";
+          $command = '/usr/bin/xvfb-run -a -s "-screen 0 1024x768x16" /usr/bin/wkhtmltopdf --encoding utf-8 -s A4 -T 0mm -B 20mm -L 0mm -R 0mm "'.$server.$permalink.'" '.$file;
+          shell_exec($command);
+        }
+        //afterwards, create zip
+        $cmd = "cd ".$folder." && zip -j ".$hash.".zip $hash/*";
+        exec($cmd);
+        $content = "";
+        if(is_file($folder.$hash.".zip") && ($content = file_get_contents($folder.$hash.".zip"))){
+          $name = str_replace("/", "-", $controller->controller). "-".date("Ymdh").".zip";
+          header("Content-type: application/zip");
+          header("Content-Disposition: attachment; filename=".$name);
+          header("Pragma: no-cache");
+          header("Expires: 0");
+        }
+        //tidy up
+        unlink($folder.$hash.".zip");
+        foreach(glob($folder.$hash."/*") as $f) unlink($f);
+        rmdir($folder.$hash);
+        echo $content;
+      }
+    }
     public function candidate(){}
 
 }
