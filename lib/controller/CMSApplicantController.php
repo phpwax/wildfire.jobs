@@ -50,17 +50,19 @@ class CMSApplicantController extends AdminComponent{
     public function export_pdf(){
       if($use = Request::param('primval')){
         $server = "http://".$_SERVER['HTTP_HOST'];
-        $hash = date("Ymdh").rand(100,999);
+        $hash = time();
         $folder = CACHE_DIR."pdfs/";
         foreach($use as $primval){
           $file = $folder.$hash."/".$this->module_name."-".$primval.".pdf";
           $permalink = "/admin/".$this->module_name."/edit/".$primval."/.print?".$this->session->name."=".$this->session->id."&";
           $command = '/usr/bin/xvfb-run -a -s "-screen 0 1024x768x16" /usr/bin/wkhtmltopdf --encoding utf-8 -s A4 -T 0mm -B 20mm -L 0mm -R 0mm "'.$server.$permalink.'" '.$file;
           shell_exec($command);
+          WaxLog::log('error', '[pdf] '.$command, "pdf");
         }
         //afterwards, create zip
         $cmd = "cd ".$folder." && zip -j ".$hash.".zip $hash/*";
         exec($cmd);
+        WaxLog::log('error', '[zip] '.$cmd, "pdf");
         $content = "";
         if(is_file($folder.$hash.".zip") && ($content = file_get_contents($folder.$hash.".zip"))){
           $name = str_replace("/", "-", $controller->controller). "-".date("Ymdh").".zip";
