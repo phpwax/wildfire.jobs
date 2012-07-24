@@ -53,8 +53,7 @@ class CMSApplicantController extends AdminComponent{
         $server = "http://".$_SERVER['HTTP_HOST'];
         $hash = "ex".date("Ymdh");
         $folder = WAX_ROOT."tmp/export/";
-        var_dump(mkdir($folder.$hash, 0777, true));
-        echo "<br>".$folder.$hash."<br>";
+        mkdir($folder.$hash, 0777, true);
 
         foreach($use as $primval){
           $file = $folder.$hash."/".$this->module_name."-".$primval.".pdf";
@@ -76,9 +75,9 @@ class CMSApplicantController extends AdminComponent{
           header("Expires: 0");
         }
         //tidy up
-        //unlink($folder.$hash.".zip");
-        //foreach(glob($folder.$hash."/*") as $f) unlink($f);
-        //rmdir($folder.$hash);
+        unlink($folder.$hash.".zip");
+        foreach(glob($folder.$hash."/*") as $f) unlink($f);
+        rmdir($folder.$hash);
         echo $content;
       }
     }
