@@ -48,6 +48,7 @@ class CMSApplicantController extends AdminComponent{
     }
 
     public function export_pdf(){
+      $this->use_view = $this->use_layout = false;
       if($use = Request::param('primval')){
         $server = "http://".$_SERVER['HTTP_HOST'];
         $hash = time();
