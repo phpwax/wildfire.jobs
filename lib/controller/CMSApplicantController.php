@@ -56,11 +56,8 @@ class CMSApplicantController extends AdminComponent{
         mkdir($folder.$hash, 0777, true);
 
         foreach($use as $primval){
-          $file = $folder.$hash."/".$this->module_name."-".$primval.".pdf";
-          $permalink = "/admin/".$this->module_name."/edit/".$primval."/.print?auth_token=".$this->current_user->auth_token;
-          $command = '/usr/bin/xvfb-run -a -s "-screen 0 1024x768x16" /usr/bin/wkhtmltopdf --encoding utf-8 -s A4 -T 0mm -B 20mm -L 0mm -R 0mm "'.$server.$permalink.'" '.$file;
-          shell_exec($command);
-          WaxLog::log('error', '[pdf] '.$command, "pdf");
+          $m = new $this->model_class($primval);
+          $m->create_pdf($module_name, $server, $hash, $folder, $this->current_user->primval);
         }
         //afterwards, create zip
         $cmd = "cd ".$folder." && zip -j ".$hash.".zip $hash/*";
@@ -81,7 +78,35 @@ class CMSApplicantController extends AdminComponent{
         echo $content;
       }
     }
-    public function candidate(){}
+
+    /**
+     * check if they are from the same question, if not return with an error,
+     * this is for column mapping between answers and canidate (ie job 1
+     * might call it Last Name & job 2 calls its surname)
+     *
+     * create set of mapping arrays to post to the next page
+     */
+    public function candidate(){
+      if($use = Request::param('primval')){
+        if(!$this->from_same_question($use)){
+          $this->session->add_error("Candidates have to be for the same position");
+          $this->redirect_to("/admin/".$this->module_name."/");
+        }
+
+
+
+      }else $this->redirect_to("/admin/".$this->module_name."/");
+    }
+
+    protected function from_same_question($ids){
+      $question = false;
+      foreach($ids as $id){
+        $app = new Application($id);
+        if(!$question) $question = $app->job->primval;
+        if($question != $app->job->primval) return false;
+      }
+      return false;
+    }
 
 }
 ?>
