@@ -58,7 +58,7 @@ class CMSApplicantController extends AdminComponent{
         foreach($use as $primval){
           $file = $folder.$hash."/".$this->module_name."-".$primval.".pdf";
           $permalink = "/admin/".$this->module_name."/edit/".$primval."/.print?auth_token=".$this->current_user->auth_token;
-          $command = '/usr/bin/xvfb-run -a -s "-screen 0 1024x768x16" /usr/bin/wkhtmltopdf --encoding utf-8 -s A4 -T 0mm -B 20mm -L 0mm -R 0mm '.$server.$permalink.'" '.$file;
+          $command = '/usr/bin/xvfb-run -a -s "-screen 0 1024x768x16" /usr/bin/wkhtmltopdf --encoding utf-8 -s A4 -T 0mm -B 20mm -L 0mm -R 0mm "'.$server.$permalink.'" '.$file;
           shell_exec($command);
           WaxLog::log('error', '[pdf] '.$command, "pdf");
         }
