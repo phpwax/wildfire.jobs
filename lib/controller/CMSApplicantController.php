@@ -68,7 +68,7 @@ class CMSApplicantController extends AdminComponent{
         WaxLog::log('error', '[zip] '.$cmd, "pdf");
         $content = "";
         if(is_file($folder.$hash.".zip") && ($content = file_get_contents($folder.$hash.".zip"))){
-          $name = str_replace("/", "-", $controller->controller). "-".date("Ymdh").".zip";
+          $name = str_replace("/", "-", $this->module_name). "-".date("Ymdh").".zip";
           header("Content-type: application/zip");
           header("Content-Disposition: attachment; filename=".$name);
           header("Pragma: no-cache");
