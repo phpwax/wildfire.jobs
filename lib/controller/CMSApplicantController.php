@@ -48,34 +48,43 @@ class CMSApplicantController extends AdminComponent{
     }
 
     public function export_pdf(){
+
       $this->use_view = $this->use_layout = false;
       if($use = Request::param('primval')){
         $server = "http://".$_SERVER['HTTP_HOST'];
         $hash = "ex".date("Ymdh");
         $folder = WAX_ROOT."tmp/export/";
-        mkdir($folder.$hash, 0777, true);
 
-        foreach($use as $primval){
-          $m = new $this->model_class($primval);
-          $m->create_pdf($module_name, $server, $hash, $folder, $this->current_user->primval);
-        }
-        //afterwards, create zip
-        $cmd = "cd ".$folder." && zip -j ".$hash.".zip $hash/*";
-        exec($cmd);
-        WaxLog::log('error', '[zip] '.$cmd, "pdf");
-        $content = "";
-        if(is_file($folder.$hash.".zip") && ($content = file_get_contents($folder.$hash.".zip"))){
-          $name = str_replace("/", "-", $this->module_name). "-".date("Ymdh").".zip";
-          header("Content-type: application/zip");
-          header("Content-Disposition: attachment; filename=".$name);
-          header("Pragma: no-cache");
-          header("Expires: 0");
-        }
-        //tidy up
-        unlink($folder.$hash.".zip");
-        foreach(glob($folder.$hash."/*") as $f) unlink($f);
-        rmdir($folder.$hash);
-        echo $content;
+        $this->create_pdfs($folder, $hash, $server, $use);
+        $this->create_and_output_zips($folder, $hash);
+      }
+    }
+
+    protected function create_and_output_zips($folder, $hash){
+      //afterwards, create zip
+      $cmd = "cd ".$folder." && zip -j ".$hash.".zip $hash/*";
+      exec($cmd);
+      WaxLog::log('error', '[zip] '.$cmd, "pdf");
+      $content = "";
+      if(is_file($folder.$hash.".zip") && ($content = file_get_contents($folder.$hash.".zip"))){
+        $name = str_replace("/", "-", $this->module_name). "-".date("Ymdh").".zip";
+        header("Content-type: application/zip");
+        header("Content-Disposition: attachment; filename=".$name);
+        header("Pragma: no-cache");
+        header("Expires: 0");
+      }
+      //tidy up
+      unlink($folder.$hash.".zip");
+      foreach(glob($folder.$hash."/*") as $f) unlink($f);
+      rmdir($folder.$hash);
+      echo $content;
+    }
+
+    protected function create_pdfs($folder, $hash, $server, $ids){
+      mkdir($folder.$hash, 0777, true);
+      foreach($ids as $primval){
+        $m = new $this->model_class($primval);
+        $m->create_pdf($this->module_name, $server, $hash, $folder, $this->current_user->primval);
       }
     }
 
@@ -123,6 +132,26 @@ class CMSApplicantController extends AdminComponent{
       }
       $this->redirect_to("/admin/".$this->module_name."/");
     }
+
+    /**
+     * almost the same as pdf, put deletes the records as well
+     */
+    public function archive(){
+      $this->use_view = $this->use_layout = false;
+      if($use = Request::param('primval')){
+        $server = "http://".$_SERVER['HTTP_HOST'];
+        $hash = "ex".date("Ymdh");
+        $folder = WAX_ROOT."tmp/export/";
+        $this->create_pdfs($folder, $hash, $server, $use);
+
+        foreach($use as $primval){
+          $m = new $this->model_class($primval);
+          $m->delete();
+        }
+        $this->create_and_output_zips($folder, $hash);
+      }
+    }
+
 
     protected function from_same_question($ids){
       $question = false;
