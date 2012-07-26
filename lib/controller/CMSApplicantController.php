@@ -92,10 +92,36 @@ class CMSApplicantController extends AdminComponent{
           $this->session->add_error("Candidates have to be for the same position");
           $this->redirect_to("/admin/".$this->module_name."/");
         }
-
-
-
-      }else $this->redirect_to("/admin/".$this->module_name."/");
+        //fetch the original job
+        $app = new Application($use[0]);
+        $job = $app->job;
+        $mapping = $ignored = $not_completed = $candidates = array();
+        //find the mapping columns
+        foreach($job->fields as $question) if($question->candidate_field) $mapping[$question->primval] = $question->candidate_field;
+        //do the conversion
+        foreach($use as $id){
+          $app = new Application($id);
+          if($app->is_candidate) $ignored[] = $id;
+          elseif(!$app->completed) $not_completed[] = $id;
+          else{
+            $model = new Answer;
+            $answers = $model->filter("application_id", $id)->filter("question_id", array_keys($mapping))->all();
+            $candidate = new Candidate;
+            foreach($answers as $answer){
+              $col = $mapping[$answer->question_id];
+              $candidate->$col = $answer->answer;
+            }
+            if($saved = $candidate->save()){
+              $app->update_attributes(array('is_candidate'=>1, 'candidate_id'=>$saved->primval));
+              $candidates[] = $saved->primval;
+            }
+          }
+        }
+        if($c = count($ignored)) $this->session->add_error($c . " applicants are already candidates so have been ignored");
+        if($i = count($not_completed)) $this->session->add_error($i . " applicants are incomplete so have been ignored");
+        if($d = count($candidates)) $this->session->add_message($d . " applicants have been converted.");
+      }
+      $this->redirect_to("/admin/".$this->module_name."/");
     }
 
     protected function from_same_question($ids){
@@ -105,7 +131,7 @@ class CMSApplicantController extends AdminComponent{
         if(!$question) $question = $app->job->primval;
         if($question != $app->job->primval) return false;
       }
-      return false;
+      return true;
     }
 
 }
