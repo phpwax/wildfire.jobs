@@ -1,6 +1,6 @@
 <?
 CMSApplication::register_module("applicant", array("display_name"=>"Applications", "link"=>"/admin/applicant/"));
-CMSApplication::register_module("answers", array("display_name"=>"Answers", "link"=>"/admin/answers/"));
+CMSApplication::register_module("answers", array("display_name"=>"Answers", "link"=>"/admin/answers/", 'hidden'=>true));
 
 //hook in to the content model and add a join
 if(!defined("CONTENT_MODEL")){

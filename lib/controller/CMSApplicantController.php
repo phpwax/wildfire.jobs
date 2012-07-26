@@ -84,7 +84,7 @@ class CMSApplicantController extends AdminComponent{
       mkdir($folder.$hash, 0777, true);
       foreach($ids as $primval){
         $m = new $this->model_class($primval);
-        $m->create_pdf($this->module_name, $server, $hash, $folder, $this->current_user->primval);
+        $m->create_pdf($this->module_name, $server, $hash, $folder, $this->current_user->auth_token);
       }
     }
 
