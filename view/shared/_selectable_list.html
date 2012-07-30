@@ -51,9 +51,8 @@ if(($tc = get_class($model)) && ($pid = $current_user->restricted_tree($tc))){
 </table>
 <?endif?>
 <div class='pagination pagination_bottom clearfix'>
-  <input type="submit" name="ex[archive]" value="Archive" class='submit_field input_field hide preview-button'>
-  <input type="submit" name="ex[export.zip]" value="Export as CSV" class='submit_field input_field revision'>
-  <input type="submit" name="ex[export_pdf]" value="Export as pdf" class='submit_field input_field revision'>
-  <input type="submit" name="ex[candidate]" value="Convert to candidate" class='submit_field input_field revision'>
+  <?foreach($list_options as $opt):?>
+  <input type="submit" name="ex[<?=$opt['form_name']?>]" value="<?=$opt['form_value']?>" class='submit_field input_field <?=$opt['class']?>'>
+  <?endforeach?>
 </div>
 </form>
