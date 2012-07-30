@@ -3,19 +3,29 @@ class Candidate extends WaxModel{
 
   //no required fields as we need to create empty
   public function setup(){
+    $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput'));
     parent::setup();
-    $this->define("first_name", "CharField", array('group'=>'details', 'label'=>'First Name'));
-    $this->define("last_name", "CharField", array('group'=>'details', 'label'=>'Last Name'));
 
-    $this->define("main_telephone", "CharField", array('group'=>'details', 'label'=>'Main Telephone'));
-    $this->define("secondary_telephone", "CharField", array('group'=>'details', 'label'=>'Secondary Telephone'));
-    $this->define("mobile_telephone", "CharField", array('group'=>'details', 'label'=>'Mobile Telephone'));
-    $this->define("email", "CharField", array('group'=>'details', 'label'=>'Email'));
+    $this->define("first_name", "CharField", array('group'=>'details', 'label'=>'First Name', 'export'=>true,'scaffold'=>true));
+    $this->define("last_name", "CharField", array('group'=>'details', 'label'=>'Last Name', 'export'=>true,'scaffold'=>true));
 
-    $this->define("address", "TextField", array('group'=>'details', 'label'=>'Address'));
-    $this->define("postcode", "CharField", array('group'=>'details', 'label'=>'Postcode'));
+    $this->define("main_telephone", "CharField", array('group'=>'details', 'label'=>'Main Telephone', 'export'=>true,'scaffold'=>true));
+    $this->define("secondary_telephone", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Secondary Telephone'));
+    $this->define("mobile_telephone", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Mobile Telephone'));
+    $this->define("email", "CharField", array('group'=>'details', 'label'=>'Email', 'export'=>true,'scaffold'=>true));
+    $this->define("address", "TextField", array('group'=>'details', 'export'=>true,'label'=>'Address'));
+    $this->define("postcode", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Postcode'));
 
+    $this->define("application", "ForeignKey", array('target_model'=>"Application", 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
   }
 
+
+  public function create_pdf($module_name, $server, $hash, $folder, $auth_token){
+    $file = $folder.$hash."/".$module_name."-".$this->primval.".pdf";
+    $permalink = "/admin/".$module_name."/edit/".$this->primval."/.print?auth_token=".$auth_token;
+    $command = '/usr/bin/xvfb-run -a -s "-screen 0 1024x768x16" /usr/bin/wkhtmltopdf --encoding utf-8 -s A4 -T 0mm -B 20mm -L 0mm -R 0mm "'.$server.$permalink.'" '.$file;
+    shell_exec($command);
+    WaxLog::log('error', '[pdf] '.$command, "pdf");
+  }
 }
 ?>
