@@ -3,7 +3,7 @@ class Candidate extends WaxModel{
 
   //no required fields as we need to create empty
   public function setup(){
-    $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput'));
+
     parent::setup();
 
     $this->define("first_name", "CharField", array('group'=>'details', 'label'=>'First Name', 'export'=>true,'scaffold'=>true));
@@ -15,7 +15,7 @@ class Candidate extends WaxModel{
     $this->define("email", "CharField", array('group'=>'details', 'label'=>'Email', 'export'=>true,'scaffold'=>true));
     $this->define("address", "TextField", array('group'=>'details', 'export'=>true,'label'=>'Address'));
     $this->define("postcode", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Postcode'));
-
+    $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput'));
     $this->define("application", "ForeignKey", array('target_model'=>"Application", 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
   }
 
