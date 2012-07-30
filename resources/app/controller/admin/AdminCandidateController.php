@@ -1,0 +1,3 @@
+<?
+class AdminCandidateController extends CMSCandidateController{}
+?>
