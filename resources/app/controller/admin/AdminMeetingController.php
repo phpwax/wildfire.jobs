@@ -1,0 +1,3 @@
+<?
+class AdminMeetingController extends CMSMeetingController{}
+?>

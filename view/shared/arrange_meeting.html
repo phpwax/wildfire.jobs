@@ -1,0 +1,38 @@
+<div class='cms-wrapper cms-uploads-0'>
+  <div class='index_container'>
+    <h3>Add to Meeting</h3>
+    <div class='listing' id="data-listing">
+      <form action="" class="tabs_container form_container <?=Inflections::to_url($controller)?>-<?=$action?> upload-form" method="post" enctype="multipart/form-data" id="upload-form">
+
+        <fieldset class='tab-contents clearfix details ui-tabs-panel ui-widget-content ui-corner-top ui-corner-bottom'>
+        <?foreach($use as $id):?>
+        <input type="hidden" name="use[]" value="<?=$id?>">
+        <?endforeach?>
+          <div class='field'><h3 id="existing"><strong>Add to an existing meeting</strong></h3></div>
+          <div class='field field-select clearfix'>
+            <select name="exisiting">
+              <?$meetings = new Meeting("future");?>
+              <option value="">-- Select --</option>
+              <?foreach($meetings->order("title ASC")->all() as $meet):?>
+              <option value="<?=$meet->primval?>"><?=$meet->title?></option>
+              <?endforeach?>
+            </select>
+          </div>
+
+          <div class='field'><h3 id="create-new"><strong>OR Create a new meeting</strong></h3></div>
+          <div class='field'><?=$form->title->render()?></div>
+          <div class='field'><?=$form->date_start->render()?></div>
+          <div class='field'><?=$form->date_end->render()?></div>
+          <div class='field'><?=$form->description->render()?></div>
+
+
+        </fieldset>
+        <fieldset class='submit'>
+          <input type="submit" name='live' value='SAVE' class='submit_field input_field live <?=get_class($model)?>-live'>
+        </fieldset>
+      </form>
+    </div>
+
+  </div>
+
+</div>
