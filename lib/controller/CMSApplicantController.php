@@ -18,6 +18,12 @@ class CMSApplicantController extends AdminComponent{
                             'deadend' => array('columns'=>array('deadend'), 'partial'=>"_filters_status")
                           );
     public $autosave = false;
+    public $list_options = array(
+                            array('form_name'=>'archive', 'form_value'=>'Archive', 'class'=>'hide preview-button'),
+                            array('form_name'=>'export.zip', 'form_value'=>'Export as CSV', 'class'=>'revision'),
+                            array('form_name'=>'export_pdf', 'form_value'=>'Export as PDF', 'class'=>'revision'),
+                            array('form_name'=>'candidate', 'form_value'=>'Convert to candidate', 'class'=>'revision')
+                          );
 
 
     protected function events(){
@@ -52,7 +58,7 @@ class CMSApplicantController extends AdminComponent{
       $this->use_view = $this->use_layout = false;
       if($use = Request::param('primval')){
         $server = "http://".$_SERVER['HTTP_HOST'];
-        $hash = "ex".date("Ymdh");
+        $hash = "ex".date("Ymdhis");
         $folder = WAX_ROOT."tmp/export/";
 
         $this->create_pdfs($folder, $hash, $server, $use);
@@ -121,6 +127,8 @@ class CMSApplicantController extends AdminComponent{
               $candidate->$col = $answer->answer;
             }
             if($saved = $candidate->save()){
+              $saved->job = $app->job;
+              $saved->application = $app;
               $app->update_attributes(array('is_candidate'=>1, 'candidate_id'=>$saved->primval));
               $candidates[] = $saved->primval;
             }
@@ -135,12 +143,14 @@ class CMSApplicantController extends AdminComponent{
 
     /**
      * almost the same as pdf, put deletes the records as well
+     * - do they want this to enforce rules, such as applicantions assigned to a candidate / staff cannot be
+     *   archived
      */
     public function archive(){
       $this->use_view = $this->use_layout = false;
       if($use = Request::param('primval')){
         $server = "http://".$_SERVER['HTTP_HOST'];
-        $hash = "ex".date("Ymdh");
+        $hash = "ex".date("Ymdhis");
         $folder = WAX_ROOT."tmp/export/";
         $this->create_pdfs($folder, $hash, $server, $use);
 
