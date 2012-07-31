@@ -18,8 +18,15 @@ class Candidate extends WaxModel{
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput'));
     $this->define("application", "ForeignKey", array('target_model'=>"Application", 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
     $this->define("meeting", "ForeignKey", array('target_model'=>"Meeting", 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
+
+    $this->define("date_created", "DateTimeField");
+    $this->define("date_modified", "DateTimeField");
   }
 
+  public function before_save(){
+    if(!$this->date_created) $this->date_created = date("Y-m-d H:i:s");
+    $this->date_modified = date("Y-m-d H:i:s");
+  }
 
   public function create_pdf($module_name, $server, $hash, $folder, $auth_token){
     $file = $folder.$hash."/".$module_name."-".$this->primval.".pdf";
