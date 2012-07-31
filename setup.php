@@ -14,6 +14,8 @@ WaxEvent::add(CONTENT_MODEL.".setup", function(){
   $model = WaxEvent::data();
   if($model->columns['forms']) unset($model->columns['forms']);
   $model->define("fields", "ManyToManyField", array('scaffold'=>true, 'target_model'=>'Question', 'group'=>'Questions', 'editable'=>true));
+  $model->define("send_email_to", "CharField");
+
 });
 
 ?>
