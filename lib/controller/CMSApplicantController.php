@@ -31,7 +31,10 @@ class CMSApplicantController extends AdminComponent{
       parent::events();
 
     }
-
+    public function _list(){
+      parent::_list();
+      $this->use_view = "_selectable_list";
+    }
     /**
      * this just shows a list of locations to go to - export etc
      */
