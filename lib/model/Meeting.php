@@ -15,7 +15,7 @@ class Meeting extends WaxModel{
     $this->define("send_email_to", "CharField", array('group'=>'details'));
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
     $this->define("candidates", "HasManyField", array('target_model'=>"Candidate", 'export'=>true, 'group'=>'relationships', 'editable'=>true));
-    $this->define("cancelled", "BooleanField", array('scaffold'=>true, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
+    $this->define("cancelled", "BooleanField", array('scaffold'=>true, "widget"=>"SelectInput", "choices"=>array(''=>'-- cancelled? --', 0=>"No",1=>"Yes")));
   }
 
 
