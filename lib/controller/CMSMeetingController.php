@@ -11,7 +11,8 @@ class CMSMeetingController extends CMSApplicantController{
 	public $limit_revisions = 20; //limit revisions as it may cause problems
 	public $filter_fields=array(
 							'job' => array('columns'=>array('domain_content_id'), 'partial'=>'_filters_select'),
-							'date_start' => array('columns'=>array('date_start'), 'partial'=>"_filters_date", 'fuzzy_right'=>true)
+							'date_start' => array('columns'=>array('date_start'), 'partial'=>"_filters_date", 'fuzzy_right'=>true),
+							'cancelled' => array('columns'=>array('cancelled'), 'partial'=>"_filters_status"),
 						  );
 	public $autosave = false;
 	public $operation_actions = array();
@@ -51,6 +52,13 @@ class CMSMeetingController extends CMSApplicantController{
 		if(!$res) $this->session->add_error("Please select a meeting");
 		if($res && $res['failed']) $this->session->add_error("Failed to be notify ".$res['failed']." candidates.");
 		if($res && $res['notified']) $this->session->add_message("Notified ".$res['notified']." candidates.");
+
+		//turn off the meetings
+		foreach(Request::param('primval') as $primval){
+			$meeting = new Meeting($primval);
+			$meeting->update_attributes(array('cancelled'=>1));
+		}
+
 		$this->redirect_to("/admin/".$this->module_name."/");
 	}
 
