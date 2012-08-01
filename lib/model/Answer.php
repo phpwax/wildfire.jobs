@@ -14,8 +14,8 @@ class Answer extends WaxModel{
     $this->define("extra_class", "CharField");
     $this->define("deadend_copy", "CharField");
     //copy from application
-    $this->define("completed", "IntegerField", array('export'=>true));
-    $this->define("deadend", "IntegerField", array('export'=>true));
+    $this->define("completed", "IntegerField", array('export'=>true, "choices"=>array(''=>'Completed?', 0=>"No",1=>"Yes")));
+    $this->define("deadend", "IntegerField", array('export'=>true,"choices"=>array(''=>'Dead End?', 0=>"No",1=>"Yes")));
     $this->define("session", "CharField");
     $this->define("question_order", "IntegerField", array('widget'=>'HiddenInput'));
   }
