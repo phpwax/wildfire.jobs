@@ -14,6 +14,7 @@ class CMSMeetingController extends CMSApplicantController{
 							'date_start' => array('columns'=>array('date_start'), 'partial'=>"_filters_date", 'fuzzy_right'=>true)
 						  );
 	public $autosave = false;
+	public $operation_actions = array();
 	public $list_options = array(
 							array('form_name'=>'meeting_cancelled_notify', 'form_value'=>'Cancel & Notify', 'class'=>'hide preview-button'),
 							array('form_name'=>'export_pdf', 'form_value'=>'Export as PDF', 'class'=>'revision'),
