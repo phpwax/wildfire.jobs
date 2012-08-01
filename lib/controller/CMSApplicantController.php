@@ -156,10 +156,11 @@ class CMSApplicantController extends AdminComponent{
         $hash = "ex".date("Ymdhis");
         $folder = WAX_ROOT."tmp/export/";
         $this->create_pdfs($folder, $hash, $server, $use);
-
+        $archived = $failed = 0;
         foreach($use as $primval){
           $m = new $this->model_class($primval);
-          $m->delete();
+          if($done = $m->archive()) $archived++;
+          else $failed++;
         }
         $this->create_and_output_zips($folder, $hash);
       }
