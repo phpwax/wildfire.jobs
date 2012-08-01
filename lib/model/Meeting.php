@@ -1,6 +1,9 @@
 <?
 class Meeting extends WaxModel{
 
+  public static $from_email = "";
+  public static $dev_emails = array();
+
   public function setup(){
 
     parent::setup();
@@ -24,11 +27,14 @@ class Meeting extends WaxModel{
 
 
   public function send_notifications($type){
-    $notified = $failed = 0
+    $notified = $failed = 0;
     if(($candidates = $this->candidates) && $candidates->count()){
       foreach($candidates as $candidate){
-        $notfiy = new MeetingNotification();
-
+        $notfiy = new Meetingnotification();
+        if($candidate->email){
+          $notify->{"send_".$type}($candidate, Meeting::$from_email, $this->send_email_to, Meeting::$dev_emails);
+          $notified++;
+        }else $failed ++;
       }
     }
     return array('failed'=>$failed, 'notified'=>$notified);
