@@ -51,5 +51,14 @@ class Application extends WaxModel{
     shell_exec($command);
     WaxLog::log('error', '[pdf] '.$command, "pdf");
   }
+
+
+  public function archive(){
+    if($this->is_candidate || $this->is_staff || ($c = $this->candidate) ) return false;
+    else{
+      $this->delete();
+      return true;
+    }
+  }
 }
 ?>
