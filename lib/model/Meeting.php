@@ -9,6 +9,7 @@ class Meeting extends WaxModel{
     parent::setup();
     $this->define("title", "CharField", array('group'=>'details', 'export'=>true,'scaffold'=>true, 'required'=>true));
     $this->define("description", "TextField", array('widget'=>"TinymceTextareaInput"));
+    $this->define("location", "TextField", array('widget'=>"TextareaInput"));
     $this->define("date_start", "DateTimeField", array('export'=>true,'scaffold'=>true, 'default'=>"tomorrow", 'output_format'=>"j F Y",'input_format'=> 'j F Y H:i', 'info_preview'=>1));
     $this->define("date_end", "DateTimeField", array('export'=>true,'scaffold'=>true, 'default'=>"tomorrow", 'output_format'=>"j F Y", 'input_format'=> 'j F Y H:i','info_preview'=>1));
     $this->define("send_email_to", "CharField", array('group'=>'details'));
@@ -32,7 +33,7 @@ class Meeting extends WaxModel{
       foreach($candidates as $candidate){
         $notfiy = new Meetingnotification();
         if($candidate->email){
-          $notify->{"send_".$type}($candidate, Meeting::$from_email, $this->send_email_to, Meeting::$dev_emails);
+          $notify->{"send_".$type}($meeting, $candidate, Meeting::$from_email, $this->send_email_to, Meeting::$dev_emails);
           $notified++;
         }else $failed ++;
       }
