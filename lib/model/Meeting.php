@@ -1,7 +1,6 @@
 <?
 class Meeting extends WaxModel{
 
-  public static $from_email = "";
   public static $dev_emails = array();
 
   public function setup(){
@@ -16,6 +15,11 @@ class Meeting extends WaxModel{
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
     $this->define("candidates", "HasManyField", array('target_model'=>"Candidate", 'export'=>true, 'group'=>'relationships', 'editable'=>true));
     $this->define("cancelled", "BooleanField", array('scaffold'=>true, "widget"=>"SelectInput", "choices"=>array(''=>'-- cancelled? --', 0=>"No",1=>"Yes")));
+    //joins to the meetings
+    $this->define("meeting_invite", "ForeignKey", array('group'=>'details', 'target_model'=>'EmailTemplate', 'col_name'=>'meeting_invite_id'));
+    $this->define("meeting_changed", "ForeignKey", array('group'=>'details', 'target_model'=>'EmailTemplate', 'col_name'=>'meeting_changed_id'));
+    $this->define("meeting_cancelled", "ForeignKey", array('group'=>'details', 'target_model'=>'EmailTemplate', 'col_name'=>'meeting_cancelled_id'));
+
   }
 
 
@@ -30,13 +34,13 @@ class Meeting extends WaxModel{
 
   public function send_notifications($type){
     $notified = $failed = 0;
-    if(($candidates = $this->candidates) && $candidates->count()){
+    if(($candidates = $this->candidates) && $candidates->count() && ($email = $this->$type)) && $email->primval){
       foreach($candidates as $candidate){
-        // $notify = new Meetingnotification();
-        // if($candidate->email){
-        //   $notify->{"send_".$type}($this, $candidate, Meeting::$from_email, $this->send_email_to, Meeting::$dev_emails);
-        //   $notified++;
-        // }else $failed ++;
+        $notify = new Widlfirejobsnotification;
+        if($candidate->email){
+          $notify->send_notification($email, $this, $candidate);
+          $notified++;
+        }else $failed ++;
       }
     }
     return array('failed'=>$failed, 'notified'=>$notified);
