@@ -2,7 +2,7 @@
 class Meeting extends WaxModel{
 
   public static $dev_emails = array('charles@oneblackbear.com');
-  public static $stage_choices = array(''=>'-- Select stage --', 'general'=>'General Assessment', 'written'=>'Written Assessment', 'driving'=>'Driving Assesstment', 'final'=>'Final Interview', 'cancelled'=>'Cancelled', 'reject'=>'Rejection');
+  public static $stage_choices = array(''=>'-- select --','general'=>'General Assessment', 'written'=>'Written Assessment', 'driving'=>'Driving Assesstment', 'final'=>'Final Interview', 'cancelled'=>'Cancelled', 'changed'=>'Changed', 'reject'=>'Rejection');
   public function setup(){
 
     parent::setup();
@@ -15,9 +15,8 @@ class Meeting extends WaxModel{
     $this->define("date_start", "DateTimeField", array('export'=>true,'scaffold'=>true, 'default'=>"tomorrow", 'output_format'=>"j F Y",'input_format'=> 'j F Y H:i', 'info_preview'=>1));
     $this->define("date_end", "DateTimeField", array('export'=>true,'scaffold'=>true, 'default'=>"tomorrow", 'output_format'=>"j F Y", 'input_format'=> 'j F Y H:i','info_preview'=>1));
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
-    $this->define("candidates", "HasManyField", array('target_model'=>"Candidate", 'export'=>true, 'group'=>'candidates', 'editable'=>true));
-
     $this->define("emails", "ManyToManyField", array('target_model'=>"EmailTemplate", "eager_loading"=>true, "join_model_class"=>"WildfireOrderedTagJoin", "join_order"=>"join_order", 'group'=>'templates'));
+    $this->define("candidates", "HasManyField", array('target_model'=>"Candidate", 'export'=>true, 'group'=>'candidates', 'editable'=>true));
 
   }
 
@@ -29,23 +28,21 @@ class Meeting extends WaxModel{
     shell_exec($command);
   }
 
-  /**
-   * if sending the notifications,
-   *  reset the field
-   *  check if
-   */
-  public function before_save(){
-    parent::before_save();
-    // //check not at the same stage?
-    // $matching = true;
-    // if($this->primval){
-    //   $old = new Meeting($this->primval);
-    //   if($old->stage != $this->stage) $matching = false;
-    // }
-    if($this->send_notification && $this->stage && ($emails = $this->email_template_get($this->stage) )){
-      $this->send_notification = 0;
 
+  public function notifications(){
+    $sent=0;
+    if($this->send_notification && $this->stage && ($emails = $this->email_template_get($this->stage) ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
+      $this->send_notification = 0;
+      if($candidates = $this->candidates){
+        foreach($this->candidates as $candidate){
+          $notify = new Wildfirejobsnotification;
+          $notify->send_notification($template, $this, $candidate, Meeting::$dev_emails);
+          $sent++;
+        }
+
+      }
     }
+    return $sent;
   }
 
 

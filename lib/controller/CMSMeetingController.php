@@ -26,6 +26,11 @@ class CMSMeetingController extends CMSApplicantController{
 		parent::events();
 		WaxEvent::clear("cms.layout.sublinks");
 		$this->quick_links = array();
+		WaxEvent::add("cms.save.success", function(){
+			$controller = WaxEvent::data();
+			$saved = $controller->model;
+			if($sent = $saved->notifications()) $controller->session->add_message("Sent ".$sent." notifications to candidates");
+		});
 	}
 
 
