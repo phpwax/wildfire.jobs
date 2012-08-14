@@ -17,7 +17,7 @@ class CMSMeetingController extends CMSApplicantController{
 	public $autosave = false;
 	public $operation_actions = array('view');
 	public $list_options = array(
-							array('form_name'=>'export_pdf', 'form_value'=>'Export as PDF', 'class'=>'revision'),
+							array('form_name'=>'export_pdf', 'form_value'=>'Export as PDF', 'class'=>'revision')
 						  );
 
 	public $quick_links = array();
@@ -29,10 +29,13 @@ class CMSMeetingController extends CMSApplicantController{
 	}
 
 
-
 	public function view(){
 		$this->edit();
 		$this->use_view = "edit";
+	}
+
+	public function _filter_inline_tagged(){
+		parent::_filter_inline();
 	}
 }
 ?>

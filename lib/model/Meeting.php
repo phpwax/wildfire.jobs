@@ -2,13 +2,13 @@
 class Meeting extends WaxModel{
 
   public static $dev_emails = array('charles@oneblackbear.com');
-  public static $stage_choices = array(''=>'-- Select stage --', 'general'=>'General Assessment', 'written'=>'Written Assessment', 'driving'=>'Driving Assesstment', 'final'=>'Final Interview', 'reject'=>'Rejection');
+  public static $stage_choices = array(''=>'-- Select stage --', 'general'=>'General Assessment', 'written'=>'Written Assessment', 'driving'=>'Driving Assesstment', 'final'=>'Final Interview', 'cancelled'=>'Cancelled', 'reject'=>'Rejection');
   public function setup(){
 
     parent::setup();
     $this->define("title", "CharField", array('group'=>'details', 'export'=>true,'scaffold'=>true, 'required'=>true));
     $this->define("stage", "CharField", array('group'=>'details', 'export'=>true,'scaffold'=>true, 'required'=>true, 'widget'=>'SelectInput', 'choices'=>Meeting::$stage_choices));
-    $this->define("send_notifications", "BooleanField", array('group'=>'details'));
+    $this->define("send_notification", "BooleanField", array('group'=>'details'));
 
     $this->define("description", "TextField", array('widget'=>"TinymceTextareaInput"));
     $this->define("location", "TextField", array('widget'=>"TextareaInput"));
@@ -27,7 +27,6 @@ class Meeting extends WaxModel{
     $permalink = "/admin/".$module_name."/edit/".$this->primval."/.print?auth_token=".$auth_token;
     $command = '/usr/bin/xvfb-run -a -s "-screen 0 1024x768x16" /usr/bin/wkhtmltopdf --encoding utf-8 -s A4 -T 0mm -B 20mm -L 0mm -R 0mm "'.$server.$permalink.'" '.$file;
     shell_exec($command);
-    WaxLog::log('error', '[pdf] '.$command, "pdf");
   }
 
   /**
@@ -43,39 +42,22 @@ class Meeting extends WaxModel{
     //   $old = new Meeting($this->primval);
     //   if($old->stage != $this->stage) $matching = false;
     // }
-    if(!$matching && $this->send_notifications && ($emails = $this->email_meta_get($this->stage) ){
-      $this->send_notifications = 0;
+    if($this->send_notification && $this->stage && ($emails = $this->email_template_get($this->stage) )){
+      $this->send_notification = 0;
 
     }
   }
 
 
-
-  //this will need updating when the framework can handle manipulating join columns
-  public function email_meta_set($id, $tag, $order=0, $title=''){
+  public function email_template_get($tag=false, $id=false){
     $model = new WaxModel;
     if($this->table < "email_template") $model->table = $this->table."_email_template";
     else $model->table = "email_template_".$this->table;
-
     $col = $this->table."_".$this->primary_key;
-    if(!$order) $order = 0;
-    if(($found = $model->filter($col, $this->primval)->filter("email_template_id", $id)->all()) && $found->count()){
-      foreach($found as $r){
-        $sql = "UPDATE `".$model->table."` SET `join_order`=$order, `tag`='$tag', `title`='$title' WHERE `id`=$r->primval";
-        $model->query($sql);
-      }
-    }else{
-      $sql = "INSERT INTO `".$model->table."` (`email_template_id`, `$col`, `join_order`, `tag`, `title`) VALUES ('$id', '$this->primval', '$order', '$tag', '$title')";
-      $model->query($sql);
+    if($id){
+      if($tag && $tag != "all") $model->filter("tag", $tag);
+      return $model->filter($col, $this->primval)->filter("email_template_id", $id)->order('join_order ASC')->first();
     }
-  }
-
-  public function email_meta_get($id=false, $tag=false){
-    $model = new WaxModel;
-    if($this->table < "email_template") $model->table = $this->table."_email_template";
-    else $model->table = "email_template_".$this->table;
-    $col = $this->table."_".$this->primary_key;
-    if($id) return $model->filter($col, $this->primval)->filter("email_template_id", $id)->order('join_order ASC')->first();
     elseif($tag=="all") return $model->filter($col, $this->primval)->order('join_order ASC')->all();
     elseif($tag) return $model->filter($col, $this->primval)->filter("tag", $tag)->order('join_order ASC')->all();
     else return false;
