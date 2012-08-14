@@ -62,12 +62,12 @@ class CMSMeetingController extends CMSApplicantController{
 		$this->redirect_to("/admin/".$this->module_name."/");
 	}
 
-	protected function meeting_notification($use, $param="meeting_invite", $func="send_notifications"){
+	protected function meeting_notification($use, $param="meeting_invite"){
 		$failed = $notified = 0;
 		if($use){
 			foreach($use as $primval){
 				$meeting = new Meeting($primval);
-				$results = $meeting->$func($param);
+				$results = $meeting->send_notifications($param);
 				if($results){
 					$failed += $results['failed'];
 					$notified += $results['notified'];

@@ -34,11 +34,11 @@ class Meeting extends WaxModel{
 
   public function send_notifications($type){
     $notified = $failed = 0;
-    if(($candidates = $this->candidates) && $candidates->count() && ($email = $this->$type) && $email->primval){
+    if(($candidates = $this->candidates) && $candidates->count() && ($email = $this->$type) && $email && $email->primval){
       foreach($candidates as $candidate){
-        $notify = new Widlfirejobsnotification;
+        $notify = new Wildfirejobsnotification;
         if($candidate->email){
-          $notify->send_notification($email, $this, $candidate);
+          $notify->send_notification($email, $this, $candidate, self::$dev_emails);
           $notified++;
         }else $failed ++;
       }
