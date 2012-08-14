@@ -1,7 +1,7 @@
 <?
 class Meeting extends WaxModel{
 
-  public static $dev_emails = array();
+  public static $dev_emails = array('charles@oneblackbear.com');
 
   public function setup(){
 
@@ -36,8 +36,8 @@ class Meeting extends WaxModel{
     $notified = $failed = 0;
     if(($candidates = $this->candidates) && $candidates->count() && ($email = $this->$type) && $email && $email->primval){
       foreach($candidates as $candidate){
-        $notify = new Wildfirejobsnotification;
         if($candidate->email){
+          $notify = new Wildfirejobsnotification;
           $notify->send_notification($email, $this, $candidate, self::$dev_emails);
           $notified++;
         }else $failed ++;
