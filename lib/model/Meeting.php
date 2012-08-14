@@ -32,11 +32,11 @@ class Meeting extends WaxModel{
     $notified = $failed = 0;
     if(($candidates = $this->candidates) && $candidates->count()){
       foreach($candidates as $candidate){
-        $notify = new Meetingnotification();
-        if($candidate->email){
-          $notify->{"send_".$type}($this, $candidate, Meeting::$from_email, $this->send_email_to, Meeting::$dev_emails);
-          $notified++;
-        }else $failed ++;
+        // $notify = new Meetingnotification();
+        // if($candidate->email){
+        //   $notify->{"send_".$type}($this, $candidate, Meeting::$from_email, $this->send_email_to, Meeting::$dev_emails);
+        //   $notified++;
+        // }else $failed ++;
       }
     }
     return array('failed'=>$failed, 'notified'=>$notified);
