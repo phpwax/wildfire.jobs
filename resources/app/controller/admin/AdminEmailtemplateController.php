@@ -1,0 +1,3 @@
+<?
+class AdminEmailtemplateController extends CMSEmailtemplateController{}
+?>

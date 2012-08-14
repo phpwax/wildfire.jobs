@@ -16,9 +16,9 @@ class Meeting extends WaxModel{
     $this->define("candidates", "HasManyField", array('target_model'=>"Candidate", 'export'=>true, 'group'=>'relationships', 'editable'=>true));
     $this->define("cancelled", "BooleanField", array('scaffold'=>true, "widget"=>"SelectInput", "choices"=>array(''=>'-- cancelled? --', 0=>"No",1=>"Yes")));
     //joins to the meetings
-    $this->define("meeting_invite", "ForeignKey", array('group'=>'details', 'target_model'=>'EmailTemplate', 'col_name'=>'meeting_invite_id'));
-    $this->define("meeting_changed", "ForeignKey", array('group'=>'details', 'target_model'=>'EmailTemplate', 'col_name'=>'meeting_changed_id'));
-    $this->define("meeting_cancelled", "ForeignKey", array('group'=>'details', 'target_model'=>'EmailTemplate', 'col_name'=>'meeting_cancelled_id'));
+    $this->define("meeting_invite", "ForeignKey", array('group'=>'details', 'target_model'=>'EmailTemplate', 'col_name'=>'meeting_invite_id', 'label'=>'Meeting invite email'));
+    $this->define("meeting_changed", "ForeignKey", array('group'=>'details', 'target_model'=>'EmailTemplate', 'col_name'=>'meeting_changed_id', 'label'=>'Meeting changed email'));
+    $this->define("meeting_cancelled", "ForeignKey", array('group'=>'details', 'target_model'=>'EmailTemplate', 'col_name'=>'meeting_cancelled_id', 'label'=>'Meeting cancelled email'));
 
   }
 
@@ -34,7 +34,7 @@ class Meeting extends WaxModel{
 
   public function send_notifications($type){
     $notified = $failed = 0;
-    if(($candidates = $this->candidates) && $candidates->count() && ($email = $this->$type)) && $email->primval){
+    if(($candidates = $this->candidates) && $candidates->count() && ($email = $this->$type) && $email->primval){
       foreach($candidates as $candidate){
         $notify = new Widlfirejobsnotification;
         if($candidate->email){
