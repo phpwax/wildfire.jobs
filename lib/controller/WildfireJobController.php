@@ -43,6 +43,7 @@ class WildfireJobController extends ApplicationController{
     if(Request::param("completed_application") && !$this->deadend && $application->complete($content)){
       $this->completed = 1;
       $application = $application->update_attributes(array('completed'=>1, 'date_completed'=>date("Y-m-d H:i:s")));
+      $this->send_application_complete_notification($content, $application);
     }
     //check for reset params
     if($this->reset_application && !$application->locked){
@@ -57,6 +58,12 @@ class WildfireJobController extends ApplicationController{
 
     //copy current settings to this applications answers
     foreach($application->answers as $answer) $answer->update_attributes(array('completed'=>$application->completed, 'deadend'=>$application->deadend, 'session'=>$application->session));
+  }
+
+  protected function send_application_complete_notification($job, $application){
+    if($job->send_email_to){
+
+    }
   }
 
   protected function saving($application){
