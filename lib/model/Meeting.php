@@ -1,7 +1,6 @@
 <?
 class Meeting extends WaxModel{
 
-  public static $dev_emails = array('charles@oneblackbear.com');
   public static $stage_choices = array(''=>'-- select --','general'=>'General Assessment', 'written'=>'Written Assessment', 'driving'=>'Driving Assesstment', 'final'=>'Final Interview', 'cancelled'=>'Cancelled', 'changed'=>'Changed', 'reject'=>'Rejection');
   public function setup(){
 
@@ -35,7 +34,7 @@ class Meeting extends WaxModel{
       if($candidates = $this->candidates){
         foreach($this->candidates as $candidate){
           $notify = new Wildfirejobsnotification;
-          $notify->send_notification($template, $this, $candidate, Meeting::$dev_emails);
+          $notify->send_notification($template, $this, $candidate);
           $sent++;
         }
 

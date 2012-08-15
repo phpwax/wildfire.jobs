@@ -10,6 +10,7 @@ class WildfireJobController extends ApplicationController{
   public $error_forms = array();
   public $deadend = false;
   public $completed = false;
+  public $send_application_notification_from = false;
 
   //from a job id, generate the form
   public function __job(){
@@ -62,7 +63,8 @@ class WildfireJobController extends ApplicationController{
 
   protected function send_application_complete_notification($job, $application){
     if($job->send_email_to){
-
+      $notify = new Wildfirejobsnotification;
+      $notify->send_application_complete($job, $application, $this->send_application_notification_from);
     }
   }
 
