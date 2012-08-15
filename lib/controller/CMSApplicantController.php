@@ -25,6 +25,10 @@ class CMSApplicantController extends AdminComponent{
                             array('form_name'=>'candidate', 'form_value'=>'Convert to candidate', 'class'=>'revision')
                           );
 
+    public function edit(){
+      parent::edit();
+      if($this->model && !$this->model->locked) $this->model->update_attributes(array('locked'=>1));
+    }
 
     protected function events(){
       $this->export_group = Inflections::underscore(CONTENT_MODEL)."_id";
