@@ -32,7 +32,6 @@ class Meeting extends WaxModel{
   public function notifications(){
     $sent=0;
     if($this->send_notification && $this->stage && ($emails = $this->email_template_get($this->stage) ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
-      $this->send_notification = 0;
       if($candidates = $this->candidates){
         foreach($this->candidates as $candidate){
           $notify = new Wildfirejobsnotification;
@@ -42,6 +41,7 @@ class Meeting extends WaxModel{
 
       }
     }
+    $this->update_attributes(array('send_notification'=>0));
     return $sent;
   }
 
