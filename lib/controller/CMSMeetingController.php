@@ -60,7 +60,7 @@ class CMSMeetingController extends CMSApplicantController{
 				foreach($stages as $stage=>$candidates){
 					//make a new meeting based on this stage
 					$meeting = new Meeting;
-					$meeting = $meeting->update_attributes(array('title'=>$saved->title, 'location'=>$saved->location, 'stage'=>$stage));
+					$meeting = $meeting->update_attributes(array('title'=>$saved->title, 'location'=>$saved->location, 'stage'=>$stage, 'send_notification'=>1));
 					$meeting->emails = $saved->emails;
 					$meeting->job = $saved->job;
 					$meeting->prior_meeting = $saved;
@@ -88,9 +88,12 @@ class CMSMeetingController extends CMSApplicantController{
 				$prefix = "meeting-".$id;
 				$meeting = new Meeting($id);
 				$this->forms[] = $form = new WaxForm($meeting, false, array('prefix'=>$prefix));
-				if(($saved = $form->save()) && ($sent = $saved->notifications())) $this->session->add_message("Sent ".$sent." notifications to candidates for meeting ".$saved->title);
+				if($saved = $form->save()){
+					$sent = $saved->notifications();
+					$this->session->add_message("Sent ".$sent." notifications to candidates for meeting ".$saved->title);
+				}
 			}
-
+			$this->meetings = $meetings;
 		}
 		else $this->redirect_to("/admin/".$this->module_name."/");
 	}

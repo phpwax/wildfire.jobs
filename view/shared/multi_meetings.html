@@ -3,20 +3,27 @@
     <h3>Arrange Meetings</h3>
     <div class='listing' id="data-listing">
       <form action="" class="tabs_container form_container <?=Inflections::to_url($controller)?>-<?=$action?> upload-form" method="post" enctype="multipart/form-data" id="upload-form">
+        <?foreach($meetings as $m):?>
+        <input type='hidden' name='primvals[]' value='<?=$m?>'>
+        <?endforeach?>
+
       <?foreach($forms as $form):?>
       <fieldset class='tab-contents clearfix details ui-tabs-panel ui-widget-content ui-corner-top ui-corner-bottom'>
-        <div class='field'><?=$form->title->render()?></div>
-        <div class='field'><?=$form->date_start->render()?></div>
-        <div class='field'><?=$form->date_end->render()?></div>
-        <div class='field'><?=$form->stage->render()?></div>
-        <div class='field'><?=$form->description->render()?></div>
-        <div class='field'><?=$form->location->render()?></div>
+        <?=$form->id->render(array('name'=>'meeting-'.$form->handler->bound_to_model->primval.'[id]'))?>
+        <div class='field'><?=$form->title->render(array('name'=>'meeting-'.$form->handler->bound_to_model->primval.'[title]'))?></div>
+        <div class='field'><?=$form->date_start->render(array('name'=>'meeting-'.$form->handler->bound_to_model->primval.'[date_start]'))?></div>
+        <div class='field'><?=$form->date_end->render(array('name'=>'meeting-'.$form->handler->bound_to_model->primval.'[date_end]'))?></div>
+        <div class='field'><?=$form->stage->render(array('name'=>'meeting-'.$form->handler->bound_to_model->primval.'[state]'))?></div>
+        <div class='field'><?=$form->description->render(array('name'=>'meeting-'.$form->handler->bound_to_model->primval.'[description]'))?></div>
+        <div class='field'><?=$form->location->render(array('name'=>'meeting-'.$form->handler->bound_to_model->primval.'[location]'))?></div>
         <div class='field candidate_listing_block'>
           <p><strong>For:</strong></p>
           <?foreach($form->handler->bound_to_model->candidates as $c):?><p><a href="/admin/candidate/edit/<?=$c->primval?>/" target="_new"><?=$c->first_name?> <?=$c->last_name?></a></p><?endforeach?>
         </div>
       </fieldset>
+      <br>
       <hr>
+      <br>
       <?endforeach?>
 
 

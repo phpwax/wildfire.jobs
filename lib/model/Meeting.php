@@ -5,6 +5,8 @@ class Meeting extends WaxModel{
   public function setup(){
 
     parent::setup();
+    $this->columns['id'][1]['widget'] = 'HiddenInput';
+    $this->columns['id'][1]['editable'] = true;
     $this->define("title", "CharField", array('group'=>'details', 'export'=>true,'scaffold'=>true, 'required'=>true));
     $this->define("stage", "CharField", array('group'=>'details', 'export'=>true,'scaffold'=>true, 'required'=>true, 'widget'=>'SelectInput', 'choices'=>Meeting::$stage_choices));
     $this->define("send_notification", "BooleanField", array('group'=>'details', 'default'=>1)); //set to true by default
