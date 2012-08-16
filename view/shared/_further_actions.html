@@ -1,0 +1,24 @@
+<div class='joins joins_<?=count($fields)?> clearfix'>
+  <?
+  $name = "further actions";
+  $all = $model->candidates;
+  ?>
+  <?if($all && $all->count()):?>
+  <div class='field clearfix  multipleselect'>
+    <p>Change the stage in the drop downs to setup further meetings.<br><br></p>
+    <ul>
+      <?foreach($all as $i => $row):?>
+      <li class='clearfix join-option join-yes'>
+        <input type='hidden' id="<?=$name?>_<?=$row->primval?>" name='candidates[<?=$i?>][<?=$row->primval?>][<?=$row->primary_key?>]' value="<?=$row->primval?>">
+        <label for="<?=$name?>_<?=$row->primval?>"><?=$row->first_name?> <?=$row->last_name?></label>
+        <select id="<?=$name?>_<?=$row->primval?>_tagged" name='candidates[<?=$i?>][<?=$row->primval?>][stage]'>
+          <?foreach(Meeting::$stage_choices as $choice=>$stagename):?>
+            <option value="<?=$choice?>" <?if($row->stage == $choice):?>selected="selected" <?endif?> ><?=$stagename?></option>
+          <?endforeach?>
+        </select>
+      </li>
+      <?endforeach?>
+    </ul>
+  </div>
+  <?endif?>
+</div>

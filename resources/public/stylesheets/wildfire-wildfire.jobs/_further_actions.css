@@ -1,0 +1,8 @@
+fieldset.further-actions .join-option label{
+  float:left;
+  width:20%;
+}
+fieldset.further-actions .join-option select{
+  float:left;
+  width:30%;
+}

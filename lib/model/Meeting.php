@@ -7,7 +7,7 @@ class Meeting extends WaxModel{
     parent::setup();
     $this->define("title", "CharField", array('group'=>'details', 'export'=>true,'scaffold'=>true, 'required'=>true));
     $this->define("stage", "CharField", array('group'=>'details', 'export'=>true,'scaffold'=>true, 'required'=>true, 'widget'=>'SelectInput', 'choices'=>Meeting::$stage_choices));
-    $this->define("send_notification", "BooleanField", array('group'=>'details'));
+    $this->define("send_notification", "BooleanField", array('group'=>'details', 'default'=>1)); //set to true by default
 
     $this->define("description", "TextField", array('widget'=>"TinymceTextareaInput"));
     $this->define("location", "TextField", array('widget'=>"TextareaInput"));
@@ -15,7 +15,7 @@ class Meeting extends WaxModel{
     $this->define("date_end", "DateTimeField", array('export'=>true,'scaffold'=>true, 'default'=>"tomorrow", 'output_format'=>"j F Y", 'input_format'=> 'j F Y H:i','info_preview'=>1));
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
     $this->define("emails", "ManyToManyField", array('target_model'=>"EmailTemplate", "eager_loading"=>true, "join_model_class"=>"WildfireOrderedTagJoin", "join_order"=>"join_order", 'group'=>'emails'));
-    $this->define("candidates", "HasManyField", array('target_model'=>"Candidate", 'export'=>true, 'group'=>'candidates', 'editable'=>true));
+    $this->define("candidates", "HasManyField", array('target_model'=>"Candidate", 'export'=>true, 'group'=>'further actions', 'editable'=>true));
 
   }
 
@@ -36,6 +36,7 @@ class Meeting extends WaxModel{
           $notify = new Wildfirejobsnotification;
           $notify->send_notification($template, $this, $candidate);
           $sent++;
+          $candidate->update_attributes(array('stage'=>$this->stage));
         }
 
       }
