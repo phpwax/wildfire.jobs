@@ -19,6 +19,7 @@ class Candidate extends WaxModel{
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput'));
     $this->define("application", "ForeignKey", array('target_model'=>"Application", 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
     $this->define("meeting", "ForeignKey", array('target_model'=>"Meeting", 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
+    $this->define("last_meeting", "ForeignKey", array('target_model'=>"Meeting", 'editable'=>false, 'col_name'=>'last_meeting_id'));
 
     $this->define("is_staff", "BooleanField", array('group'=>'advanced', 'editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
 
@@ -39,6 +40,24 @@ class Candidate extends WaxModel{
     $command = '/usr/bin/xvfb-run -a -s "-screen 0 1024x768x16" /usr/bin/wkhtmltopdf --encoding utf-8 -s A4 -T 0mm -B 20mm -L 0mm -R 0mm "'.$server.$permalink.'" '.$file;
     shell_exec($command);
     WaxLog::log('error', '[pdf] '.$command, "pdf");
+  }
+
+  public function hired($meeting){
+    if($meeting->send_notification && ($emails = $meeting->email_template_get('hired') ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
+      $notify = new Wildfirejobsnotification;
+      $notify->send_notification($template, $meeting, $this);
+      return true;
+    }
+    return false;
+  }
+
+  public function rejected($meeting){
+    if($meeting->send_notification && ($emails = $meeting->email_template_get('reject') ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
+      $notify = new Wildfirejobsnotification;
+      $notify->send_notification($template, $meeting, $this);
+      return true;
+    }
+    return false;
   }
 
 }
