@@ -33,6 +33,7 @@ class Meeting extends WaxModel{
   public function notifications(){
     $sent=0;
     if($this->send_notification && $this->stage && ($emails = $this->email_template_get($this->stage) ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
+
       if($candidates = $this->candidates){
         foreach($this->candidates as $candidate){
           $notify = new Wildfirejobsnotification;
@@ -47,6 +48,23 @@ class Meeting extends WaxModel{
     return $sent;
   }
 
+  public function email_template_set($fileid, $tag, $order=0, $title=''){
+    $model = new WaxModel;
+    if($this->table < "email_template") $model->table = $this->table."_email_template";
+    else $model->table = "email_template_".$this->table;
+
+    $col = $this->table."_".$this->primary_key;
+    if(!$order) $order = 0;
+    if(($found = $model->filter($col, $this->primval)->filter("email_template_id", $fileid)->all()) && $found->count()){
+      foreach($found as $r){
+        $sql = "UPDATE `".$model->table."` SET `join_order`=$order, `tag`='$tag', `title`='$title' WHERE `id`=$r->primval";
+        $model->query($sql);
+      }
+    }else{
+      $sql = "INSERT INTO `".$model->table."` (`email_template_id`, `$col`, `join_order`, `tag`, `title`) VALUES ('$fileid', '$this->primval', '$order', '$tag', '$title')";
+      $model->query($sql);
+    }
+  }
 
   public function email_template_get($tag=false, $id=false){
     $model = new WaxModel;

@@ -9,13 +9,13 @@
 
       <?foreach($forms as $form):?>
       <fieldset class='tab-contents clearfix details ui-tabs-panel ui-widget-content ui-corner-top ui-corner-bottom'>
-        <?=$form->id->render(array('name'=>'meeting-'.$form->handler->bound_to_model->primval.'[id]'))?>
-        <div class='field'><?=$form->title->render(array('name'=>'meeting-'.$form->handler->bound_to_model->primval.'[title]'))?></div>
-        <div class='field'><?=$form->date_start->render(array('name'=>'meeting-'.$form->handler->bound_to_model->primval.'[date_start]'))?></div>
-        <div class='field'><?=$form->date_end->render(array('name'=>'meeting-'.$form->handler->bound_to_model->primval.'[date_end]'))?></div>
-        <div class='field'><?=$form->stage->render(array('name'=>'meeting-'.$form->handler->bound_to_model->primval.'[state]'))?></div>
-        <div class='field'><?=$form->description->render(array('name'=>'meeting-'.$form->handler->bound_to_model->primval.'[description]'))?></div>
-        <div class='field'><?=$form->location->render(array('name'=>'meeting-'.$form->handler->bound_to_model->primval.'[location]'))?></div>
+        <?=$form->id->render(array('name'=>$form->handler->prefix.'[id]'))?>
+        <div class='field'><?=$form->title->render(array('name'=>$form->handler->prefix.'[title]'))?></div>
+        <div class='field'><?=$form->date_start->render(array('name'=>$form->handler->prefix.'[date_start]'))?></div>
+        <div class='field'><?=$form->date_end->render(array('name'=>$form->handler->prefix.'[date_end]'))?></div>
+        <div class='field'><?=$form->stage->render(array('name'=>$form->handler->prefix.'[stage]'))?></div>
+        <div class='field'><?=$form->description->render(array('name'=>$form->handler->prefix.'[description]'))?></div>
+        <div class='field'><?=$form->location->render(array('name'=>$form->handler->prefix.'[location]'))?></div>
         <div class='field candidate_listing_block'>
           <p><strong>For:</strong></p>
           <?foreach($form->handler->bound_to_model->candidates as $c):?><p><a href="/admin/candidate/edit/<?=$c->primval?>/" target="_new"><?=$c->first_name?> <?=$c->last_name?></a></p><?endforeach?>

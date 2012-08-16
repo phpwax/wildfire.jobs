@@ -61,7 +61,7 @@ class CMSMeetingController extends CMSApplicantController{
 					//make a new meeting based on this stage
 					$meeting = new Meeting;
 					$meeting = $meeting->update_attributes(array('title'=>$saved->title, 'location'=>$saved->location, 'stage'=>$stage, 'send_notification'=>1));
-					$meeting->emails = $saved->emails;
+					foreach($saved->email_template_get("all") as $em) $meeting->email_template_set($em->email_template_id, $em->tag);
 					$meeting->job = $saved->job;
 					$meeting->prior_meeting = $saved;
 					$other_meetings[] = $meeting->primval;
@@ -87,8 +87,9 @@ class CMSMeetingController extends CMSApplicantController{
 			foreach($meetings as $id){
 				$prefix = "meeting-".$id;
 				$meeting = new Meeting($id);
-				$this->forms[] = $form = new WaxForm($meeting, false, array('prefix'=>$prefix));
-				if($saved = $form->save()){
+				$this->forms[] = $form = new WaxForm($meeting, false, array('form_prefix'=>$prefix, 'prefix'=>$prefix));
+				if(($saved = $form->save())  ){
+					$saved->send_notification = 1;
 					$sent = $saved->notifications();
 					$this->session->add_message("Sent ".$sent." notifications to candidates for meeting ".$saved->title);
 				}
