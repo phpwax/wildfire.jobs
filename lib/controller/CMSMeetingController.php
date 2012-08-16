@@ -82,6 +82,9 @@ class CMSMeetingController extends CMSApplicantController{
 		});
 	}
 
+	public function multi_meetings(){
+
+	}
 
 	public function view(){
 		$this->edit();
