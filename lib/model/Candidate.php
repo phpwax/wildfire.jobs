@@ -20,10 +20,12 @@ class Candidate extends WaxModel{
     $this->define("application", "ForeignKey", array('target_model'=>"Application", 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
     $this->define("meeting", "ForeignKey", array('target_model'=>"Meeting", 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
 
-    $this->define("is_staff", "BooleanField", array('editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
+    $this->define("is_staff", "BooleanField", array('group'=>'advanced', 'editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
 
-    $this->define("date_created", "DateTimeField");
-    $this->define("date_modified", "DateTimeField");
+    $this->define("date_created", "DateTimeField", array('group'=>'advanced'));
+    $this->define("date_modified", "DateTimeField", array('group'=>'advanced'));
+    //include a stage to track how far the person got
+    $this->define("stage", "CharField", array('group'=>'details', 'widget'=>'SelectInput', 'choices'=>Meeting::$stage_choices, 'group'=>'advanced'));
   }
 
   public function before_save(){
@@ -38,11 +40,6 @@ class Candidate extends WaxModel{
     shell_exec($command);
     WaxLog::log('error', '[pdf] '.$command, "pdf");
   }
-  /**
-   * return false for now as not sure rules for this; is should probably remove application as well
-   */
-  public function archive(){
-    return false;
-  }
+
 }
 ?>

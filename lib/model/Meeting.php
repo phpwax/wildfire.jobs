@@ -1,7 +1,7 @@
 <?
 class Meeting extends WaxModel{
 
-  public static $stage_choices = array(''=>'-- select --','general'=>'General Assessment', 'written'=>'Written Assessment', 'driving'=>'Driving Assesstment', 'final'=>'Final Interview', 'cancelled'=>'Cancelled', 'changed'=>'Changed', 'reject'=>'Rejection');
+  public static $stage_choices = array(''=>'-- select --','general'=>'General Assessment', 'written'=>'Written Assessment', 'driving'=>'Driving Assesstment', 'final'=>'Final Interview', 'cancelled'=>'Cancelled', 'changed'=>'Changed', 'reject'=>'Rejection', 'hire'=>'Hired');
   public function setup(){
 
     parent::setup();
