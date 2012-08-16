@@ -16,7 +16,7 @@ class Meeting extends WaxModel{
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
     $this->define("emails", "ManyToManyField", array('target_model'=>"EmailTemplate", "eager_loading"=>true, "join_model_class"=>"WildfireOrderedTagJoin", "join_order"=>"join_order", 'group'=>'emails'));
     $this->define("candidates", "HasManyField", array('target_model'=>"Candidate", 'export'=>true, 'group'=>'further actions', 'editable'=>true));
-
+    $this->define("prior_meeting", "ForeignKey", array('target_model'=>"Meeting", 'editable'=>false, 'col_name'=>'prior_meeting_id'));
   }
 
 

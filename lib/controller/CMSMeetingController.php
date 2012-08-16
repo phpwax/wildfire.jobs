@@ -33,10 +33,10 @@ class CMSMeetingController extends CMSApplicantController{
 
 			if($actions = Request::param('actions')){
 				$stages = array();
-				foreach($actions as $id=>$stage) $stages[$stage][] = $id;
+				foreach($actions as $id=>$stage) if($stage) $stages[$stage][] = $id;
 				//hires
 				$hired_error = $hired = 0;
-				foreach($stages['hire'] as $primval){
+				foreach((array)$stages['hire'] as $primval){
 					$candidate = new Candidate($primval);
 					if($candidate->hired($saved)) $hired ++;
 					else $hired_error ++;
@@ -46,7 +46,7 @@ class CMSMeetingController extends CMSApplicantController{
 				if($hired_error) $controller->session->add_error('Failed to notify '.$hired_error." candidates of hiring.");
 				//rejects
 				$rejected_error = $rejected = 0;
-				foreach($stages['reject'] as $primval){
+				foreach((array)$stages['reject'] as $primval){
 					$candidate = new Candidate($primval);
 					if($candidate->rejected($saved)) $rejected ++;
 					else $rejected_error++;
@@ -56,20 +56,27 @@ class CMSMeetingController extends CMSApplicantController{
 				if($rejected_error) $controller->session->add_error('Failed to notify '.$rejected_error." candidates of rejection.");
 				//others need to have meetings removed before joining to a new meeting
 				$other_meetings = array();
+
 				foreach($stages as $stage=>$candidates){
 					//make a new meeting based on this stage
 					$meeting = new Meeting;
 					$meeting = $meeting->update_attributes(array('title'=>$saved->title, 'location'=>$saved->location, 'stage'=>$stage));
 					$meeting->emails = $saved->emails;
 					$meeting->job = $saved->job;
+					$meeting->prior_meeting = $saved;
 					$other_meetings[] = $meeting->primval;
 					//go over all candidates, remove them from current meeting, record that, join to new meeting
 					foreach($candidates as $id){
 						$candidate = new Candidate($id);
 						$candidate = $candidate->update_attributes(array('meeting_id'=>$meeting->primval, 'last_meeting_id'=>$saved->primval));
 					}
-					$this->session->add_message("Moved ".count($candidates) ." candidates to ".Meeting::$stage_choices[$stage]);
+					$controller->session->add_message("Moved ".count($candidates) ." candidates to ".Meeting::$stage_choices[$stage].". Set details below.");
 				}
+				if(count($other_meetings)){
+					$string = "primvals[]=".implode("&primvals[]=", $other_meetings);
+					$controller->redirect_to("/admin/".$controller->module_name."/multi_meetings?".$string);
+				}
+
 			}
 
 		});
