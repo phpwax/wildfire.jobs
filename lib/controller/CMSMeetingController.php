@@ -83,7 +83,16 @@ class CMSMeetingController extends CMSApplicantController{
 	}
 
 	public function multi_meetings(){
+		if($meetings = Request::param('primvals')){
+			foreach($meetings as $id){
+				$prefix = "meeting-".$id;
+				$meeting = new Meeting($id);
+				$this->forms[] = $form = new WaxForm($meeting, false, array('prefix'=>$prefix));
+				if(($saved = $form->save()) && ($sent = $saved->notifications())) $this->session->add_message("Sent ".$sent." notifications to candidates for meeting ".$saved->title);
+			}
 
+		}
+		else $this->redirect_to("/admin/".$this->module_name."/");
 	}
 
 	public function view(){

@@ -9,7 +9,7 @@ class Meeting extends WaxModel{
     $this->define("stage", "CharField", array('group'=>'details', 'export'=>true,'scaffold'=>true, 'required'=>true, 'widget'=>'SelectInput', 'choices'=>Meeting::$stage_choices));
     $this->define("send_notification", "BooleanField", array('group'=>'details', 'default'=>1)); //set to true by default
 
-    $this->define("description", "TextField", array('widget'=>"TinymceTextareaInput"));
+    $this->define("description", "TextField");
     $this->define("location", "TextField", array('widget'=>"TextareaInput"));
     $this->define("date_start", "DateTimeField", array('export'=>true,'scaffold'=>true, 'default'=>"tomorrow", 'output_format'=>"j F Y",'input_format'=> 'j F Y H:i', 'info_preview'=>1));
     $this->define("date_end", "DateTimeField", array('export'=>true,'scaffold'=>true, 'default'=>"tomorrow", 'output_format'=>"j F Y", 'input_format'=> 'j F Y H:i','info_preview'=>1));

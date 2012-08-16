@@ -1,0 +1,31 @@
+<div class='cms-wrapper cms-uploads-0'>
+  <div class='index_container'>
+    <h3>Arrange Meetings</h3>
+    <div class='listing' id="data-listing">
+      <form action="" class="tabs_container form_container <?=Inflections::to_url($controller)?>-<?=$action?> upload-form" method="post" enctype="multipart/form-data" id="upload-form">
+      <?foreach($forms as $form):?>
+      <fieldset class='tab-contents clearfix details ui-tabs-panel ui-widget-content ui-corner-top ui-corner-bottom'>
+        <div class='field'><?=$form->title->render()?></div>
+        <div class='field'><?=$form->date_start->render()?></div>
+        <div class='field'><?=$form->date_end->render()?></div>
+        <div class='field'><?=$form->stage->render()?></div>
+        <div class='field'><?=$form->description->render()?></div>
+        <div class='field'><?=$form->location->render()?></div>
+        <div class='field candidate_listing_block'>
+          <p><strong>For:</strong></p>
+          <?foreach($form->handler->bound_to_model->candidates as $c):?><p><a href="/admin/candidate/edit/<?=$c->primval?>/" target="_new"><?=$c->first_name?> <?=$c->last_name?></a></p><?endforeach?>
+        </div>
+      </fieldset>
+      <hr>
+      <?endforeach?>
+
+
+      <div class='form-submit'>
+        <input type="submit" name='live' value='Save & notify' class='submit_field input_field live <?=get_class($model)?>-live'>
+      </div>
+      </form>
+    </div>
+
+  </div>
+
+</div>
