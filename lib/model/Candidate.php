@@ -26,7 +26,9 @@ class Candidate extends WaxModel{
     $this->define("date_created", "DateTimeField", array('group'=>'advanced'));
     $this->define("date_modified", "DateTimeField", array('group'=>'advanced'));
     //include a stage to track how far the person got
-    $this->define("stage", "CharField", array('group'=>'details', 'widget'=>'SelectInput', 'choices'=>Meeting::$stage_choices, 'group'=>'advanced'));
+    $choices = Meeting::$stage_choices;
+    unset($choices['hire'], $choices['reject']);
+    $this->define("stage", "CharField", array('group'=>'details', 'widget'=>'SelectInput', 'choices'=>$choices, 'group'=>'advanced'));
   }
 
   public function before_save(){
@@ -46,6 +48,13 @@ class Candidate extends WaxModel{
     if($meeting->send_notification && ($emails = $meeting->email_template_get('hired') ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
       $notify = new Wildfirejobsnotification;
       $notify->send_notification($template, $meeting, $this);
+      $this->update_attributes(array("is_staff"=>1));
+      if($applicant = $this->application) $applicant->update_attributes(array("is_staff"=>1));
+      $row = $this->row;
+      unset($row['id'], $row['date_created'], $row['date_modified'], $row['last_meeting_id'], $row['meeting_id']);
+      $staff = new Staff;
+      $staff->update_attributes($row);
+      $staff->candidate = $this;
       return true;
     }
     return false;
