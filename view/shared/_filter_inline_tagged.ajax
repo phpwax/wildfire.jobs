@@ -7,7 +7,7 @@
     <label for="<?=$name?>_<?=$row->primval?>"><?=$row->humanize()?></label>
     <select id="<?=$name?>_<?=$row->primval?>_tagged" name='joins[<?=$name?>][<?=$row->primval?>][extra_fields][tag]'>
       <?foreach(Meeting::$stage_choices as $choice=>$stagename):?>
-        <option value="<?=$choice?>" <?if($model->email_template_get($choice, $row->primval)):?>selected="selected" <?endif?> ><?=$stagename?></option>
+        <option value="<?=$choice?>" <?if($origin_model->email_template_get($choice, $row->primval)):?>selected="selected" <?endif?> ><?=$stagename?></option>
       <?endforeach?>
     </select>
 

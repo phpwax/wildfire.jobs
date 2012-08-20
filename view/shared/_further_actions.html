@@ -13,7 +13,7 @@
         <label for="<?=$name?>_<?=$row->primval?>"><?=$row->first_name?> <?=$row->last_name?></label>
         <select id="<?=$name?>_<?=$row->primval?>_tagged" name='actions[<?=$row->primval?>]'>
           <?foreach(Meeting::$stage_choices as $choice=>$stagename):?>
-            <option value="<?=$choice?>" ><?=$stagename?></option>
+            <option value="<?=$choice?>"><?=$stagename?></option>
           <?endforeach?>
         </select>
       </li>
