@@ -29,6 +29,9 @@ class Candidate extends WaxModel{
     $choices = Meeting::$stage_choices;
     unset($choices['hire'], $choices['reject']);
     $this->define("stage", "CharField", array('group'=>'details', 'widget'=>'SelectInput', 'choices'=>$choices, 'group'=>'advanced'));
+
+    $this->define("sent_notification", "BooleanField", array('group'=>'details', 'editable'=>false, 'default'=>1)); //set to true by default
+    $this->define("sent_notification_at", "DateTimeField", array('group'=>'details', 'editable'=>false));
   }
 
   public function before_save(){
@@ -44,8 +47,21 @@ class Candidate extends WaxModel{
     WaxLog::log('error', '[pdf] '.$command, "pdf");
   }
 
+  public function notification($meeting){
+    if(!$this->sent_notification){
+      if($emails = $meeting->email_template_get($this->stage) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
+        $notify = new Wildfirejobsnotification;
+        $notify->send_notification($template, $meeting, $this);
+        $this->update_attributes(array('sent_notification'=>1, 'sent_notification_at'=>date("Y-m-d H:i:s")));
+        return true;
+      }
+    }
+    return false;
+  }
+
   public function hired($meeting){
-    if($meeting->send_notification && ($emails = $meeting->email_template_get('hired') ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
+    echo "sn:$meeting->send_notification<br>";
+    if($meeting->send_notification && ($emails = $meeting->email_template_get('hire') ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
       $notify = new Wildfirejobsnotification;
       $notify->send_notification($template, $meeting, $this);
       $this->update_attributes(array("is_staff"=>1));

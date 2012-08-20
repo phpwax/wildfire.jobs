@@ -9,7 +9,6 @@ class Meeting extends WaxModel{
     $this->columns['id'][1]['editable'] = true;
     $this->define("title", "CharField", array('group'=>'details', 'export'=>true,'scaffold'=>true, 'required'=>true));
     $this->define("stage", "CharField", array('group'=>'details', 'export'=>true,'scaffold'=>true, 'required'=>true, 'widget'=>'SelectInput', 'choices'=>Meeting::$stage_choices));
-    $this->define("send_notification", "BooleanField", array('group'=>'details', 'default'=>1)); //set to true by default
 
     $this->define("description", "TextField");
     $this->define("location", "TextField", array('widget'=>"TextareaInput"));
@@ -31,21 +30,7 @@ class Meeting extends WaxModel{
 
 
   public function notifications(){
-    $sent=0;
-    if($this->send_notification && $this->stage && ($emails = $this->email_template_get($this->stage) ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
 
-      if($candidates = $this->candidates){
-        foreach($this->candidates as $candidate){
-          $notify = new Wildfirejobsnotification;
-          $notify->send_notification($template, $this, $candidate);
-          $sent++;
-          $candidate->update_attributes(array('stage'=>$this->stage));
-        }
-
-      }
-    }
-    $this->update_attributes(array('send_notification'=>0));
-    return $sent;
   }
 
   public function email_template_set($fileid, $tag, $order=0, $title=''){
