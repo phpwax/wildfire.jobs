@@ -18,8 +18,16 @@ class Meeting extends WaxModel{
     $this->define("emails", "ManyToManyField", array('target_model'=>"EmailTemplate", "eager_loading"=>true, "join_model_class"=>"WildfireOrderedTagJoin", "join_order"=>"join_order", 'group'=>'emails'));
     $this->define("candidates", "HasManyField", array('target_model'=>"Candidate", 'export'=>true, 'group'=>'further actions', 'editable'=>true));
     $this->define("prior_meeting", "ForeignKey", array('target_model'=>"Meeting", 'editable'=>false, 'col_name'=>'prior_meeting_id'));
+    $this->define("date_created", "DateTimeField", array('group'=>'advanced'));
+    $this->define("date_modified", "DateTimeField", array('group'=>'advanced'));
   }
 
+
+ public function before_save(){
+   parent::before_save();
+   if(!$this->date_created) $this->date_created = date("Y-m-d H:i:s");
+   $this->date_modified = date("Y-m-d H:i:s");
+ }
 
   public function create_pdf($module_name, $server, $hash, $folder, $auth_token){
     $file = $folder.$hash."/".$module_name."-".$this->primval.".pdf";
@@ -29,9 +37,6 @@ class Meeting extends WaxModel{
   }
 
 
-  public function notifications(){
-
-  }
 
   public function email_template_set($fileid, $tag, $order=0, $title=''){
     $model = new WaxModel;

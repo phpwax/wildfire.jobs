@@ -34,15 +34,15 @@ class CMSCandidateController extends CMSApplicantController{
         if($exisiting = Request::param('exisiting')){
           $meeting = new Meeting($exisiting);
           //force true as meeting details already exist
-          list($sent,$failed) = $this->candidates_to_meeting($this->use, $meeting, true);
-          $this->session->add_message("Candidates have been added to ".$meeting->title. " (".date("d/m/Y H:i", strtotime($meeting->date_start) ) .")");
+          $this->candidates_to_meeting($this->use, $meeting, true);
+          $this->session->add_message("Candidates have been added to ".$meeting->title. " (".$meeting->date_start.")");
           $this->redirect_to("/admin/meeting/edit/".$meeting->primval."/");
         //creating a new meeting
         }elseif($saved = $this->form->save()){
-          list($sent,$failed) = $this->candidates_to_meeting($this->use, $meeting, false);
+          $this->candidates_to_meeting($this->use, $saved, false);
           $candidate = new Candidate($this->use[0]);
           $saved->job = $candidate->job;
-          $this->session->add_message("Meeting has been created. Candidates have been added to ".$meeting->title. " (".date("d/m/Y H:i", strtotime($meeting->date_start) ) .")");
+          $this->session->add_message("Meeting has been created. Candidates have been added to ".$saved->title. " (".$saved->date_start.")");
           $this->redirect_to("/admin/meeting/edit/".$saved->primval."/");
         }
       }else{
@@ -56,7 +56,7 @@ class CMSCandidateController extends CMSApplicantController{
       foreach($candidate_ids as $id){
         $candidate = new Candidate($id);
         //reset the meeting join, send notifications as details already present
-        $candidate->update_attributes(array('meeting_id'=>$meeting->primval, 'last_meeting_id'=>$candidate->meeting_id, 'sent_notification'=>0));
+        $candidate->update_attributes(array('stage'=>$meeting->stage,'meeting_id'=>$meeting->primval, 'last_meeting_id'=>$candidate->meeting_id, 'sent_notification'=>0));
         if($send) $candidate->notification($meeting);
       }
       $candidate = new Candidate($this->use[0]);

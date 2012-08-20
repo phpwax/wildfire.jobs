@@ -29,18 +29,25 @@ class CMSMeetingController extends CMSApplicantController{
 		WaxEvent::add("cms.save.success", function(){
 			$controller = WaxEvent::data();
 			$saved = $controller->model;
-			if($actions = Request::param('actions')){
+			if(($actions = Request::param('actions')) && ($actions = array_filter($actions)) && count($actions)){
 				$stages = array();
 				//convert to stage based array
 				foreach($actions as $id=>$stage) if($stage) $stages[$stage][] = $id;
-
 				$controller->hirings($stages, $saved);
 				$controller->rejections($stages, $saved);
+				//remove part of the array so dont get duplication
 				unset($stages['hire']);
 				unset($stages['rejects']);
-				//others need to have meetings removed before joining to a new meeting
 				$string = $controller->other_stages($stages);
-				$this->redirect_to("/admin/".$controller->module_name.$string);
+				$controller->redirect_to("/admin/".$controller->module_name."/".$string);
+			}elseif($saved){
+				$send_failed = $sent = 0;
+				foreach($saved->candidates as $candidate){
+					if($candidate->notification($saved)) $sent ++;
+					else $sent_failed ++;
+				}
+				if($sent) $this->session->add_message("Sent ".$sent." notifications to candidates for meeting ".$saved->title);
+				if($sent_failed) $this->session->add_error("Failed to send notifications to ".$sent_failed. " candidates");
 			}
 
 		});
@@ -73,7 +80,7 @@ class CMSMeetingController extends CMSApplicantController{
 
 
 	public function other_stages($stages, $saved){
-		$other_meetings = array();
+
 		foreach($stages as $stage=>$candidates){
 			//make a new meeting based on this stage
 			$meeting = new Meeting;
@@ -86,24 +93,24 @@ class CMSMeetingController extends CMSApplicantController{
 			foreach($candidates as $id){
 				$candidate = new Candidate($id);
 				$candidate = $candidate->update_attributes(array('meeting_id'=>$meeting->primval, 'last_meeting_id'=>$saved->primval));
+				$candidate->notification($meeting);
 			}
 			$this->session->add_message("Moved ".count($candidates) ." candidates to ".Meeting::$stage_choices[$stage].". Set details below.");
 		}
-		if(count($other_meetings)) return "/multi_meetings?primvals[]=".implode("&primvals[]=", $other_meetings);
+		if(count($other_meetings)) return "multi_meetings?primvals[]=".implode("&primvals[]=", $other_meetings);
 		return false;
 	}
 
 	public function hirings($stages, $saved){
 		//hires
-
 		$hired_error = $hired = 0;
 		foreach((array)$stages['hire'] as $primval){
 			$candidate = new Candidate($primval);
 			if($candidate->hired($saved)) $hired ++;
 			else $hired_error ++;
 		}
-		echo "h:$hired e:$hired_error<br>";
-		exit;
+		// echo "h:$hired e:$hired_error<br>";
+		// exit;
 		if($hired) $this->session->add_message('Notified '.$hired." candidates of hiring");
 		if($hired_error) $this->session->add_error('Failed to notify '.$hired_error." candidates of hiring.");
 	}
