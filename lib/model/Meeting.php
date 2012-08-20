@@ -27,6 +27,7 @@ class Meeting extends WaxModel{
    parent::before_save();
    if(!$this->date_created) $this->date_created = date("Y-m-d H:i:s");
    $this->date_modified = date("Y-m-d H:i:s");
+   if(!$this->title) $this->title = "Enter meeting name";
  }
 
   public function create_pdf($module_name, $server, $hash, $folder, $auth_token){

@@ -64,10 +64,10 @@ class Candidate extends WaxModel{
     if(!$this->sent_notification && ($emails = $meeting->email_template_get('hire') ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
       $notify = new Wildfirejobsnotification;
       $notify->send_notification($template, $meeting, $this);
-      $this->update_attributes(array("is_staff"=>1));
+      $this->update_attributes(array("is_staff"=>1, 'meeting_id'=>0, 'last_meeting_id'=>$this->meeting_id));
       if($applicant = $this->application) $applicant->update_attributes(array("is_staff"=>1));
       $row = $this->row;
-      unset($row['id'], $row['date_created'], $row['date_modified'], $row['last_meeting_id'], $row['meeting_id']);
+      unset($row['stage'], $row['id'], $row['date_created'], $row['date_modified'], $row['last_meeting_id'], $row['meeting_id'], $row['is_staff'], $row['is_candidate']);
       $staff = new Staff;
       $staff->update_attributes($row);
       $staff->candidate = $this;
@@ -80,9 +80,15 @@ class Candidate extends WaxModel{
     if(!$this->sent_notification && ($emails = $meeting->email_template_get('reject') ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
       $notify = new Wildfirejobsnotification;
       $notify->send_notification($template, $meeting, $this);
+      $this->update_attributes(array("is_staff"=>0, 'meeting_id'=>0, 'last_meeting_id'=>$this->meeting_id));
+      if($applicant = $this->application) $applicant->update_attributes(array("is_staff"=>1));
       return true;
     }
     return false;
+  }
+
+  public function set_to_meeting($meeting){
+    return $this->update_attributes(array('sent_notification'=>0, 'meeting_id'=>$meeting->primval, 'last_meeting_id'=>$this->meeting_id, 'stage'=>$meeting->stage));
   }
 
 }

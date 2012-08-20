@@ -10,7 +10,7 @@ class CMSCandidateController extends CMSApplicantController{
     public $sortable = false;
 
     public $filter_fields=array(
-                              'text' => array('columns'=>array('first_name', 'last_name'), 'partial'=>'_filters_text', 'fuzzy'=>true),
+                              'text' => array('columns'=>array('first_name', 'last_name', 'email', 'postcode'), 'partial'=>'_filters_text', 'fuzzy'=>true),
                               'job' => array('columns'=>array('job_id'), 'partial'=>'_filters_select'),
                               'date_created' => array('columns'=>array('date_created'), 'partial'=>"_filters_date", 'fuzzy_right'=>true)
                               );

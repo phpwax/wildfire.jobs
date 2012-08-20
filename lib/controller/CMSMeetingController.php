@@ -38,7 +38,7 @@ class CMSMeetingController extends CMSApplicantController{
 				//remove part of the array so dont get duplication
 				unset($stages['hire']);
 				unset($stages['rejects']);
-				$string = $controller->other_stages($stages);
+				$string = $controller->other_stages($stages, $saved);
 				$controller->redirect_to("/admin/".$controller->module_name."/".$string);
 			}elseif($saved){
 				$send_failed = $sent = 0;
@@ -46,8 +46,8 @@ class CMSMeetingController extends CMSApplicantController{
 					if($candidate->notification($saved)) $sent ++;
 					else $sent_failed ++;
 				}
-				if($sent) $this->session->add_message("Sent ".$sent." notifications to candidates for meeting ".$saved->title);
-				if($sent_failed) $this->session->add_error("Failed to send notifications to ".$sent_failed. " candidates");
+				if($sent) $controller->session->add_message("Sent ".$sent." notifications to candidates for meeting ".$saved->title);
+				if($sent_failed) $controller->session->add_error("Failed to send notifications to ".$sent_failed. " candidates");
 			}
 
 		});
@@ -60,8 +60,13 @@ class CMSMeetingController extends CMSApplicantController{
 				$meeting = new Meeting($id);
 				$this->forms[] = $form = new WaxForm($meeting, false, array('form_prefix'=>$prefix, 'prefix'=>$prefix));
 				if(($saved = $form->save())){
-					//FIX NEEDED HERE!
-					$this->session->add_message("Sent ".$sent." notifications to candidates for meeting ".$saved->title);
+					$send_failed = $sent = 0;
+					foreach($saved->candidates as $candidate){
+						if($candidate->set_to_meeting($saved)->notification($saved)) $sent ++;
+						else $sent_failed ++;
+					}
+					if($sent) $this->session->add_message("Sent ".$sent." notifications to candidates for meeting ".$saved->title);
+					if($sent_failed) $this->session->add_error("Failed to send notifications to ".$sent_failed. " candidates");
 				}
 			}
 			$this->meetings = $meetings;
@@ -84,7 +89,7 @@ class CMSMeetingController extends CMSApplicantController{
 		foreach($stages as $stage=>$candidates){
 			//make a new meeting based on this stage
 			$meeting = new Meeting;
-			$meeting = $meeting->update_attributes(array('title'=>$saved->title, 'location'=>$saved->location, 'stage'=>$stage, 'send_notification'=>1));
+			$meeting = $meeting->update_attributes(array('title'=>$saved->title, 'location'=>$saved->location, 'stage'=>$stage));
 			foreach($saved->email_template_get("all") as $em) $meeting->email_template_set($em->email_template_id, $em->tag);
 			$meeting->job = $saved->job;
 			$meeting->prior_meeting = $saved;
@@ -92,8 +97,7 @@ class CMSMeetingController extends CMSApplicantController{
 			//go over all candidates, remove them from current meeting, record that, join to new meeting
 			foreach($candidates as $id){
 				$candidate = new Candidate($id);
-				$candidate = $candidate->update_attributes(array('meeting_id'=>$meeting->primval, 'last_meeting_id'=>$saved->primval));
-				$candidate->notification($meeting);
+				$candidate->set_to_meeting($meeting)->notification($meeting);
 			}
 			$this->session->add_message("Moved ".count($candidates) ." candidates to ".Meeting::$stage_choices[$stage].". Set details below.");
 		}
@@ -106,7 +110,7 @@ class CMSMeetingController extends CMSApplicantController{
 		$hired_error = $hired = 0;
 		foreach((array)$stages['hire'] as $primval){
 			$candidate = new Candidate($primval);
-			if($candidate->hired($saved)) $hired ++;
+			if($candidate->set_to_meeting($saved)->hired($saved)) $hired ++;
 			else $hired_error ++;
 		}
 		// echo "h:$hired e:$hired_error<br>";
@@ -120,7 +124,7 @@ class CMSMeetingController extends CMSApplicantController{
 		$rejected_error = $rejected = 0;
 		foreach((array)$stages['reject'] as $primval){
 			$candidate = new Candidate($primval);
-			if($candidate->rejected($saved)) $rejected ++;
+			if($candidate->set_to_meeting($saved)->rejected($saved)) $rejected ++;
 			else $rejected_error++;
 		}
 		if($rejected) $this->session->add_message('Notified '.$rejected." candidates of rejection.");
