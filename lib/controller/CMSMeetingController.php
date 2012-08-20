@@ -29,54 +29,18 @@ class CMSMeetingController extends CMSApplicantController{
 		WaxEvent::add("cms.save.success", function(){
 			$controller = WaxEvent::data();
 			$saved = $controller->model;
-			if($sent = $saved->notifications()) $controller->session->add_message("Sent ".$sent." notifications to candidates");
-
 			if($actions = Request::param('actions')){
 				$stages = array();
+				//convert to stage based array
 				foreach($actions as $id=>$stage) if($stage) $stages[$stage][] = $id;
-				//hires
-				$hired_error = $hired = 0;
-				foreach((array)$stages['hire'] as $primval){
-					$candidate = new Candidate($primval);
-					if($candidate->hired($saved)) $hired ++;
-					else $hired_error ++;
-				}
+
+				$controller->hirings($stages, $saved);
+				$controller->rejections($stages, $saved);
 				unset($stages['hire']);
-				if($hired) $controller->session->add_message('Notified '.$hired." candidates of hiring");
-				if($hired_error) $controller->session->add_error('Failed to notify '.$hired_error." candidates of hiring.");
-				//rejects
-				$rejected_error = $rejected = 0;
-				foreach((array)$stages['reject'] as $primval){
-					$candidate = new Candidate($primval);
-					if($candidate->rejected($saved)) $rejected ++;
-					else $rejected_error++;
-				}
 				unset($stages['rejects']);
-				if($rejected) $controller->session->add_message('Notified '.$rejected." candidates of rejection.");
-				if($rejected_error) $controller->session->add_error('Failed to notify '.$rejected_error." candidates of rejection.");
 				//others need to have meetings removed before joining to a new meeting
-				$other_meetings = array();
-
-				foreach($stages as $stage=>$candidates){
-					//make a new meeting based on this stage
-					$meeting = new Meeting;
-					$meeting = $meeting->update_attributes(array('title'=>$saved->title, 'location'=>$saved->location, 'stage'=>$stage, 'send_notification'=>1));
-					foreach($saved->email_template_get("all") as $em) $meeting->email_template_set($em->email_template_id, $em->tag);
-					$meeting->job = $saved->job;
-					$meeting->prior_meeting = $saved;
-					$other_meetings[] = $meeting->primval;
-					//go over all candidates, remove them from current meeting, record that, join to new meeting
-					foreach($candidates as $id){
-						$candidate = new Candidate($id);
-						$candidate = $candidate->update_attributes(array('meeting_id'=>$meeting->primval, 'last_meeting_id'=>$saved->primval));
-					}
-					$controller->session->add_message("Moved ".count($candidates) ." candidates to ".Meeting::$stage_choices[$stage].". Set details below.");
-				}
-				if(count($other_meetings)){
-					$string = "primvals[]=".implode("&primvals[]=", $other_meetings);
-					$controller->redirect_to("/admin/".$controller->module_name."/multi_meetings?".$string);
-				}
-
+				$string = $controller->other_stages($stages);
+				$this->redirect_to("/admin/".$controller->module_name.$string);
 			}
 
 		});
@@ -88,9 +52,8 @@ class CMSMeetingController extends CMSApplicantController{
 				$prefix = "meeting-".$id;
 				$meeting = new Meeting($id);
 				$this->forms[] = $form = new WaxForm($meeting, false, array('form_prefix'=>$prefix, 'prefix'=>$prefix));
-				if(($saved = $form->save())  ){
-					$saved->send_notification = 1;
-					$sent = $saved->notifications();
+				if(($saved = $form->save())){
+					//FIX NEEDED HERE!
 					$this->session->add_message("Sent ".$sent." notifications to candidates for meeting ".$saved->title);
 				}
 			}
@@ -106,6 +69,55 @@ class CMSMeetingController extends CMSApplicantController{
 
 	public function _filter_inline_tagged(){
 		parent::_filter_inline();
+	}
+
+
+	public function other_stages($stages, $saved){
+		$other_meetings = array();
+		foreach($stages as $stage=>$candidates){
+			//make a new meeting based on this stage
+			$meeting = new Meeting;
+			$meeting = $meeting->update_attributes(array('title'=>$saved->title, 'location'=>$saved->location, 'stage'=>$stage, 'send_notification'=>1));
+			foreach($saved->email_template_get("all") as $em) $meeting->email_template_set($em->email_template_id, $em->tag);
+			$meeting->job = $saved->job;
+			$meeting->prior_meeting = $saved;
+			$other_meetings[] = $meeting->primval;
+			//go over all candidates, remove them from current meeting, record that, join to new meeting
+			foreach($candidates as $id){
+				$candidate = new Candidate($id);
+				$candidate = $candidate->update_attributes(array('meeting_id'=>$meeting->primval, 'last_meeting_id'=>$saved->primval));
+			}
+			$this->session->add_message("Moved ".count($candidates) ." candidates to ".Meeting::$stage_choices[$stage].". Set details below.");
+		}
+		if(count($other_meetings)) return "/multi_meetings?primvals[]=".implode("&primvals[]=", $other_meetings);
+		return false;
+	}
+
+	public function hirings($stages, $saved){
+		//hires
+
+		$hired_error = $hired = 0;
+		foreach((array)$stages['hire'] as $primval){
+			$candidate = new Candidate($primval);
+			if($candidate->hired($saved)) $hired ++;
+			else $hired_error ++;
+		}
+		echo "h:$hired e:$hired_error<br>";
+		exit;
+		if($hired) $this->session->add_message('Notified '.$hired." candidates of hiring");
+		if($hired_error) $this->session->add_error('Failed to notify '.$hired_error." candidates of hiring.");
+	}
+
+	public function rejections($stages, $saved){
+		//rejects
+		$rejected_error = $rejected = 0;
+		foreach((array)$stages['reject'] as $primval){
+			$candidate = new Candidate($primval);
+			if($candidate->rejected($saved)) $rejected ++;
+			else $rejected_error++;
+		}
+		if($rejected) $this->session->add_message('Notified '.$rejected." candidates of rejection.");
+		if($rejected_error) $this->session->add_error('Failed to notify '.$rejected_error." candidates of rejection.");
 	}
 }
 ?>

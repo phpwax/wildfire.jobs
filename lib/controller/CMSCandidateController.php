@@ -33,29 +33,34 @@ class CMSCandidateController extends CMSApplicantController{
         //if an existing id is posted then join the candidates to it
         if($exisiting = Request::param('exisiting')){
           $meeting = new Meeting($exisiting);
-          foreach($this->use as $id){
-            $candidate = new Candidate($id);
-            $candidate->meeting = $meeting;
-          }
-          $candidate = new Candidate($this->use[0]);
-          $meeting->job = $candidate->job;
+          //force true as meeting details already exist
+          list($sent,$failed) = $this->candidates_to_meeting($this->use, $meeting, true);
           $this->session->add_message("Candidates have been added to ".$meeting->title. " (".date("d/m/Y H:i", strtotime($meeting->date_start) ) .")");
           $this->redirect_to("/admin/meeting/edit/".$meeting->primval."/");
         //creating a new meeting
         }elseif($saved = $this->form->save()){
-          foreach($this->use as $id){
-            $candidate = new Candidate($id);
-            $candidate->meeting = $saved;
-          }
+          list($sent,$failed) = $this->candidates_to_meeting($this->use, $meeting, false);
           $candidate = new Candidate($this->use[0]);
           $saved->job = $candidate->job;
-          $this->session->add_message("Meeting has been created.");
+          $this->session->add_message("Meeting has been created. Candidates have been added to ".$meeting->title. " (".date("d/m/Y H:i", strtotime($meeting->date_start) ) .")");
           $this->redirect_to("/admin/meeting/edit/".$saved->primval."/");
         }
       }else{
         $this->session->add_message("Please select candidates");
         $this->redirect_to("/admin/".$this->module_name."/");
       }
+    }
+
+
+    public function candidates_to_meeting($candidate_ids, $meeting, $send=true){
+      foreach($candidate_ids as $id){
+        $candidate = new Candidate($id);
+        //reset the meeting join, send notifications as details already present
+        $candidate->update_attributes(array('meeting_id'=>$meeting->primval, 'last_meeting_id'=>$candidate->meeting_id, 'sent_notification'=>0));
+        if($send) $candidate->notification($meeting);
+      }
+      $candidate = new Candidate($this->use[0]);
+      $meeting->job = $candidate->job;
     }
 
 }
