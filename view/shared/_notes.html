@@ -1,0 +1,33 @@
+<div class='joins joins_<?=count($fields)?> clearfix'>
+  <div class='existing_fields clearfix' id="custom_form_existing_field">
+    <div class='field clearfix multipleselect' data-type="multipleselect" data-origin-class="<?=$model_class?>" data-origin-primval="<?=$model->primval?>" data-destination-class="<?=$join_class?>">
+    <h3>Notes</h3>
+    <ul class='existing_field'>
+      <?$name = "notes";?>
+      <?foreach($model->notes as $i=>$row):?>
+        <?
+        $row->table = "fields[$i]";
+        $mini_form = new WaxForm($row);
+        ?>
+      <li class='clearfix join-option'>
+        <input type='hidden' id="<?=$name?>_<?=$row->primval?>" name='joins[<?=$name?>][<?=$row->primval?>][<?=$row->primary_key?>]' value="<?=$row->primval?>">
+        <input type="hidden" name="fields[<?=$i?>][primval]" value="<?=$row->primval?>">
+        <span class='cf content'><?=$mini_form->content->render();?></span>
+
+      </li>
+      <?endforeach?>
+    </ul>
+    <a href="#custom_form_existing_field" id="add_custom_form_field" class='preview button preview-button'>+ Add New Field</a>
+    </div>
+    <div class='hidden newfield'>
+      <?
+      $tmp = new Note;
+      $tmp->table = "%s";
+      $mini_form = new WaxForm($tmp);
+      ?>
+      <div class='clearfix join-option cloneme'>
+        <span class='cf content'><?=$mini_form->content->render();?></span>
+      </div>
+    </div>
+  </div>
+</div>

@@ -5,6 +5,8 @@ class Staff extends Candidate{
     parent::setup();
     unset($this->columns['is_staff'], $this->columns['stage'], $this->columns['meeting'], $this->columns['last_meeting']);
     $this->define("candidate", "ForeignKey", array('target_model'=>'Candidate', 'group'=>'relationships'));
+    $this->define("national_insurance_number", "CharField");
+    $this->define("notes", "ManyToManyField", array('target_model'=>'Note', 'group'=>'notes'));
   }
 }
 ?>

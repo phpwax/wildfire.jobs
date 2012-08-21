@@ -1,0 +1,3 @@
+<?
+class AdminStaffController extends CMSStaffController{}
+?>
