@@ -49,7 +49,7 @@ $i = 0;
             <input type="hidden" name="<?=$form->handler->bound_to_model->table?>-<?=$question_url?>-<?=$k?>[id]" value="<?=$form->handler->bound_to_model->primval?>">
             <?else:?>
             <?=$form->application->render(array('name'=>'answer-'.$question_url.'-'.$k.'[application]'));?>
-            <?=$form->question->render(array('name'=>'answer-'.$question_url.'-'.$k.'[question]'));?>
+            <?=$form->question->render(array('name'=>'answer-'.$question_url.'-'.$k.'[question]', 'id'=>'answer-'.$question_url.'-'.$k.'-question'));?>
             <?=$form->job->render(array('name'=>'answer-'.$question_url.'-'.$k.'[job]', 'value'=>$job_primval));?>
             <?=$form->question_order->render(array('name'=>'answer-'.$question_url.'-'.$k.'[question_order]'));?>
             <?endif?>
@@ -67,9 +67,9 @@ $i = 0;
               <div class='clearfix questions question<?=$form->extra_class->value?>'>
                 <?if($form->answer->choices && ($form->answer instanceOf RadioInput)):?>
                   <?$tmp = $form->answer->choices; arsort($tmp);?>
-                  <?=$form->answer->render(array('label'=>false, 'name'=>'answer-'.$question_url.'-'.$k.'[answer]', 'choices'=>$tmp))?>
+                  <?=$form->answer->render(array('label'=>false, 'name'=>'answer-'.$question_url.'-'.$k.'[answer]', 'choices'=>$tmp, 'id'=>'answer-'.$question_url.'-'.$k.'-answer'))?>
                 <?else:?>
-                  <?=$form->answer->render(array('label'=>false, 'name'=>'answer-'.$question_url.'-'.$k.'[answer]'))?>
+                  <?=$form->answer->render(array('label'=>false, 'name'=>'answer-'.$question_url.'-'.$k.'[answer]', 'id'=>'answer-'.$question_url.'-'.$k.'-answer'))?>
                 <?endif?>
               </div>
               <div class='warning clearfix'>
