@@ -6,15 +6,15 @@ class Candidate extends WaxModel{
 
     parent::setup();
 
-    $this->define("first_name", "CharField", array('group'=>'details', 'label'=>'First Name', 'export'=>true,'scaffold'=>true));
-    $this->define("last_name", "CharField", array('group'=>'details', 'label'=>'Last Name', 'export'=>true,'scaffold'=>true));
+    $this->define("first_name", "CharField", array('group'=>'details', 'label'=>'First Name (%person_first_name%)', 'export'=>true,'scaffold'=>true));
+    $this->define("last_name", "CharField", array('group'=>'details', 'label'=>'Last Name (%person_last_name%)', 'export'=>true,'scaffold'=>true));
 
-    $this->define("main_telephone", "CharField", array('group'=>'details', 'label'=>'Main Telephone', 'export'=>true,'scaffold'=>true));
-    $this->define("secondary_telephone", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Secondary Telephone'));
-    $this->define("mobile_telephone", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Mobile Telephone'));
-    $this->define("email", "CharField", array('group'=>'details', 'label'=>'Email', 'export'=>true,'scaffold'=>true));
-    $this->define("address", "TextField", array('group'=>'details', 'export'=>true,'label'=>'Address'));
-    $this->define("postcode", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Postcode'));
+    $this->define("main_telephone", "CharField", array('group'=>'details', 'label'=>'Main Telephone (%person_main_telephone%)', 'export'=>true,'scaffold'=>true));
+    $this->define("secondary_telephone", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Secondary Telephone (%person_secondary_telephone%)'));
+    $this->define("mobile_telephone", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Mobile Telephone (%person_mobile_telephone%)'));
+    $this->define("email", "CharField", array('group'=>'details', 'label'=>'Email (%person_email%)', 'export'=>true,'scaffold'=>true));
+    $this->define("address", "TextField", array('group'=>'details', 'export'=>true,'label'=>'Address (%person_address%)'));
+    $this->define("postcode", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Postcode (%person_postcode%)'));
     $this->define("gender", "CharField", array('group'=>'details', 'export'=>true,'scaffold'=>true));
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput'));
     $this->define("application", "ForeignKey", array('target_model'=>"Application", 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
