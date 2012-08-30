@@ -161,6 +161,7 @@ class WildfireJobController extends ApplicationController{
     if($q->required == 2) $a->columns['answer'][1]['deadend'] = "deadend";
     //change the answer
     $a->columns['answer'][1]['widget'] = $q->field_type;
+    if($q->field_type == "DateInput") $a->columns['answer'][1]['input_format'] = "j F Y";
     if($q->choices){
       $c = explode("\n", $q->choices);
       foreach($c as $v) $choices[trim($v)] = trim($v);
