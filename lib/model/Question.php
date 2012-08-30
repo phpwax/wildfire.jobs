@@ -34,5 +34,11 @@ class Question extends WildfireCustomField{
     }
     return $to_mapping;
   }
+
+  public function field_types(){
+    $data = parent::field_types();
+    unset($data['FileInput']);
+    return $data;
+  }
 }
 ?>
