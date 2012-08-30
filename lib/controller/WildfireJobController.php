@@ -50,7 +50,7 @@ class WildfireJobController extends ApplicationController{
     if($this->reset_application && !$application->locked){
       $application->update_attributes(array('completed'=>0, 'deadend'=>0));
       $this->deadend = $this->completed = false;
-      $this->redirect_to($content->permalink."apply/");
+      $this->redirect_to($content->permalink($this->domain_base_content)."apply/");
     }
 
     WaxEvent::run("job.active_form.after", $this);
