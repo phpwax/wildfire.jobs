@@ -113,8 +113,7 @@ class CMSMeetingController extends CMSApplicantController{
 			if($candidate->set_to_meeting($saved)->hired($saved)) $hired ++;
 			else $hired_error ++;
 		}
-		// echo "h:$hired e:$hired_error<br>";
-		// exit;
+
 		if($hired) $this->session->add_message('Notified '.$hired." candidates of hiring");
 		if($hired_error) $this->session->add_error('Failed to notify '.$hired_error." candidates of hiring.");
 	}

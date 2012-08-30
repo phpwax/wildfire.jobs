@@ -6,15 +6,15 @@ class Candidate extends WaxModel{
 
     parent::setup();
 
-    $this->define("first_name", "CharField", array('group'=>'details', 'label'=>'First Name (%person_first_name%)', 'export'=>true,'scaffold'=>true));
-    $this->define("last_name", "CharField", array('group'=>'details', 'label'=>'Last Name (%person_last_name%)', 'export'=>true,'scaffold'=>true));
+    $this->define("first_name", "CharField", array('group'=>'details', 'label'=>'First Name <small>(%person_first_name%)</small>', 'export'=>true,'scaffold'=>true));
+    $this->define("last_name", "CharField", array('group'=>'details', 'label'=>'Last Name <small>(%person_last_name%)</small>', 'export'=>true,'scaffold'=>true));
 
-    $this->define("main_telephone", "CharField", array('group'=>'details', 'label'=>'Main Telephone (%person_main_telephone%)', 'export'=>true,'scaffold'=>true));
-    $this->define("secondary_telephone", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Secondary Telephone (%person_secondary_telephone%)'));
-    $this->define("mobile_telephone", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Mobile Telephone (%person_mobile_telephone%)'));
-    $this->define("email", "CharField", array('group'=>'details', 'label'=>'Email (%person_email%)', 'export'=>true,'scaffold'=>true));
-    $this->define("address", "TextField", array('group'=>'details', 'export'=>true,'label'=>'Address (%person_address%)'));
-    $this->define("postcode", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Postcode (%person_postcode%)'));
+    $this->define("main_telephone", "CharField", array('group'=>'details', 'label'=>'Main Telephone <small>(%person_main_telephone%)</small>', 'export'=>true,'scaffold'=>true));
+    $this->define("secondary_telephone", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Secondary Telephone <small>(%person_secondary_telephone%)</small>'));
+    $this->define("mobile_telephone", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Mobile Telephone <small>(%person_mobile_telephone%)</small>'));
+    $this->define("email", "CharField", array('group'=>'details', 'label'=>'Email <small>(%person_email%)</small>', 'export'=>true,'scaffold'=>true));
+    $this->define("address", "TextField", array('group'=>'details', 'export'=>true,'label'=>'Address <small>(%person_address%)</small>'));
+    $this->define("postcode", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Postcode <small>(%person_postcode%)</small>'));
     $this->define("gender", "CharField", array('group'=>'details', 'export'=>true,'scaffold'=>true));
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput'));
     $this->define("application", "ForeignKey", array('target_model'=>"Application", 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
@@ -22,6 +22,7 @@ class Candidate extends WaxModel{
     $this->define("last_meeting", "ForeignKey", array('target_model'=>"Meeting", 'editable'=>false, 'col_name'=>'last_meeting_id'));
 
     $this->define("is_staff", "BooleanField", array('group'=>'advanced', 'editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
+    $this->define("rejected", "BooleanField", array('scaffold'=>true,'group'=>'advanced', 'editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
 
     $this->define("date_created", "DateTimeField", array('group'=>'advanced'));
     $this->define("date_modified", "DateTimeField", array('group'=>'advanced'));
@@ -32,6 +33,10 @@ class Candidate extends WaxModel{
 
     $this->define("sent_notification", "BooleanField", array('group'=>'details', 'editable'=>false, 'default'=>1)); //set to true by default
     $this->define("sent_notification_at", "DateTimeField", array('group'=>'details', 'editable'=>false));
+  }
+
+  public function scope_admin(){
+    return $this->filter("rejected", 0)->order("date_created DESC");
   }
 
   public function before_save(){
@@ -77,6 +82,7 @@ class Candidate extends WaxModel{
   }
 
   public function rejected($meeting){
+    $this->copy_to_reject()->update_attributes(array('rejected'=>1));
     if(!$this->sent_notification && ($emails = $meeting->email_template_get('reject') ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
       $notify = new Wildfirejobsnotification;
       $notify->send_notification($template, $meeting, $this);
@@ -91,5 +97,12 @@ class Candidate extends WaxModel{
     return $this->update_attributes(array('sent_notification'=>0, 'meeting_id'=>$meeting->primval, 'last_meeting_id'=>$this->meeting_id, 'stage'=>$meeting->stage));
   }
 
+  public function copy_to_reject(){
+    $model = new Rejected;
+    $data = $this->row;
+    unset($data['id']);
+    $model->update_attributes($data);
+    return $this;
+  }
 }
 ?>
