@@ -55,8 +55,10 @@ class CMSApplicantController extends AdminComponent{
     }
 
     public function export(){
-      $this->model_class = "Answer";
-      $this->export_group = "application_id";
+      if(!$this instanceOf CMSRejectedController){
+        $this->model_class = "Answer";
+        $this->export_group = "application_id";
+      }
       parent::export();
     }
 
