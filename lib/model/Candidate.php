@@ -101,6 +101,7 @@ class Candidate extends WaxModel{
     $model = new Rejected;
     $data = $this->row;
     unset($data['id']);
+    $data['rejected'] = 1;
     $model->update_attributes($data);
     return $this;
   }

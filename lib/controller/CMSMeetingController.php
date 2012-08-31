@@ -37,7 +37,7 @@ class CMSMeetingController extends CMSApplicantController{
 				$controller->rejections($stages, $saved);
 				//remove part of the array so dont get duplication
 				unset($stages['hire']);
-				unset($stages['rejects']);
+				unset($stages['reject']);
 				$string = $controller->other_stages($stages, $saved);
 				$controller->redirect_to("/admin/".$controller->module_name."/".$string);
 			}elseif($saved){
