@@ -82,7 +82,7 @@ class Candidate extends WaxModel{
   }
 
   public function rejected($meeting){
-    $this->copy_to_reject()->update_attributes(array('rejected'=>1));
+    $this->copy_to_reject()->applicant_rejection()->update_attributes(array('rejected'=>1));
     if(!$this->sent_notification && ($emails = $meeting->email_template_get('reject') ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
       $notify = new Wildfirejobsnotification;
       $notify->send_notification($template, $meeting, $this);
@@ -102,6 +102,11 @@ class Candidate extends WaxModel{
     $data = $this->row;
     unset($data['id']);
     $model->update_attributes($data);
+    return $this;
+  }
+
+  public function applicant_rejection(){
+    if($app = $this->application) $app->update_attributes(array('rejected'=>1));
     return $this;
   }
 }
