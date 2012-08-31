@@ -125,6 +125,7 @@ class CMSApplicantController extends AdminComponent{
         //do the conversion
         foreach($use as $id){
           $app = new Application($id);
+          $app->update_attributes(array('locked'=>1));
           if($app->is_candidate) $ignored[] = $id;
           elseif(!$app->completed) $not_completed[] = $id;
           else{

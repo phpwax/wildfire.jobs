@@ -70,7 +70,7 @@ class Candidate extends WaxModel{
       $notify = new Wildfirejobsnotification;
       $notify->send_notification($template, $meeting, $this);
       $this->update_attributes(array("is_staff"=>1, 'meeting_id'=>0, 'last_meeting_id'=>$this->meeting_id));
-      if($applicant = $this->application) $applicant->update_attributes(array("is_staff"=>1));
+      if($applicant = $this->application) $applicant->update_attributes(array("is_staff"=>1, 'locked'=>1));
       $row = $this->row;
       unset($row['stage'], $row['id'], $row['date_created'], $row['date_modified'], $row['last_meeting_id'], $row['meeting_id'], $row['is_staff'], $row['is_candidate']);
       $staff = new Staff;
@@ -107,7 +107,7 @@ class Candidate extends WaxModel{
   }
 
   public function applicant_rejection(){
-    if($app = $this->application) $app->update_attributes(array('rejected'=>1));
+    if($app = $this->application) $app->update_attributes(array('rejected'=>1, 'locked'=>1));
     return $this;
   }
 }

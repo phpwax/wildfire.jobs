@@ -10,5 +10,9 @@ class Rejected extends Candidate{
     parent::before_save();
     if(!$this->rejected_on) $this->rejected_on = date("Y-m-d H:i:s");
   }
+
+  public function scope_admin(){
+    return $this->order("date_created DESC");
+  }
 }
 ?>
