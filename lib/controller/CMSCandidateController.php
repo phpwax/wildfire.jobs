@@ -57,8 +57,13 @@ class CMSCandidateController extends CMSApplicantController{
         $candidate = new Candidate($id);
         //reset the meeting join, send notifications as details already present
         $candidate->update_attributes(array('stage'=>$meeting->stage,'meeting_id'=>$meeting->primval, 'last_meeting_id'=>$candidate->meeting_id, 'sent_notification'=>0));
-        if($send) $candidate->notification($meeting);
+        //
+        if($send){
+
+          $candidate->notification($meeting);
+        }
       }
+
       $candidate = new Candidate($this->use[0]);
       $meeting->job = $candidate->job;
     }

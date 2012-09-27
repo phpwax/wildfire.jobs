@@ -54,6 +54,20 @@ class Application extends WaxModel{
     WaxLog::log('error', '[pdf] '.$command, "pdf");
   }
 
+  public function notify(){
+    //only send if we have found job, questions and the email field
+    if(($job = $this->job) && ($fields = $job->fields) && ($email_field = $fields->filter("candidate_field", "email")->first()) &&
+       ($answers = $this->answers) && ($email = $answers->filter("question_id", $email_field->primval)->first())){
+      //now we need to find their answer for this question & send the email
+      $template = new EmailTemplate;
+      if(($use = $template->get_join($job, "completed_application", true)) && ($join = $use->first()) && ($email_address = $email->answer)){
+        $this->email = $email_address;
+        $notify = new Wildfirejobsnotification;
+        $notify->send_notification(new EmailTemplate($join->email_template_id), $job, $this);
+      }
+    }
+  }
+
 
   public function archive(){
     if($this->is_candidate || $this->is_staff || ($c = $this->candidate) ) return false;
