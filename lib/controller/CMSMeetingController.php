@@ -94,7 +94,7 @@ class CMSMeetingController extends CMSApplicantController{
 			//go over all candidates, remove them from current meeting, record that, join to new meeting
 			foreach($candidates as $id){
 				$candidate = new Candidate($id);
-				$candidate->set_to_meeting($meeting)->notification($meeting);
+				$candidate->set_to_meeting($meeting);
 			}
 			$this->session->add_message("Moved ".count($candidates) ." candidates to ".Meeting::$stage_choices[$stage].". Set details below.");
 		}
