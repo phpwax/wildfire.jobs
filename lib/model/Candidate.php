@@ -62,6 +62,8 @@ class Candidate extends WaxModel{
         return true;
       }
     }
+    //return true as they have already recieved this notification
+    else if($this->meeting_id = $meeting->primval) return true;
     return false;
   }
 
@@ -94,7 +96,9 @@ class Candidate extends WaxModel{
   }
 
   public function set_to_meeting($meeting){
-    return $this->update_attributes(array('sent_notification'=>0, 'meeting_id'=>$meeting->primval, 'last_meeting_id'=>$this->meeting_id, 'stage'=>$meeting->stage));
+    $opts = array('meeting_id'=>$meeting->primval, 'last_meeting_id'=>$this->meeting_id, 'stage'=>$meeting->stage);
+    if($this->meeting_id != $meeting->primval) $opts['sent_notification'] = 0;
+    return $this->update_attributes();
   }
 
   public function copy_to_reject(){
