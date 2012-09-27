@@ -79,9 +79,7 @@ class CMSMeetingController extends CMSApplicantController{
 		$this->use_view = "edit";
 	}
 
-	public function _filter_inline_tagged(){
-		parent::_filter_inline();
-	}
+	public function _filter_inline_tagged(){}
 
 
 	public function other_stages($stages, $saved){
@@ -90,7 +88,6 @@ class CMSMeetingController extends CMSApplicantController{
 			//make a new meeting based on this stage
 			$meeting = new Meeting;
 			$meeting = $meeting->update_attributes(array('title'=>$saved->title, 'location'=>$saved->location, 'stage'=>$stage));
-			foreach($saved->email_template_get("all") as $em) $meeting->email_template_set($em->email_template_id, $em->tag);
 			$meeting->job = $saved->job;
 			$meeting->prior_meeting = $saved;
 			$other_meetings[] = $meeting->primval;

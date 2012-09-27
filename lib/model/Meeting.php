@@ -1,7 +1,7 @@
 <?
 class Meeting extends WaxModel{
 
-  public static $stage_choices = array(''=>'-- select --','general'=>'General Assessment', 'written'=>'Written Assessment', 'driving'=>'Driving Assesstment', 'final'=>'Final Interview', 'cancelled'=>'Cancelled', 'changed'=>'Changed', 'reject'=>'Rejection', 'hire'=>'Hired');
+  public static $stage_choices = array(''=>'-- select --','completed_application'=>'Completed Application', 'general'=>'General Assessment', 'written'=>'Written Assessment', 'driving'=>'Driving Assessment', 'final'=>'Final Interview', 'cancelled'=>'Cancelled', 'changed'=>'Changed', 'reject'=>'Rejection', 'hire'=>'Hired');
   public function setup(){
 
     parent::setup();
@@ -15,7 +15,6 @@ class Meeting extends WaxModel{
     $this->define("date_start", "DateTimeField", array('label'=>'Date start <small>(%date_start%)</small>','export'=>true,'scaffold'=>true, 'default'=>"tomorrow", 'output_format'=>"j F Y",'input_format'=> 'j F Y H:i', 'info_preview'=>1));
     $this->define("date_end", "DateTimeField", array('label'=>'Date end <small>(%date_end%)</small>','export'=>true,'scaffold'=>true, 'default'=>"tomorrow", 'output_format'=>"j F Y", 'input_format'=> 'j F Y H:i','info_preview'=>1));
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
-    $this->define("emails", "ManyToManyField", array('target_model'=>"EmailTemplate", "eager_loading"=>true, "join_model_class"=>"WildfireOrderedTagJoin", "join_order"=>"join_order", 'group'=>'emails'));
     $this->define("candidates", "HasManyField", array('target_model'=>"Candidate", 'export'=>true, 'group'=>'further actions', 'editable'=>true));
     $this->define("prior_meeting", "ForeignKey", array('target_model'=>"Meeting", 'editable'=>false, 'col_name'=>'prior_meeting_id'));
     $this->define("date_created", "DateTimeField", array('group'=>'advanced'));
@@ -38,38 +37,13 @@ class Meeting extends WaxModel{
   }
 
 
-
-  public function email_template_set($fileid, $tag, $order=0, $title=''){
-    $model = new WaxModel;
-    if($this->table < "email_template") $model->table = $this->table."_email_template";
-    else $model->table = "email_template_".$this->table;
-
-    $col = $this->table."_".$this->primary_key;
-    if(!$order) $order = 0;
-    if(($found = $model->filter($col, $this->primval)->filter("email_template_id", $fileid)->all()) && $found->count()){
-      foreach($found as $r){
-        $sql = "UPDATE `".$model->table."` SET `join_order`=$order, `tag`='$tag', `title`='$title' WHERE `id`=$r->primval";
-        $model->query($sql);
-      }
-    }else{
-      $sql = "INSERT INTO `".$model->table."` (`email_template_id`, `$col`, `join_order`, `tag`, `title`) VALUES ('$fileid', '$this->primval', '$order', '$tag', '$title')";
-      $model->query($sql);
-    }
+  public function email_template_get($tag){
+    if($job = $this->job){
+      $template = new EmailTemplate;
+      return $template->get_join($job, $this->stage, true);
+    }else return false;
   }
 
-  public function email_template_get($tag=false, $id=false){
-    $model = new WaxModel;
-    if($this->table < "email_template") $model->table = $this->table."_email_template";
-    else $model->table = "email_template_".$this->table;
-    $col = $this->table."_".$this->primary_key;
-    if($id){
-      if($tag && $tag != "all") $model->filter("tag", $tag);
-      return $model->filter($col, $this->primval)->filter("email_template_id", $id)->order('join_order ASC')->first();
-    }
-    elseif($tag=="all") return $model->filter($col, $this->primval)->order('join_order ASC')->all();
-    elseif($tag) return $model->filter($col, $this->primval)->filter("tag", $tag)->order('join_order ASC')->all();
-    else return false;
-  }
 
 }
 ?>

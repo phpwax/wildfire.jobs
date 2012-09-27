@@ -5,7 +5,7 @@ CMSApplication::register_module("meeting", array("display_name"=>"Meetings", "li
 CMSApplication::register_module("answers", array("display_name"=>"Answers", "link"=>"/admin/answers/", 'hidden'=>true));
 CMSApplication::register_module("staff", array("display_name"=>"Staff", "link"=>"/admin/staff/"));
 CMSApplication::register_module("rejected", array("display_name"=>"Rejections", "link"=>"/admin/rejected/"));
-CMSApplication::register_module("emailtemplate", array("display_name"=>"Email templates", "link"=>"/admin/emailtemplate/"));
+CMSApplication::register_module("emailtemplate", array("display_name"=>"Templates", "link"=>"/admin/emailtemplate/"));
 
 //hook in to the content model and add a join
 if(!defined("CONTENT_MODEL")){

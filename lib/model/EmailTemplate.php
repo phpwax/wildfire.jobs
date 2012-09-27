@@ -21,6 +21,37 @@ class EmailTemplate extends WaxModel{
     $this->content = stripslashes($this->content);
   }
 
+
+  public function get_join($job, $tag="all", $no_template_filter=false){
+    $model = new WaxModel;
+    if($this->table < $job->table) $model->table = $this->table."_".$job->table;
+    else $model->table = $job->table."_".$this->table;
+    $job_col = $job->table."_".$job->primary_key;
+    $col = $this->table."_".$this->primary_key;
+    if($no_template_filter) return $model->filter($job_col, $job->primval)->filter("tag", $tag)->order('join_order ASC')->all();
+    else if($tag == "all") return $model->filter($job_col, $job->primval)->filter($col, $this->primval)->order('join_order ASC')->all();
+    else return $model->filter($job_col, $job->primval)->filter($col, $this->primval)->filter("tag", $tag)->order('join_order ASC')->all();
+  }
+
+  public function set_join($job, $tag, $order=0, $title=''){
+    $model = new WaxModel;
+    if($this->table < $job->table) $model->table = $this->table."_".$job->table;
+    else $model->table = $job->table."_".$this->table;
+    $job_col = $job->table."_".$job->primary_key;
+    $col = $this->table."_".$this->primary_key;
+
+    if(!$order) $order = 0;
+    if(($found = $model->filter($job_col, $job->primval)->filter($col, $this->primval)->all()) && $found->count()){
+      foreach($found as $r){
+        $sql = "UPDATE `".$model->table."` SET `join_order`=$order, `tag`='$tag', `title`='$title' WHERE `id`=$r->primval";
+        $model->query($sql);
+      }
+    }else{
+      $sql = "INSERT INTO `".$model->table."` (`$col`, `$job_col`, `join_order`, `tag`, `title`) VALUES ('$this->primval', '$job->primval', '$order', '$tag', '$title')";
+      $model->query($sql);
+    }
+  }
+
 }
 
 ?>

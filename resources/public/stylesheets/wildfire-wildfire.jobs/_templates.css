@@ -1,0 +1,8 @@
+fieldset.templates .join-option label{
+  float:left;
+  width:30%;
+}
+fieldset.templates .join-option select{
+  float:left;
+  width:30%;
+}

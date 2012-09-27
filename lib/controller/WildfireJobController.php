@@ -66,6 +66,7 @@ class WildfireJobController extends ApplicationController{
       $notify = new Wildfirejobsnotification;
       $notify->send_application_complete($job, $application, $this->send_application_notification_from);
     }
+    //$application->notify();
   }
 
   protected function saving($application){

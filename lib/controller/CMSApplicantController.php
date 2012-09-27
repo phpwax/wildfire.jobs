@@ -146,7 +146,11 @@ class CMSApplicantController extends AdminComponent{
         }
         if($c = count($ignored)) $this->session->add_error($c . " applicants are already candidates so have been ignored");
         if($i = count($not_completed)) $this->session->add_error($i . " applicants are incomplete so have been ignored");
-        if($d = count($candidates)) $this->session->add_message($d . " applicants have been converted.");
+        if($d = count($candidates)){
+          $query_string ="";
+          foreach($candidates as $c) $query_string .= "&primval[]=".$c;
+          $this->session->add_message($d . " applicants have been converted. <a href='/admin/candidate/arrange_meeting/?".$query_string."'>CREATE MEETING</a>");
+        }
       }
       $this->redirect_to("/admin/".$this->module_name."/");
     }

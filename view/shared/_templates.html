@@ -1,6 +1,6 @@
 <div class='joins joins_<?=count($fields)?> clearfix'>
   <?
-  $name = "emails";
+  $name = "templates";
   $join_class = $model->columns[$name][1]['target_model'];
   $join_model = new $join_class("multipleselect");
   $all = $join_model->all();
@@ -11,7 +11,7 @@
     <h3><?=Inflections::humanize($name, true)?></h3>
 
 
-    <?=partial("_filter_inline_tagged", array("name"=>$name, "filter_type"=>"multipleselect", "search_model"=>$join_model, "origin_model"=>$model), "ajax")?>
+    <?=partial("_filter_inline_tagged", array("name"=>$name, "filter_type"=>"multipleselect", "search_model"=>$join_model, "origin_model"=>$model, 'results'=>$all), "ajax")?>
   </div>
   <?endif?>
 </div>
