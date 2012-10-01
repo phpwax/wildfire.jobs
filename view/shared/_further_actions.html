@@ -16,6 +16,8 @@
             <option value="<?=$choice?>"><?=$stagename?></option>
           <?endforeach?>
         </select>
+        <input type="text" name='candidates[<?=$row->primval?>][meeting_slot_start]' id="meeting_slot_start" value="<?=$row->meeting_slot_start?>">
+        <input type="text" name='candidates[<?=$row->primval?>][meeting_slot_end]' id="meeting_slot_end" value="<?=$row->meeting_slot_end?>">
       </li>
       <?endforeach?>
     </ul>

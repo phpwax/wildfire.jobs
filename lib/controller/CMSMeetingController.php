@@ -29,6 +29,15 @@ class CMSMeetingController extends CMSApplicantController{
 		WaxEvent::add("cms.save.success", function(){
 			$controller = WaxEvent::data();
 			$saved = $controller->model;
+
+			//find start / end times of candidates
+			if($candidates = Request::param('candidates')){
+				foreach($candidates as $id=>$times){
+					$c = new Candidate($id);
+					$c->update_attributes(array('meeting_slot_start'=>$times['meeting_slot_start'], 'meeting_slot_end'=>$times['meeting_slot_end']));
+				}
+			}
+
 			if(($actions = Request::param('actions')) && ($actions = array_filter($actions)) && count($actions)){
 				$stages = array();
 				//convert to stage based array
