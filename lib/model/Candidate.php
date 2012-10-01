@@ -99,6 +99,7 @@ class Candidate extends WaxModel{
   }
 
   public function set_to_meeting($meeting){
+
     $opts = array('meeting_id'=>$meeting->primval, 'last_meeting_id'=>$this->meeting_id, 'stage'=>$meeting->stage, 'meeting_slot_start'=>date("jS F Y H:i", $meeting->date_start), 'meeting_slot_end'=>date("jS F Y H:i", $meeting->date_end));
     if($this->meeting_id != $meeting->primval) $opts['sent_notification'] = 0;
     return $this->update_attributes();

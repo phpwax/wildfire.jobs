@@ -34,6 +34,8 @@ class CMSMeetingController extends CMSApplicantController{
 			if($candidates = Request::param('candidates')){
 				foreach($candidates as $id=>$times){
 					$c = new Candidate($id);
+					//if the time has changed, reset the notification as well
+					if($times['meeting_slot_start'] != $c->meeting_slot_start || $times['meeting_slot_end'] != $c->meeting_slot_end) $c->sent_notification = 0;
 					$c->update_attributes(array('meeting_slot_start'=>$times['meeting_slot_start'], 'meeting_slot_end'=>$times['meeting_slot_end']));
 				}
 			}
