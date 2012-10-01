@@ -1,7 +1,18 @@
 <?
 class Meeting extends WaxModel{
 
-  public static $stage_choices = array(''=>'-- select --','completed_application'=>'Completed Application', 'general'=>'General Assessment', 'written'=>'Written Assessment', 'driving'=>'Driving Assessment', 'final'=>'Final Interview', 'cancelled'=>'Cancelled', 'changed'=>'Changed', 'reject'=>'Rejection', 'hire'=>'Hired');
+  public static $stage_choices = array(''=>'-- select --',
+                                       'completed_application'=>'Completed Application',
+                                       'reject_post_application'=>'Decline After Application',
+                                       'general'=>'General Assessment',
+                                       'reject_post_assessment' => 'Decline After Assessment',
+                                       'written'=>'Written Assessment',
+                                       'driving'=>'Driving Assessment',
+                                       'final'=>'Final Interview',
+                                       'cancelled'=>'Cancelled',
+                                       'changed'=>'Changed',
+                                       'reject'=>'General Rejection',
+                                       'hire'=>'Hired');
   public function setup(){
 
     parent::setup();
