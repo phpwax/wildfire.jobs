@@ -37,7 +37,7 @@ class CMSMeetingController extends CMSApplicantController{
 				$controller->rejections($stages, $saved);
 				//remove part of the array so dont get duplication
 				unset($stages['hire']);
-				unset($stages['reject']);
+				unset($stages['reject'], $stages['reject_post_application'], $stages['reject_post_assessment'], $stages['reject_post_interview']);
 				$string = $controller->other_stages($stages, $saved);
 				$controller->redirect_to("/admin/".$controller->module_name."/".$string);
 			}elseif($saved){
@@ -118,10 +118,13 @@ class CMSMeetingController extends CMSApplicantController{
 	public function rejections($stages, $saved){
 		//rejects
 		$rejected_error = $rejected = 0;
-		foreach((array)$stages['reject'] as $primval){
-			$candidate = new Candidate($primval);
-			if($candidate->set_to_meeting($saved)->rejected($saved)) $rejected ++;
-			else $rejected_error++;
+		$multi_rejects = array('reject_post_interview', 'reject_post_assessment', 'reject_post_application', 'reject');
+		foreach($multi_rejects as $type){
+			foreach((array)$stages[$type] as $primval){
+				$candidate = new Candidate($primval);
+				if($candidate->set_to_meeting($saved)->rejected($saved, $type)) $rejected ++;
+				else $rejected_error++;
+			}
 		}
 		if($rejected) $this->session->add_message('Notified '.$rejected." candidates of rejection.");
 		if($rejected_error) $this->session->add_error('Failed to notify '.$rejected_error." candidates of rejection.");

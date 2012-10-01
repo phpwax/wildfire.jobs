@@ -83,9 +83,9 @@ class Candidate extends WaxModel{
     return false;
   }
 
-  public function rejected($meeting){
+  public function rejected($meeting, $stage="reject"){
     $this->copy_to_reject()->applicant_rejection()->update_attributes(array('rejected'=>1));
-    if(!$this->sent_notification && ($emails = $meeting->email_template_get('reject') ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
+    if(!$this->sent_notification && ($emails = $meeting->email_template_get($stage) ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
       $notify = new Wildfirejobsnotification;
       $notify->send_notification($template, $meeting, $this);
       $this->update_attributes(array("is_staff"=>0, 'meeting_id'=>0, 'last_meeting_id'=>$this->meeting_id));
