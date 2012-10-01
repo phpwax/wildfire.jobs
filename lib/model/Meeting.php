@@ -9,6 +9,7 @@ class Meeting extends WaxModel{
                                        'written'=>'Written Assessment',
                                        'driving'=>'Driving Assessment',
                                        'final'=>'Final Interview',
+                                       'reject_post_interview'=>'Decline After Interview',
                                        'cancelled'=>'Cancelled',
                                        'changed'=>'Changed',
                                        'reject'=>'General Rejection',
