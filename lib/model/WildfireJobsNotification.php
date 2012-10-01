@@ -25,6 +25,8 @@ class Wildfirejobsnotification extends WaxEmail{
     $this->email_template = $email_template;
     $this->to = $recipient->email;
     foreach((array)Wildfirejobsnotification::$dev_emails as $email) $this->add_bcc_address($email);
+    //add file attachments
+    if($media = $email_template->media) foreach($media as $file) $this->AddAttachment("http://".$_SERVER['HTTP_HOST'].$file->permalink(false), $file->title);
   }
 
   protected function parse_template($template, $data_item, $prefix=""){
