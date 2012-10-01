@@ -6,3 +6,7 @@ fieldset.further-actions .join-option select{
   float:left;
   width:30%;
 }
+fieldset.further-actions .text_field{
+  float:left;
+  width:20%;
+}
