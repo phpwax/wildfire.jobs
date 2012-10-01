@@ -26,6 +26,9 @@ class Candidate extends WaxModel{
 
     $this->define("date_created", "DateTimeField", array('group'=>'advanced'));
     $this->define("date_modified", "DateTimeField", array('group'=>'advanced'));
+    //so can give a person a unique start time
+    $this->define("meeting_slot_start", "CharField", array('group'=>'advanced'));
+    $this->define("meeting_slot_end", "CharField", array('group'=>'advanced'));
     //include a stage to track how far the person got
     $choices = Meeting::$stage_choices;
     unset($choices['hire'], $choices['reject']);
@@ -68,13 +71,13 @@ class Candidate extends WaxModel{
   }
 
   public function hired($meeting){
+    $this->update_attributes(array("is_staff"=>1, 'meeting_id'=>0, 'last_meeting_id'=>$this->meeting_id, 'meeting_slot_start'=>'', 'meeting_slot_end'=>''));
     if(!$this->sent_notification && ($emails = $meeting->email_template_get('hire') ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
       $notify = new Wildfirejobsnotification;
       $notify->send_notification($template, $meeting, $this);
-      $this->update_attributes(array("is_staff"=>1, 'meeting_id'=>0, 'last_meeting_id'=>$this->meeting_id));
       if($applicant = $this->application) $applicant->update_attributes(array("is_staff"=>1, 'locked'=>1));
       $row = $this->row;
-      unset($row['stage'], $row['id'], $row['date_created'], $row['date_modified'], $row['last_meeting_id'], $row['meeting_id'], $row['is_staff'], $row['is_candidate']);
+      unset($row['stage'], $row['id'], $row['date_created'], $row['date_modified'], $row['last_meeting_id'], $row['meeting_id'], $row['is_staff'], $row['is_candidate'], $row['meeting_slot']);
       $staff = new Staff;
       $staff->update_attributes($row);
       $staff->candidate = $this;
@@ -84,7 +87,7 @@ class Candidate extends WaxModel{
   }
 
   public function rejected($meeting, $stage="reject"){
-    $this->copy_to_reject()->applicant_rejection()->update_attributes(array('rejected'=>1));
+    $this->copy_to_reject()->applicant_rejection()->update_attributes(array('rejected'=>1, 'meeting_slot_start'=>'', 'meeting_slot_end'=>''));
     if(!$this->sent_notification && ($emails = $meeting->email_template_get($stage) ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
       $notify = new Wildfirejobsnotification;
       $notify->send_notification($template, $meeting, $this);
@@ -96,7 +99,7 @@ class Candidate extends WaxModel{
   }
 
   public function set_to_meeting($meeting){
-    $opts = array('meeting_id'=>$meeting->primval, 'last_meeting_id'=>$this->meeting_id, 'stage'=>$meeting->stage);
+    $opts = array('meeting_id'=>$meeting->primval, 'last_meeting_id'=>$this->meeting_id, 'stage'=>$meeting->stage, 'meeting_slot_start'=>date("jS F Y H:i", $meeting->date_start), 'meeting_slot_end'=>date("jS F Y H:i", $meeting->date_end));
     if($this->meeting_id != $meeting->primval) $opts['sent_notification'] = 0;
     return $this->update_attributes();
   }
