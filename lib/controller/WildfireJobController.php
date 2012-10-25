@@ -21,6 +21,12 @@ class WildfireJobController extends ApplicationController{
     WaxEvent::run("job.session", $this);
 
     $application_ids = Session::get('application');
+    if(param("new_application")){
+      $url_params = parse_url($_SERVER['REQUEST_URI']);
+      unset($application_ids[$this->job_primval]);
+      Session::set('application', $application_ids);
+      $this->redirect_to($url_params["path"]);
+    }
     $this->application_primval = $this->get_application($content, $this->job_primval, $application_ids[$this->job_primval], $this->session_id);
     $application = new Application($this->application_primval);
     WaxEvent::run("job.application", $this);
