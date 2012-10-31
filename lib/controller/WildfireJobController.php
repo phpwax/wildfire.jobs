@@ -20,7 +20,8 @@ class WildfireJobController extends ApplicationController{
     $this->session_id = $this->session_cookie();
     WaxEvent::run("job.session", $this);
 
-    $this->application_primval = $this->get_application($content, $this->job_primval, Session::get('application'), $this->session_id);
+    $application_ids = Session::get('application');
+    $this->application_primval = $this->get_application($content, $this->job_primval, $application_ids[$this->job_primval], $this->session_id);
     $application = new Application($this->application_primval);
     WaxEvent::run("job.application", $this);
 
@@ -125,11 +126,14 @@ class WildfireJobController extends ApplicationController{
     $application = new Application($application_primval);
     if(!$this->application_primval || !($application->primval == $application_primval) ){
       $saved = $application->update_attributes(array('session'=>$session_id, Inflections::underscore(get_class($content))."_".$content->primary_key=>$job_primval));
-      Session::set('application', $saved->primval);
+      $applications = Session::get('application');
+      $applications[$job_primval] = $saved->primval;
+      Session::set('application', $applications);
       $application_primval = $saved->primval;
       return $application_primval;
     }
-    return Session::get('application');
+    $application_ids = Session::get('application');
+    return $application_ids[$job_primval];
   }
 
   protected function setup_answer($q){
@@ -164,6 +168,7 @@ class WildfireJobController extends ApplicationController{
     $a->columns['answer'][1]['widget'] = $q->field_type;
     if($q->field_type == "DateInput") $a->columns['answer'][1]['input_format'] = "j F Y";
     if($q->choices){
+      if($q->field_type == "SelectInput") $q->choices = "\n".trim($q->choices);
       $c = explode("\n", $q->choices);
       foreach($c as $v) $choices[trim($v)] = trim($v);
       $a->columns['answer'][1]['choices'] = $choices;
