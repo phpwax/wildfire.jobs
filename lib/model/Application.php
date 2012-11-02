@@ -62,7 +62,7 @@ class Application extends WaxModel{
       $template = new EmailTemplate;
       if(($use = $template->get_join($job, "completed_application", true)) && ($join = $use->first()) && ($email_address = $email->answer)){
         $this->email = $email_address;
-        $notify = new Wildfirejobsnotification;
+        $notify = new WildfireJobsNotification;
         $notify->send_notification(new EmailTemplate($join->email_template_id), $job, $this);
       }
     }
