@@ -33,10 +33,13 @@ class Wildfirejobsnotification extends WaxEmail{
     $email_cols = array_keys($template->columns);
     $data_cols = array_keys($data_item->columns);
     foreach($email_cols as $ecol){
-      if($ecol != "id"){
+      $ecol_i = $template->get_col($ecol);
+      if($ecol != "id" && !$ecol_i->is_association){
         foreach($data_cols as $dcol){
-          $col = $data_item->get_col($dcol);
-          if($dcol != "id" && !$col->is_association) $template->$ecol = str_replace("%".$prefix.$dcol."%", $data_item->$dcol, $template->$ecol);
+          $dcol_i = $data_item->get_col($dcol);
+          if($dcol != "id" && !$dcol_i->is_association){
+            $template->$ecol = str_replace("%".$prefix.$dcol."%", $data_item->$dcol, $template->$ecol);
+          }
         }
       }
     }
