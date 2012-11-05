@@ -59,7 +59,7 @@ class Candidate extends WaxModel{
   public function notification($meeting){
     if(!$this->sent_notification){
       if(($emails = $meeting->email_template_get($this->stage)) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
-        $notify = new Wildfirejobsnotification;
+        $notify = new WildfireJobsNotification;
         $notify->send_notification($template, $meeting, $this);
         $this->update_attributes(array('sent_notification'=>1, 'sent_notification_at'=>date("Y-m-d H:i:s")));
         return true;
@@ -73,7 +73,7 @@ class Candidate extends WaxModel{
   public function hired($meeting){
     $this->update_attributes(array("is_staff"=>1, 'meeting_id'=>0, 'last_meeting_id'=>$this->meeting_id, 'meeting_slot_start'=>'', 'meeting_slot_end'=>''));
     if(!$this->sent_notification && ($emails = $meeting->email_template_get('hire') ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
-      $notify = new Wildfirejobsnotification;
+      $notify = new WildfireJobsNotification;
       $notify->send_notification($template, $meeting, $this);
       if($applicant = $this->application) $applicant->update_attributes(array("is_staff"=>1, 'locked'=>1));
       $row = $this->row;
@@ -89,7 +89,7 @@ class Candidate extends WaxModel{
   public function rejected($meeting, $stage="reject"){
     $this->copy_to_reject()->applicant_rejection()->update_attributes(array('rejected'=>1, 'meeting_slot_start'=>'', 'meeting_slot_end'=>''));
     if(!$this->sent_notification && ($emails = $meeting->email_template_get($stage) ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
-      $notify = new Wildfirejobsnotification;
+      $notify = new WildfireJobsNotification;
       $notify->send_notification($template, $meeting, $this);
       $this->update_attributes(array("is_staff"=>0, 'meeting_id'=>0, 'last_meeting_id'=>$this->meeting_id));
       if($applicant = $this->application) $applicant->update_attributes(array("is_staff"=>1));

@@ -1,5 +1,5 @@
 <?
-class Wildfirejobsnotification extends WaxEmail{
+class WildfireJobsNotification extends WaxEmail{
 
   public static $dev_emails = array();
 
@@ -24,7 +24,7 @@ class Wildfirejobsnotification extends WaxEmail{
     $this->subject = $email_template->subject;
     $this->email_template = $email_template;
     $this->to = $recipient->email;
-    foreach((array)Wildfirejobsnotification::$dev_emails as $email) $this->add_bcc_address($email);
+    foreach((array)WildfireJobsNotification::$dev_emails as $email) $this->add_bcc_address($email);
     //add file attachments
     if($media = $email_template->media) foreach($media as $file) $this->AddAttachment(PUBLIC_DIR.$file->permalink(false), $file->title);
   }
