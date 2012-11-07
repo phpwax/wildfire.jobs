@@ -140,5 +140,45 @@ class CMSMeetingController extends CMSApplicantController{
 		if($rejected) $this->session->add_message('Notified '.$rejected." candidates of rejection.");
 		if($rejected_error) $this->session->add_error('Failed to notify '.$rejected_error." candidates of rejection.");
 	}
+
+	public function email_pdfs(){
+	  WaxEvent::run("cms.form.setup", $this);
+    $folder = WAX_ROOT."tmp/export/ex".date("Ymdhis")."/";
+		foreach($this->model->candidates as $candidate){
+      if(($emails = $this->model->email_template_get($candidate->stage)) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
+		    $file = "$folder$this->module_name-".$this->model->primval."-email-candidate-$candidate->primval.pdf";
+		    $permalink = "/admin/$this->module_name/email_pdf/".$this->model->primval."/?email_template=$template->id&candidate=$candidate->id&auth_token=".$this->current_user->auth_token;
+		    $command = '/usr/bin/xvfb-run -a -s "-screen 0 1024x768x16" /usr/bin/wkhtmltopdf --encoding utf-8 -s A4 -T 0mm -B 20mm -L 0mm -R 0mm "http://'.$_SERVER['HTTP_HOST'].$permalink.'" '.$file;
+		    shell_exec($command);
+      }
+		}
+
+    //afterwards, create zip
+    $zip = "$this->module_name-".$this->model->primval."-emails.zip";
+    exec("cd ".$folder." && zip -j $zip $folder/*");
+    if(is_file($folder.$zip) && ($content = file_get_contents($folder.$zip))){
+    	foreach(array(
+	      "Content-type"=>"application/zip",
+	      "Content-Disposition"=>"attachment; filename=".$zip,
+	      "Pragma"=>"no-cache",
+	      "Expires"=>"0"
+	    ) as $k => $v) $this->response->add_header($k, $v);
+	    $this->response->write($content);
+	    unlink($folder.$zip);
+	    foreach(glob($folder."*") as $f) unlink($f);
+	    rmdir($folder);
+    }else throw new WaxException("Could not create zip file");
+	}
+
+	public function email_pdf(){
+		$this->use_layout = $this->use_view = false;
+	  WaxEvent::run("cms.form.setup", $this);
+    $notify = new WildfireJobsNotification;
+    $template = new EmailTemplate(param("email_template"));
+    $candidate = new Candidate(param("candidate"));
+    $notify->notification($template, $this->model, $candidate);
+    $notify->get_templates("notification");
+    $this->response->write($notify->body);
+	}
 }
 ?>
