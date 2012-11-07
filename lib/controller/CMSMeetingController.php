@@ -144,7 +144,7 @@ class CMSMeetingController extends CMSApplicantController{
 	public function email_pdfs(){
 	  WaxEvent::run("cms.form.setup", $this);
     $folder = WAX_ROOT."tmp/export/ex".date("Ymdhis")."/";
-    mkdir($folder);
+    mkdir($folder, 0777, true);
 		foreach($this->model->candidates as $candidate){
       if(($emails = $this->model->email_template_get($candidate->stage)) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
 		    $file = "$folder$this->module_name-".$this->model->primval."-email-candidate-$candidate->primval.pdf";
