@@ -142,6 +142,7 @@ class CMSMeetingController extends CMSApplicantController{
 	}
 
 	public function email_pdfs(){
+		$this->use_layout = $this->use_view = false;
 	  WaxEvent::run("cms.form.setup", $this);
     $folder = WAX_ROOT."tmp/export/ex".date("Ymdhis")."/";
     mkdir($folder, 0777, true);
