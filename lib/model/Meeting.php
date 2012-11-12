@@ -33,7 +33,7 @@ class Meeting extends WaxModel{
     $this->define("date_modified", "DateTimeField", array('group'=>'advanced'));
     $this->define("contact_name", "CharField", array('label'=>'Contact name <small>(%contact_name%)</small>'));
     $this->define("contact_email", "CharField", array('label'=>'Contact email <small>(%contact_email%)</small>'));
-    $this->define("contact_telephone", "CharField", array('label'=>'Contact name <small>(%contact_telephone%)</small>'));
+    $this->define("contact_telephone", "CharField", array('label'=>'Contact telephone <small>(%contact_telephone%)</small>'));
   }
 
 
