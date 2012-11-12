@@ -10,7 +10,7 @@ class WildfireJobsNotification extends WaxEmail{
     $this->applicant = $applicant;
     if(!$to) $this->to = $job->send_email_to;
     else $this->to = $to;
-    foreach((array)Meeting::$dev_emails as $email) $this->add_bcc_address($email);
+    foreach((array)WildfireJobsNotification::$dev_emails as $email) $this->add_bcc_address($email);
   }
 
 
