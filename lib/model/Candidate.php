@@ -30,12 +30,10 @@ class Candidate extends WaxModel{
     $this->define("meeting_slot_start", "CharField", array('group'=>'advanced'));
     $this->define("meeting_slot_end", "CharField", array('group'=>'advanced'));
     //include a stage to track how far the person got
-    $choices = Meeting::$stage_choices;
-    unset($choices['hire'], $choices['reject']);
-    $this->define("stage", "CharField", array('group'=>'details', 'widget'=>'SelectInput', 'choices'=>$choices, 'group'=>'advanced'));
+    $this->define("stage", "ForeignKey", array('widget'=>'SelectInput', 'target_model'=>'EmailTemplate', 'choices'=>$choices, 'group'=>'advanced'));
 
-    $this->define("sent_notification", "BooleanField", array('group'=>'details', 'editable'=>false, 'default'=>1)); //set to true by default
-    $this->define("sent_notification_at", "DateTimeField", array('group'=>'details', 'editable'=>false));
+    $this->define("sent_notification", "BooleanField", array('group'=>'advanced', 'editable'=>false, 'default'=>1)); //set to true by default
+    $this->define("sent_notification_at", "DateTimeField", array('group'=>'advanced', 'editable'=>false));
   }
 
   public function scope_admin(){

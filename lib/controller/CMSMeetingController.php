@@ -107,7 +107,8 @@ class CMSMeetingController extends CMSApplicantController{
 				$candidate = new Candidate($id);
 				$candidate->set_to_meeting($meeting);
 			}
-			$this->session->add_message("Moved ".count($candidates) ." candidates to ".Meeting::$stage_choices[$stage].". Set details below.");
+			$stages = Meeting::stage_choices();
+			$this->session->add_message("Moved ".count($candidates) ." candidates to ".$stages[$stage].". Set details below.");
 		}
 		if(count($other_meetings)) return "multi_meetings?primvals[]=".implode("&primvals[]=", $other_meetings);
 		return false;

@@ -8,7 +8,7 @@
     <input type='checkbox' id="<?=$name?>_<?=$row->primval?>" name='joins[<?=$name?>][<?=$row->primval?>][<?=$row->primary_key?>]' value="<?=$row->primval?>" <?if($joined):?> checked="checked"<?endif?>>
     <label for="<?=$name?>_<?=$row->primval?>"><?=$row->humanize()?></label>
     <select id="<?=$name?>_<?=$row->primval?>_tagged" name='joins[<?=$name?>][<?=$row->primval?>][extra_fields][tag]'>
-      <?foreach(Meeting::$stage_choices as $choice=>$stagename):?>
+      <?foreach(Meeting::stage_choices() as $choice=>$stagename):?>
         <option value="<?=$choice?>"<?if(($f = $row->get_join($origin_model, $choice)) && $f->count()):?> selected="selected"<?endif?>><?=$stagename?></option>
       <?endforeach?>
     </select>

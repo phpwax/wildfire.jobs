@@ -8,7 +8,7 @@ class EmailTemplate extends WaxModel{
     $this->define("subject", "CharField", array('scaffold'=>true));
     $this->define("from_email", "CharField", array('scaffold'=>true));
     $this->define("from_name", "CharField", array('scaffold'=>true));
-    $this->define("content", "TextField", array());
+    $this->define("content", "TextField", array('widget'=>"TinymceTextareaInput"));
 
     $this->define("date_modified", "DateTimeField", array('export'=>true, 'scaffold'=>true, "editable"=>false));
     $this->define("date_created", "DateTimeField", array('export'=>true, "editable"=>false));

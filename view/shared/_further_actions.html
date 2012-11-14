@@ -2,17 +2,19 @@
   <?
   $name = "further actions";
   $all = $model->candidates;
+  $stages = Meeting::stage_choices();
+  $current = $model->stage;
   ?>
   <?if($all && $all->count()):?>
   <div class='field clearfix  multipleselect'>
     <p>Change the stage in the drop downs to setup further meetings.<br><br></p>
-    <p><strong>Current Stage: <?=Meeting::$stage_choices[$model->stage]?></strong><br><br></p>
+    <p><strong>Current Stage: <?=$current->title?></strong><br><br></p>
     <ul>
       <?foreach($all as $i => $row):?>
       <li class='clearfix join-option join-yes'>
         <label for="<?=$name?>_<?=$row->primval?>"><?=$row->first_name?> <?=$row->last_name?></label>
         <select id="<?=$name?>_<?=$row->primval?>_tagged" name='actions[<?=$row->primval?>]'>
-          <?foreach(Meeting::$stage_choices as $choice=>$stagename):?>
+          <?foreach($stages as $choice=>$stagename):?>
             <option value="<?=$choice?>"><?=$stagename?></option>
           <?endforeach?>
         </select>

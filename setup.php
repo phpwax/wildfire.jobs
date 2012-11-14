@@ -26,7 +26,7 @@ WaxEvent::add(CONTENT_MODEL.".setup", function(){
   $model->define("person_responsible_for_job", "CharField", array('label'=>'Person responsible'));
   $model->define("salary", "CharField");
   $model->define("location", "CharField");
-  $model->define("roll_type", "CharField", array('widget'=>'SelectInput', 'choices'=>array('Permanent'=>'Permanent', 'Temporary'=>'Temporary', 'Part time'=>'Part time')));
+  $model->define("role_type", "CharField", array('widget'=>'SelectInput', 'choices'=>array('Permanent'=>'Permanent', 'Temporary'=>'Temporary', 'Part time'=>'Part time')));
   $model->define("is_job", "BooleanField", array('group'=>'details'));
   $model->define("templates", "ManyToManyField", array('target_model'=>"EmailTemplate", "eager_loading"=>true, "join_model_class"=>"WildfireOrderedTagJoin", "join_order"=>"join_order", 'group'=>'templates'));
 });
