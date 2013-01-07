@@ -21,7 +21,7 @@ $has_repeating=0;
     $cols_forms = $total - $stacked - $has_repeating;
 
     if($cols_forms == 2) $cols = 2;
-    else if($cols_forms == 4) $cols = 4;
+    else if($cols_forms == 4 || $cols_forms == 8) $cols = 4;
     else if($cols_forms > 3) $cols = 3;
     else $cols = 1;
 
@@ -45,6 +45,7 @@ $has_repeating=0;
         <div class='clearfix form_block form-<?=$question_url?>'>
 
         <?foreach($forms as $k=>$form_group):?>
+
           <?foreach($form_group as $p=>$form):?>
 
           <?
@@ -96,8 +97,13 @@ $has_repeating=0;
             </fieldset>
           </div>
           <?if($form->extra_class->value != "stacked") $sets++;?>
+
+          <?if($form->field_type->value == "HiddenInput") echo "</div><div class='clearfix form_block form-$question_url'>";?>
+
           <?endforeach?>
+
         <?endforeach?>
+
         </div>
         <fieldset class='clearfix submit'><input data-i="<?=$i?>" data-t="<?=$all_total?>" type="submit" class='submit_button button submit_input' value='Confirm' name="<?if($i+1 == $all_total):?>completed_application<?else:?>submitted_q<?endif?>"></fieldset>
       </div>

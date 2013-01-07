@@ -131,23 +131,30 @@ class WildfireJobController extends ApplicationController{
         if($q->field_type == "HiddenInput") $clone[] = $q->url();
       }
     }
-    print_r($clone);
+    //print_r($clone);
+
 
     foreach($clone as $dup){
       $cloned =  $answer_forms[$dup];
-      $index = max(array_keys($cloned));
+
+      $starter = $index = max(array_keys($cloned));
       $index++;
       foreach($cloned as $id=>$fg){
         $copy = $fg[0];
-        $copy->handler->bound_to_model->id = "";
-        $copy->handler->bound_to_model->submitted_at ="";
-        $answer_forms[$dup][$index] = $copy;
-        $index++;
+        if(!is_array($copy)) $copy = array($copy);
+        if($copy[0]->handler->bound_to_model->field_type != "TitleInput"){
+          $copy->handler->bound_to_model->id = "";
+          $copy->handler->bound_to_model->submitted_at ="";
+          $answer_forms[$dup][$index] = $copy;
+          $index++;
+        }
+
+
       }
+
+
     }
 
-    print_r($answer_forms['education-details']);
-    exit;
     return $answer_forms;
   }
 
