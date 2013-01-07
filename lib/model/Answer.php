@@ -13,6 +13,7 @@ class Answer extends WaxModel{
     $this->define("submitted_at", "DateTimeField", array('editable'=>false, 'export'=>true));
     $this->define("extra_class", "CharField");
     $this->define("deadend_copy", "CharField");
+    $this->define("field_type", "CharField");
     //copy from application
     $this->define("completed", "IntegerField", array('export'=>true, "choices"=>array(''=>'Completed?', 0=>"No",1=>"Yes")));
     $this->define("deadend", "IntegerField", array('export'=>true,"choices"=>array(''=>'Dead End?', 0=>"No",1=>"Yes")));

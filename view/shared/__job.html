@@ -2,6 +2,7 @@
 <?
 $all_total = count($answer_forms);
 $i = 0;
+$has_repeating=0;
 ?>
 
   <?foreach($answer_forms as $question_url=>$forms):?>
@@ -10,15 +11,23 @@ $i = 0;
     $cols_forms = $total = count($forms);
     $stacked = 0;
     $sets=0;
-    foreach($forms as $f) if($f->extra_class->value == "stacked") $stacked ++;
-    $col_forms = $total - $stacked;
-    if($col_forms == 2) $cols = 2;
-    else if($col_forms > 2) $cols = 3;
+    foreach($forms as $f){
+      if($f->extra_class->value == "stacked") $stacked ++;
+      if($f->field_type->value == "HiddenInput") $has_repeating++;
+    }
+    $cols_forms = $total - $stacked - $has_repeating;
+
+    if($cols_forms == 2) $cols = 2;
+    else if($cols_forms == 4) $cols = 4;
+    else if($cols_forms > 3) $cols = 3;
     else $cols = 1;
+
 
     ?>
 
-    <form data-total="<?=$total?>" data-stacked="<?=$stacked?>" action="#wf_form_<?=$i?>" id="wf_form_<?=$i?>" class='job_form wax_form clearfix <?if($i == $active_form):?>active_form<?endif?> form-<?=(($total > 1) ? "multi" : "single")?> form-has-<?=$cols?>' method="post" enctype="multipart/form-data">
+    <form data-total="<?=$total?>" data-stacked="<?=$stacked?>" data-repeat="<?=$has_repeating?>" data-cf="<?=$cols_forms?>" action="#wf_form_<?=$i?>" id="wf_form_<?=$i?>" class='job_form wax_form clearfix <?if($i == $active_form):?>active_form<?endif?> form-<?=(($total > 1) ? "multi" : "single")?> form-has-<?=$cols?>' method="post" enctype="multipart/form-data">
+    <div class='<?if($has_repeating):?>form-has-repeating<?endif?>'>
+      <input type="hidden" name="_job" value="<?=$job_primval?>">
       <div class='form_content clearfix'>
         <?if($i == 0):?>
         <?#this field is used as a bot check on the form and will be hidden via js?>
@@ -27,7 +36,7 @@ $i = 0;
           <input type="text" class='input_field text_field' name='check-in[<?=date("Y-m-d")?>]' id="check-in" value="">
         </fieldset>
         <?endif?>
-
+        <input type="hidden" name="_original_form" value="<?=$question_url?>">
         <input type="hidden" name="_form" value="<?=$question_url?>">
         <div class='clearfix form_block form-<?=$question_url?>'>
         <?foreach($forms as $k=>$form):?>
@@ -44,7 +53,7 @@ $i = 0;
           </div>
             <?$errors = true;?>
           <?endif?>
-          <div class="wrap<?=$form->extra_class->value?><?=strtolower(get_class($form->answer))?>">
+          <div class="wrap<?=$form->extra_class->value?><?=strtolower(get_class($form->answer))?> ec-<?=$form->extra_class->value?>">
             <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
             <input type="hidden" name="<?=$form->handler->bound_to_model->table?>-<?=$question_url?>-<?=$k?>[id]" value="<?=$form->handler->bound_to_model->primval?>">
             <?else:?>
@@ -83,7 +92,9 @@ $i = 0;
         </div>
         <fieldset class='clearfix submit'><input data-i="<?=$i?>" data-t="<?=$all_total?>" type="submit" class='submit_button button submit_input' value='Confirm' name="<?if($i+1 == $all_total):?>completed_application<?else:?>submitted_q<?endif?>"></fieldset>
       </div>
+      </div>
     </form>
     <?$i++;?>
+
   <?endforeach?>
 

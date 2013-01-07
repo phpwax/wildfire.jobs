@@ -6,7 +6,7 @@ class Question extends WildfireCustomField{
     $this->define("subtext", "TextField");
     $this->define("required", "IntegerField", array('widget'=>'SelectInput','choices'=>array('Optional', 'Required', 'Deadend')));
     $this->define("deadend_copy", "TextField", array('label'=>'Copy for deadend'));
-    $this->define("extra_class", "CharField", array('widget'=>'SelectInput', 'choices'=>array(''=>'None', 'large'=>'large', 'xlarge'=>'extra large', 'stacked'=>'force stacked')));
+    $this->define("extra_class", "CharField", array('widget'=>'SelectInput', 'choices'=>array(''=>'None', 'large'=>'large', 'xlarge'=>'extra large', 'stacked'=>'force stacked', 'repeating'=>'repeating')));
     $this->define("candidate_field", "CharField", array('widget'=>'SelectInput', 'choices'=>Question::candidate_mapping()) );
   }
   public function get_column_name($test=false){
@@ -16,6 +16,8 @@ class Question extends WildfireCustomField{
     else return $test;
     return $test;
   }
+
+
 
   public function url(){
     return Inflections::to_url($this->title);
@@ -28,7 +30,7 @@ class Question extends WildfireCustomField{
 
   public static function candidate_mapping(){
     $candidate = new Candidate;
-    $to_mapping = array(''=>'Select Candidate Column');
+    $to_mapping = array(''=>'-- Select Candidate Column --');
     foreach($candidate->columns as $col=>$info){
       if($info[1]['group'] == "details") $to_mapping[$col] = $info[1]['label'];
     }
@@ -38,6 +40,7 @@ class Question extends WildfireCustomField{
   public function field_types(){
     $data = parent::field_types();
     unset($data['FileInput']);
+    $data['HiddenInput'] = 'Repeat previous';
     return $data;
   }
 }

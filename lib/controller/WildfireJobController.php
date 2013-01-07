@@ -79,6 +79,7 @@ class WildfireJobController extends ApplicationController{
   protected function saving($application){
     //if form is being posted & its within range
     $this->posted_form = $posted = Request::param('_form');
+
     foreach($this->answer_forms[$posted] as $i=>$to_save){
       if($to_save && ($saved = $to_save->save())){
         $application->answers = $saved;
@@ -160,6 +161,7 @@ class WildfireJobController extends ApplicationController{
       $a->deadend_copy = $q->deadend_copy;
       $a->columns['answer'][1]['label'] = $q->subtext;
       $a->extra_class = $q->extra_class;
+      $a->field_type = $q->field_type;
       $a->question_order = $q->order;
     }
 
@@ -179,6 +181,7 @@ class WildfireJobController extends ApplicationController{
       foreach($c as $v) $choices[trim($v)] = trim($v);
       $a->columns['answer'][1]['choices'] = $choices;
     }
+    $a->field_type = $q->field_type;
     return $a;
   }
 
