@@ -48,7 +48,7 @@ $has_repeating=0;
           <?foreach($form_group as $p=>$form):?>
 
           <?
-          $field_prefix = 'answer-'.$question_url.'-'.$k."-".$p;
+          $field_prefix = $form->handler->bound_to_model->table."-".$question_url."-".$k."-".$p;
           $extra_class = "question-".strtolower(get_class($form->answer));
           ?>
           <?if(!$header):?>
@@ -63,7 +63,7 @@ $has_repeating=0;
           <?endif?>
           <div class="wrap<?=$form->extra_class->value?><?=strtolower(get_class($form->answer))?> ec-<?=$form->extra_class->value?>">
             <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
-            <input type="hidden" name="<?=$form->handler->bound_to_model->table?>-<?=$question_url?>-<?=$k?>[id]" value="<?=$form->handler->bound_to_model->primval?>">
+            <input type="hidden" name="<?=$field_prefix?>[id]" value="<?=$form->handler->bound_to_model->primval?>">
             <?else:?>
             <?=$form->application->render(array('name'=>$field_prefix.'[application]'));?>
             <?=$form->question->render(array('name'=>$field_prefix.'[question]', 'id'=>$field_prefix.'-question'));?>

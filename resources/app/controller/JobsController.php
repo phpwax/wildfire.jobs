@@ -1,3 +1,7 @@
 <?
-class JobsController extends WildfireJobController{}
+class JobsController extends WildfireJobController{
+
+
+
+}
 ?>

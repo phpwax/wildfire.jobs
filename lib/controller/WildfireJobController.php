@@ -119,6 +119,7 @@ class WildfireJobController extends ApplicationController{
 
   protected function get_forms($content){
     $answer_forms = array();
+    $clone = array();
     if($content && $content->primval && ($questions = $content->fields) && $questions->count()){
       foreach($questions->order('`order` ASC')->all() as $k=>$q){
         $answers = $this->setup_answer($q);
@@ -127,8 +128,26 @@ class WildfireJobController extends ApplicationController{
           $form = new WaxForm($a, false, array('prefix'=>$prefix));
           $answer_forms[$q->url()][$k][$i] = $form;
         }
+        if($q->field_type == "HiddenInput") $clone[] = $q->url();
       }
     }
+    print_r($clone);
+
+    foreach($clone as $dup){
+      $cloned =  $answer_forms[$dup];
+      $index = max(array_keys($cloned));
+      $index++;
+      foreach($cloned as $id=>$fg){
+        $copy = $fg[0];
+        $copy->handler->bound_to_model->id = "";
+        $copy->handler->bound_to_model->submitted_at ="";
+        $answer_forms[$dup][$index] = $copy;
+        $index++;
+      }
+    }
+
+    print_r($answer_forms['education-details']);
+    exit;
     return $answer_forms;
   }
 
@@ -157,22 +176,12 @@ class WildfireJobController extends ApplicationController{
         $a->columns['question_text'][1]['disabled'] = "disabled";
         $a->columns['answer'][1]['label'] = $a->question_subtext;
         $answers[] = $a;
+
       }
     }else{
-      $a = new Answer;
-      //set joins to the application and question
-      $a->question_id = $q->primval;
-      $a->application_id = $this->application_primval;
-      //set the title
-      $a->question_text = $q->title;
-      $a->question_subtext = $q->subtext;
-      $a->deadend_copy = $q->deadend_copy;
-      $a->columns['answer'][1]['label'] = $q->subtext;
-      $a->extra_class = $q->extra_class;
-      $a->field_type = $q->field_type;
-      $a->question_order = $q->order;
-      $answers[]= $a;
+      $answers[]= $this->empty_answer($q);
     }
+
     foreach($answers as $a){
       $a->columns['question_subtext'][1]['widget'] = $a->columns['question_text'][1]['widget'] = "HiddenInput";
       //make it a required field
@@ -201,5 +210,23 @@ class WildfireJobController extends ApplicationController{
     else return false;
   }
 
+  protected function empty_answer($q){
+    $a = new Answer;
+    //set joins to the application and question
+    $a->question_id = $q->primval;
+    $a->application_id = $this->application_primval;
+    //set the title
+    $a->question_text = $q->title;
+    $a->question_subtext = $q->subtext;
+    $a->deadend_copy = $q->deadend_copy;
+    $a->columns['answer'][1]['label'] = $q->subtext;
+    $a->extra_class = $q->extra_class;
+    $a->field_type = $q->field_type;
+    $a->question_order = $q->order;
+    return $a;
+  }
+
 }
 ?>
+
+
