@@ -11,10 +11,13 @@ $has_repeating=0;
     $cols_forms = $total = count($forms);
     $stacked = 0;
     $sets=0;
-    foreach($forms as $f){
-      if($f->extra_class->value == "stacked") $stacked ++;
-      if($f->field_type->value == "HiddenInput") $has_repeating++;
+    foreach($forms as $fg){
+      foreach($fg as $f){
+        if($f->extra_class->value == "stacked") $stacked ++;
+        if($f->field_type->value == "HiddenInput") $has_repeating++;
+      }
     }
+
     $cols_forms = $total - $stacked - $has_repeating;
 
     if($cols_forms == 2) $cols = 2;
@@ -24,6 +27,7 @@ $has_repeating=0;
 
 
     ?>
+
 
     <form data-total="<?=$total?>" data-stacked="<?=$stacked?>" data-repeat="<?=$has_repeating?>" data-cf="<?=$cols_forms?>" action="#wf_form_<?=$i?>" id="wf_form_<?=$i?>" class='job_form wax_form clearfix <?if($i == $active_form):?>active_form<?endif?> form-<?=(($total > 1) ? "multi" : "single")?> form-has-<?=$cols?>' method="post" enctype="multipart/form-data">
     <div class='<?if($has_repeating):?>form-has-repeating<?endif?>'>
@@ -39,8 +43,12 @@ $has_repeating=0;
         <input type="hidden" name="_original_form" value="<?=$question_url?>">
         <input type="hidden" name="_form" value="<?=$question_url?>">
         <div class='clearfix form_block form-<?=$question_url?>'>
-        <?foreach($forms as $k=>$form):?>
+
+        <?foreach($forms as $k=>$form_group):?>
+          <?foreach($form_group as $p=>$form):?>
+
           <?
+          $field_prefix = 'answer-'.$question_url.'-'.$k."-".$p;
           $extra_class = "question-".strtolower(get_class($form->answer));
           ?>
           <?if(!$header):?>
@@ -57,10 +65,10 @@ $has_repeating=0;
             <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
             <input type="hidden" name="<?=$form->handler->bound_to_model->table?>-<?=$question_url?>-<?=$k?>[id]" value="<?=$form->handler->bound_to_model->primval?>">
             <?else:?>
-            <?=$form->application->render(array('name'=>'answer-'.$question_url.'-'.$k.'[application]'));?>
-            <?=$form->question->render(array('name'=>'answer-'.$question_url.'-'.$k.'[question]', 'id'=>'answer-'.$question_url.'-'.$k.'-question'));?>
-            <?=$form->job->render(array('name'=>'answer-'.$question_url.'-'.$k.'[job]', 'value'=>$job_primval));?>
-            <?=$form->question_order->render(array('name'=>'answer-'.$question_url.'-'.$k.'[question_order]'));?>
+            <?=$form->application->render(array('name'=>$field_prefix.'[application]'));?>
+            <?=$form->question->render(array('name'=>$field_prefix.'[question]', 'id'=>$field_prefix.'-question'));?>
+            <?=$form->job->render(array('name'=>$field_prefix.'[job]', 'value'=>$job_primval, 'id'=>$field_prefix.'-job'));?>
+            <?=$form->question_order->render(array('name'=>$field_prefix.'[question_order]', 'id'=>$field_prefix.'-question-order'));?>
             <?endif?>
 
             <fieldset class='clearfix question_set question-set-<?=$sets%$cols?> <?=$extra_class?> q<?=$k?> top<?=$form->extra_class->value?>'>
@@ -76,9 +84,9 @@ $has_repeating=0;
               <div class='clearfix questions question<?=$form->extra_class->value?>'>
                 <?if($form->answer->choices && ($form->answer instanceOf RadioInput)):?>
                   <?$tmp = $form->answer->choices; arsort($tmp);?>
-                  <?=$form->answer->render(array('label'=>false, 'name'=>'answer-'.$question_url.'-'.$k.'[answer]', 'choices'=>$tmp, 'id'=>'answer-'.$question_url.'-'.$k.'-answer'))?>
+                  <?=$form->answer->render(array('label'=>false, 'name'=>$field_prefix.'[answer]', 'choices'=>$tmp, 'id'=>$field_prefix.'-answer'))?>
                 <?else:?>
-                  <?=$form->answer->render(array('label'=>false, 'name'=>'answer-'.$question_url.'-'.$k.'[answer]', 'id'=>'answer-'.$question_url.'-'.$k.'-answer'))?>
+                  <?=$form->answer->render(array('label'=>false, 'name'=>$field_prefix.'[answer]', 'id'=>$field_prefix.'-answer'))?>
                 <?endif?>
               </div>
               <div class='warning clearfix'>
@@ -88,6 +96,7 @@ $has_repeating=0;
             </fieldset>
           </div>
           <?if($form->extra_class->value != "stacked") $sets++;?>
+          <?endforeach?>
         <?endforeach?>
         </div>
         <fieldset class='clearfix submit'><input data-i="<?=$i?>" data-t="<?=$all_total?>" type="submit" class='submit_button button submit_input' value='Confirm' name="<?if($i+1 == $all_total):?>completed_application<?else:?>submitted_q<?endif?>"></fieldset>

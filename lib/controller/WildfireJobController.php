@@ -80,15 +80,17 @@ class WildfireJobController extends ApplicationController{
     //if form is being posted & its within range
     $this->posted_form = $posted = Request::param('_form');
 
-    foreach($this->answer_forms[$posted] as $i=>$to_save){
-      if($to_save && ($saved = $to_save->save())){
-        $application->answers = $saved;
-        $this->answer_forms[$posted] = new WaxForm($saved);
-        $this->saved_forms[$posted] = $saved;
+    foreach($this->answer_forms[$posted] as $i=>$form_group){
+      foreach($form_group as $k=>$to_save){
+        if($to_save && ($saved = $to_save->save())){
+          $application->answers = $saved;
+          $this->answer_forms[$posted][$i][$k] = new WaxForm($saved);
+          $this->saved_forms[$posted] = $saved;
+        }
+        //check for errors - empty fields that are require
+        if($to_save && ($errors = $to_save->errors())) $this->error_forms[$posted] = $errors;
+        if($dead = $this->deadend($to_save)) $application->update_attributes(array('deadend'=>1));
       }
-      //check for errors - empty fields that are require
-      if($to_save && ($errors = $to_save->errors())) $this->error_forms[$posted] = $errors;
-      if($dead = $this->deadend($to_save)) $application->update_attributes(array('deadend'=>1));
     }
     return $application;
   }
@@ -119,10 +121,12 @@ class WildfireJobController extends ApplicationController{
     $answer_forms = array();
     if($content && $content->primval && ($questions = $content->fields) && $questions->count()){
       foreach($questions->order('`order` ASC')->all() as $k=>$q){
-        $a = $this->setup_answer($q);
-        $prefix = "answer-".$q->url()."-".$k;
-        $form = new WaxForm($a, false, array('prefix'=>$prefix));
-        $answer_forms[$q->url()][$k] = $form;
+        $answers = $this->setup_answer($q);
+        foreach($answers as $i=>$a){
+          $prefix = "answer-".$q->url()."-".$k."-".$i;
+          $form = new WaxForm($a, false, array('prefix'=>$prefix));
+          $answer_forms[$q->url()][$k][$i] = $form;
+        }
       }
     }
     return $answer_forms;
@@ -144,14 +148,18 @@ class WildfireJobController extends ApplicationController{
   }
 
   protected function setup_answer($q){
-    $answer = $a = new Answer;
+    $answer = new Answer;
+    $answers = array();
     //see if it exists already
-    if($found = $answer->filter("question_id", $q->primval)->filter("application_id", $this->application_primval)->first()){
-      $a = $found;
-      //set them so they arent editable any more
-      $a->columns['question_text'][1]['disabled'] = "disabled";
-      $a->columns['answer'][1]['label'] = $a->question_subtext;
+    if(($found = $answer->filter("question_id", $q->primval)->filter("application_id", $this->application_primval)->all()) && $found->count()){
+      foreach($found as $a){
+        //set them so they arent editable any more
+        $a->columns['question_text'][1]['disabled'] = "disabled";
+        $a->columns['answer'][1]['label'] = $a->question_subtext;
+        $answers[] = $a;
+      }
     }else{
+      $a = new Answer;
       //set joins to the application and question
       $a->question_id = $q->primval;
       $a->application_id = $this->application_primval;
@@ -163,26 +171,28 @@ class WildfireJobController extends ApplicationController{
       $a->extra_class = $q->extra_class;
       $a->field_type = $q->field_type;
       $a->question_order = $q->order;
+      $answers[]= $a;
     }
-
-    $a->columns['question_subtext'][1]['widget'] = $a->columns['question_text'][1]['widget'] = "HiddenInput";
-    //make it a required field
-    if($q->required == 1 || $q->required == 2){
-      $a->columns['answer'][1]['required'] = true;
-      if($q->field_type != "RadioInput") $a->question_subtext = str_replace("<span class='answer_required'>*</span>", "", $a->question_subtext) . " <span class='answer_required'>*</span>";
+    foreach($answers as $a){
+      $a->columns['question_subtext'][1]['widget'] = $a->columns['question_text'][1]['widget'] = "HiddenInput";
+      //make it a required field
+      if($q->required == 1 || $q->required == 2){
+        $a->columns['answer'][1]['required'] = true;
+        if($q->field_type != "RadioInput") $a->question_subtext = str_replace("<span class='answer_required'>*</span>", "", $a->question_subtext) . " <span class='answer_required'>*</span>";
+      }
+      if($q->required == 2) $a->columns['answer'][1]['deadend'] = "deadend";
+      //change the answer
+      $a->columns['answer'][1]['widget'] = $q->field_type;
+      if($q->field_type == "DateInput") $a->columns['answer'][1]['input_format'] = "j F Y";
+      if($q->choices){
+        if($q->field_type == "SelectInput") $q->choices = "\n".trim($q->choices);
+        $c = explode("\n", $q->choices);
+        foreach($c as $v) $choices[trim($v)] = trim($v);
+        $a->columns['answer'][1]['choices'] = $choices;
+      }
+      $a->field_type = $q->field_type;
     }
-    if($q->required == 2) $a->columns['answer'][1]['deadend'] = "deadend";
-    //change the answer
-    $a->columns['answer'][1]['widget'] = $q->field_type;
-    if($q->field_type == "DateInput") $a->columns['answer'][1]['input_format'] = "j F Y";
-    if($q->choices){
-      if($q->field_type == "SelectInput") $q->choices = "\n".trim($q->choices);
-      $c = explode("\n", $q->choices);
-      foreach($c as $v) $choices[trim($v)] = trim($v);
-      $a->columns['answer'][1]['choices'] = $choices;
-    }
-    $a->field_type = $q->field_type;
-    return $a;
+    return $answers;
   }
 
   protected function bot_check(){
