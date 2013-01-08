@@ -17,9 +17,10 @@ class WildfireJobsNotification extends WaxEmail{
   }
 
 
-  public function notification($email_template, $data_item, $recipient, $bcc=false){
+  public function notification($email_template, $data_item, $recipient, $bcc=false, $job=false){
     if($data_item) $email_template = $this->parse_template($email_template, $data_item);
     if($recipient) $email_template = $this->parse_template($email_template, $recipient, "person_");
+    if($job) $email_template = $this->parse_template($email_template, $job, "job_");
 
     $this->from = $email_template->from_email;
     $this->from_name = $email_template->from_name;

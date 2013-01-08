@@ -14,7 +14,7 @@ fieldset.templates .join-option select{
   padding:5px 2%;
 }
 
-.generic_cms_header .scrolling_list{
+.generic_cms_block .scrolling_list{
   width:96%;
   max-height:200px;
   overflow: auto

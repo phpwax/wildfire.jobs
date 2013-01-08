@@ -21,6 +21,7 @@ if(!defined("CONTENT_MODEL")){
 WaxEvent::add(CONTENT_MODEL.".setup", function(){
   $model = WaxEvent::data();
   if($model->columns['forms']) unset($model->columns['forms']);
+  $model->columns['title'][1]['label'] = 'Position <small>%job_title%</small>';
   $model->define("fields", "ManyToManyField", array('scaffold'=>true, 'target_model'=>'Question', 'group'=>'Questions', 'editable'=>true));
   $model->define("send_email_to", "CharField");
   $model->define("received_application_template", "ForeignKey", array('target_model'=>"EmailTemplate", "eager_loading"=>true));
