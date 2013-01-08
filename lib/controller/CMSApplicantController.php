@@ -18,12 +18,7 @@ class CMSApplicantController extends AdminComponent{
                             'deadend' => array('columns'=>array('deadend'), 'partial'=>"_filters_status")
                           );
     public $autosave = false;
-    public $list_options = array(
-                            array('form_name'=>'archive', 'form_value'=>'Archive', 'class'=>'hide preview-button'),
-                            array('form_name'=>'export.zip', 'form_value'=>'Export as CSV', 'class'=>'revision'),
-                            array('form_name'=>'export_pdf', 'form_value'=>'Export as PDF', 'class'=>'revision'),
-                            array('form_name'=>'candidate', 'form_value'=>'Convert to candidate', 'class'=>'revision')
-                          );
+    public $list_options = array();
 
     public function edit(){
       parent::edit();

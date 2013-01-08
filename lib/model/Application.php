@@ -18,6 +18,7 @@ class Application extends WaxModel{
     $this->define("is_candidate", "BooleanField", array('editable'=>false,'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
     $this->define("is_staff", "BooleanField", array('editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
     $this->define("rejected", "BooleanField", array('editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
+    $this->define("rejection_reason", "TextField", array('group'=>'advanced', 'label'=>'Rejected because <small>%person_rejection_reason%</small>'));
     $this->define("locked", "BooleanField", array('editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
 
     $this->define("candidate", "ForeignKey", array('target_model'=>'Candidate', 'editable'=>false, 'scaffold'=>true));
@@ -103,6 +104,29 @@ class Application extends WaxModel{
     }
   }
 
+  public function rejected($template){
+    $notify = new WildfireJobsNotification;
+    $notify->send_notification($template, $this->job, $this);
+    return $this->update_attributes(array('rejected'=>1, 'locked'=>1) );
+  }
+
+  public function copy_to_reject(){
+    $model = new Rejected;
+    $data = array('rejected'=>1,
+                          'first_name'=>$this->first_name,
+                          'last_name'=>$this->last_name,
+                          'email'=>$this->email,
+                          'application_id'=>$this->primval,
+                          'is_raw_applicant'=>1,
+                          'date_created'=>$this->date_completed,
+                          'rejected_on'=>date("Y-m-d H:i:s"),
+                          'rejection_reason'=>$this->rejection_reason
+                          );
+
+    $model->update_attributes($data);
+    return $this;
+  }
+
   public function convert_to_candidate($meeting, $extra_data){
     if($job = $this->job){
       //grab all the key answers and copy over to candidate
@@ -117,6 +141,7 @@ class Application extends WaxModel{
       }
       //copy over the changed meeting info
       foreach($extra_data as $k=>$v) $candidate->$k = $v;
+      $candidate->sent_notification = 0;
       if($saved = $candidate->save()){
         $saved->job = $this->job;
         $saved->application = $this;

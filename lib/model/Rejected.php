@@ -4,6 +4,7 @@ class Rejected extends Candidate{
   public function setup(){
     parent::setup();
     $this->define("rejected_on", "DateTimeField");
+    $this->define("is_raw_applicant", "BooleanField");
   }
 
   public function before_save(){

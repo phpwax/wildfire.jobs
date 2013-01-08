@@ -23,7 +23,7 @@ class Candidate extends WaxModel{
 
     $this->define("is_staff", "BooleanField", array('group'=>'advanced', 'editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
     $this->define("rejected", "BooleanField", array('scaffold'=>true,'group'=>'advanced', 'editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
-
+    $this->define("rejection_reason", "TextField", array('group'=>'advanced', 'label'=>'Rejected because <small>%person_rejection_reason%</small>'));
     $this->define("date_created", "DateTimeField", array('group'=>'advanced'));
     $this->define("date_modified", "DateTimeField", array('group'=>'advanced'));
     //so can give a person a unique start time
@@ -56,7 +56,7 @@ class Candidate extends WaxModel{
 
   public function notification($meeting){
     if(!$this->sent_notification){
-      if(($emails = $meeting->email_template_get($this->stage)) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
+      if(($template = $meeting->stage)){
         $notify = new WildfireJobsNotification;
         $notify->send_notification($template, $meeting, $this);
         $this->update_attributes(array('sent_notification'=>1, 'sent_notification_at'=>date("Y-m-d H:i:s")));
@@ -97,10 +97,9 @@ class Candidate extends WaxModel{
   }
 
   public function set_to_meeting($meeting){
-
-    $opts = array('meeting_id'=>$meeting->primval, 'last_meeting_id'=>$this->meeting_id, 'stage'=>$meeting->stage, 'meeting_slot_start'=>date("jS F Y H:i", $meeting->date_start), 'meeting_slot_end'=>date("jS F Y H:i", $meeting->date_end));
+    $opts = array('meeting_id'=>$meeting->primval, 'last_meeting_id'=>$this->meeting_id, 'email_template_id'=>$meeting->email_template_id);
     if($this->meeting_id != $meeting->primval) $opts['sent_notification'] = 0;
-    return $this->update_attributes();
+    return $this->update_attributes($opts);
   }
 
   public function copy_to_reject(){
