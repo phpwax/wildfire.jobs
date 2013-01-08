@@ -15,7 +15,7 @@ class Meeting extends WaxModel{
     $this->define("date_start", "DateTimeField", array('label'=>'Date start <small>(%date_start% | %person_meeting_slot_start%)</small>','export'=>true,'scaffold'=>true, 'default'=>"tomorrow", 'output_format'=>"j F Y",'input_format'=> 'j F Y H:i', 'info_preview'=>1));
     $this->define("date_end", "DateTimeField", array('label'=>'Date end <small>(%date_end% | %person_meeting_slot_end%)</small>','export'=>true,'scaffold'=>true, 'default'=>"tomorrow", 'output_format'=>"j F Y", 'input_format'=> 'j F Y H:i','info_preview'=>1));
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput', 'editable'=>false));
-    $this->define("candidates", "HasManyField", array('target_model'=>"Candidate", 'export'=>true, 'group'=>'further actions', 'editable'=>true));
+    $this->define("candidates", "HasManyField", array('target_model'=>"Candidate", 'export'=>true, 'group'=>'attendees', 'editable'=>true));
     $this->define("date_created", "DateTimeField", array('group'=>'advanced'));
     $this->define("date_modified", "DateTimeField", array('group'=>'advanced'));
     $this->define("contact_name", "CharField", array('label'=>'Contact name <small>(%contact_name%)</small>'));
