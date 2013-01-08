@@ -19,3 +19,9 @@ fieldset.templates .join-option select{
   max-height:200px;
   overflow: auto
 }
+
+.generic_cms_block .loading{
+  background-image:url('/images/wildfire/backgrounds/loader.gif');
+  background-repeat:no-repeat;
+  background-position:right center;
+}
