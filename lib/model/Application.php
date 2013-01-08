@@ -56,18 +56,43 @@ class Application extends WaxModel{
 
   public function notify(){
     //only send if we have found job, questions and the email field
-    if(($job = $this->job) && ($fields = $job->fields) && ($email_field = $fields->filter("candidate_field", "email")->first()) &&
-       ($answers = $this->answers) && ($email = $answers->filter("question_id", $email_field->primval)->first())){
+    if(($email_address = $this->email_address()) && ($job = $this->get_job()) && ($template = $job->received_application_template)){
+      echo "found details sending......";
       //now we need to find their answer for this question & send the email
-      $template = new EmailTemplate;
-      if(($use = $template->get_join($job, "completed_application", true)) && ($join = $use->first()) && ($email_address = $email->answer)){
-        $this->email = $email_address;
-        $notify = new WildfireJobsNotification;
-        $notify->send_notification(new EmailTemplate($join->email_template_id), $job, $this);
-      }
+      $this->email = $email_address;
+      //quickly fake a couple of columns
+      $this->define("first_name", "CharField");
+      $this->define("last_name", "CharField");
+
+      $this->first_name = $this->first_name();
+      $this->last_name = $this->last_name();
+      $notify = new WildfireJobsNotification;
+      $notify->send_notification($template, $job, $this);
     }
   }
 
+
+  public function get_job(){
+    return $this->job;
+  }
+
+  public function email_address(){
+    return $this->get_candidate_mapped_answer("email");
+  }
+  public function first_name(){
+    return $this->get_candidate_mapped_answer("first_name");
+  }
+  public function last_name(){
+    return $this->get_candidate_mapped_answer("last_name");
+  }
+
+  protected function get_candidate_mapped_answer($col="email"){
+    if(($job = $this->get_job()) && ($fields = $job->fields) && ($answer_field = $fields->filter("candidate_field", $col)->first()) &&
+       ($answers = $this->answers) && ($found = $answers->filter("question_id", $answer_field->primval)->first())){
+      return $found->answer;
+    }
+    return false;
+  }
 
   public function archive(){
     if($this->is_candidate || $this->is_staff || ($c = $this->candidate) ) return false;

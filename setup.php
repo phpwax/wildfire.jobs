@@ -28,6 +28,8 @@ WaxEvent::add(CONTENT_MODEL.".setup", function(){
   $model->define("location", "CharField");
   $model->define("role_type", "CharField", array('widget'=>'SelectInput', 'choices'=>array('Permanent'=>'Permanent', 'Temporary'=>'Temporary', 'Part time'=>'Part time')));
   $model->define("is_job", "BooleanField", array('group'=>'details'));
+  $model->define("received_application_template", "ForeignKey", array('target_model'=>"EmailTemplate", "eager_loading"=>true));
+
 });
 
 ?>
