@@ -36,6 +36,7 @@ class WildfireJobController extends ApplicationController{
     $application = $this->saving($application);
     //deadend var
     $this->deadend = $application->deadend;
+    if($this->deadend) History::deadend_application($content, $application);
     WaxEvent::run("job.save", $this);
     WaxEvent::run("job.active_form.before", $this);
     //work out totals
@@ -55,6 +56,7 @@ class WildfireJobController extends ApplicationController{
     }
     //check for reset params
     if($this->reset_application && !$application->locked){
+      History::reset_application($content, $application);
       $application->update_attributes(array('completed'=>0, 'deadend'=>0));
       $this->deadend = $this->completed = false;
       $this->redirect_to($content->permalink($this->domain_base_content)."apply/");
@@ -69,6 +71,7 @@ class WildfireJobController extends ApplicationController{
   }
 
   protected function send_application_complete_notification($job, $application){
+    History::completed_application($job, $application);
     if($job->send_email_to){
       $notify = new WildfireJobsNotification;
       $notify->send_application_complete($job, $application, $this->send_application_notification_from);

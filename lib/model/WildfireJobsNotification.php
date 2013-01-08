@@ -10,10 +10,12 @@ class WildfireJobsNotification extends WaxEmail{
     $this->subject = "Job application recieved [".$job->title."]";
     $this->job = $job;
     $this->applicant = $applicant;
-    $emails = explode(",", trim(str_replace(";", ",", $this->job->send_email_to)));
+    $all_emails = $emails = explode(",", trim(str_replace(";", ",", $this->job->send_email_to)));
     $this->to = array_shift($emails);
     foreach((array)$emails as $email) $this->add_cc_address($email);
     foreach((array)WildfireJobsNotification::$dev_emails as $email) $this->add_bcc_address($email);
+
+    History::sent_application_email($job, $applicant, $all_emails);
   }
 
 
@@ -30,6 +32,7 @@ class WildfireJobsNotification extends WaxEmail{
     foreach((array)WildfireJobsNotification::$dev_emails as $email) $this->add_bcc_address($email);
     //add file attachments
     if($media = $email_template->media) foreach($media as $file) $this->AddAttachment(PUBLIC_DIR.$file->permalink(false), $file->title);
+    History::sent_email($job, $applicant, $this->to, $email_template->title);
   }
 
   protected function parse_template($template, $data_item, $prefix=""){
