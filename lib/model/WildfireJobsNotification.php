@@ -3,13 +3,16 @@ class WildfireJobsNotification extends WaxEmail{
 
   public static $dev_emails = array();
 
-  public function application_complete($job, $applicant, $from, $to=false){
-    $this->from = $from;
+  public function application_complete($job, $applicant, $from){
+    $template = $job->received_application_template;
+    $this->from = $template->from_email;
+    $this->from_name = $job->from_name;
     $this->subject = "Job application recieved [".$job->title."]";
     $this->job = $job;
     $this->applicant = $applicant;
-    if(!$to) $this->to = $job->send_email_to;
-    else $this->to = $to;
+    $emails = explode(",", trim(str_replace(";", ",", $this->job->send_email_to)));
+    $this->to = array_shift($emails);
+    foreach((array)$emails as $email) $this->add_cc_address($email);
     foreach((array)WildfireJobsNotification::$dev_emails as $email) $this->add_bcc_address($email);
   }
 

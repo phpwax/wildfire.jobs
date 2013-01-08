@@ -23,12 +23,14 @@ WaxEvent::add(CONTENT_MODEL.".setup", function(){
   if($model->columns['forms']) unset($model->columns['forms']);
   $model->define("fields", "ManyToManyField", array('scaffold'=>true, 'target_model'=>'Question', 'group'=>'Questions', 'editable'=>true));
   $model->define("send_email_to", "CharField");
+  $model->define("received_application_template", "ForeignKey", array('target_model'=>"EmailTemplate", "eager_loading"=>true));
+
   $model->define("person_responsible_for_job", "CharField", array('label'=>'Person responsible'));
   $model->define("salary", "CharField");
   $model->define("location", "CharField");
   $model->define("role_type", "CharField", array('widget'=>'SelectInput', 'choices'=>array('Permanent'=>'Permanent', 'Temporary'=>'Temporary', 'Part time'=>'Part time')));
   $model->define("is_job", "BooleanField", array('group'=>'details'));
-  $model->define("received_application_template", "ForeignKey", array('target_model'=>"EmailTemplate", "eager_loading"=>true));
+
 
 });
 

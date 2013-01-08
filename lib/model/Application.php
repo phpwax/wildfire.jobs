@@ -3,6 +3,9 @@ class Application extends WaxModel{
 
   public function setup(){
     parent::setup();
+    $this->define("first_name", "CharField", array('scaffold'=>true));
+    $this->define("last_name", "CharField", array('scaffold'=>true));
+    $this->define("email", "CharField", array('scaffold'=>true));
     $this->define("answers", "HasManyField", array('target_model'=>'Answer', 'group'=>'answers', 'editable'=>true));
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'scaffold'=>true));
     $this->define("date_start", "DateTimeField");
@@ -23,6 +26,9 @@ class Application extends WaxModel{
   public function before_save(){
     if(!$this->date_start) $this->date_start = date("Y-m-d H:i:s");
     if(!$this->completed) $this->completed = 0;
+    if($email_address = $this->email_address()) $this->email = $email_address;
+    if($first_name = $this->first_name()) $this->first_name = $first_name;
+    if($last_name = $this->last_name()) $this->last_name = $last_name;
   }
 
   public function complete($job){
@@ -57,13 +63,8 @@ class Application extends WaxModel{
   public function notify(){
     //only send if we have found job, questions and the email field
     if(($email_address = $this->email_address()) && ($job = $this->get_job()) && ($template = $job->received_application_template)){
-      echo "found details sending......";
       //now we need to find their answer for this question & send the email
       $this->email = $email_address;
-      //quickly fake a couple of columns
-      $this->define("first_name", "CharField");
-      $this->define("last_name", "CharField");
-
       $this->first_name = $this->first_name();
       $this->last_name = $this->last_name();
       $notify = new WildfireJobsNotification;
