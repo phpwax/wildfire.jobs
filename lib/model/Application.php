@@ -102,5 +102,30 @@ class Application extends WaxModel{
       return true;
     }
   }
+
+  public function convert_to_candidate($meeting, $extra_data){
+    if($job = $this->job){
+      //grab all the key answers and copy over to candidate
+      foreach($job->fields as $question) if($question->candidate_field) $mapping[$question->primval] = $question->candidate_field;
+
+      $candidate  = new Candidate;
+      $model = new Answer;
+      $answers = $model->filter("application_id", $this->id)->filter("question_id", array_keys($mapping))->all();
+      foreach($answers as $answer){
+        $col = $mapping[$answer->question_id];
+        $candidate->$col = $answer->answer;
+      }
+      //copy over the changed meeting info
+      foreach($extra_data as $k=>$v) $candidate->$k = $v;
+      if($saved = $candidate->save()){
+        $saved->job = $this->job;
+        $saved->application = $this;
+        $saved->meeting = $meeting;
+        $this->update_attributes(array('is_candidate'=>1, 'candidate_id'=>$saved->primval));
+        return $candidate;
+      }
+    }
+    return false;
+  }
 }
 ?>
