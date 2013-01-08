@@ -2,7 +2,7 @@
 <?
 $all_total = count($answer_forms);
 $i = 0;
-$has_repeating=0;
+
 ?>
 
   <?foreach($answer_forms as $question_url=>$forms):?>
@@ -11,6 +11,7 @@ $has_repeating=0;
     $cols_forms = $total = count($forms);
     $stacked = 0;
     $sets=0;
+    $has_repeating=0;
     foreach($forms as $fg){
       foreach($fg as $f){
         if($f->extra_class->value == "stacked") $stacked ++;
@@ -19,10 +20,9 @@ $has_repeating=0;
     }
 
     $cols_forms = $total - $stacked - $has_repeating;
-
-    if($cols_forms == 2) $cols = 2;
-    else if($cols_forms == 4 || $cols_forms == 8) $cols = 4;
-    else if($cols_forms > 3) $cols = 3;
+    if($has_repeating) $cols = 4;
+    else if($cols_forms == 2) $cols = 2;
+    else if($cols_forms > 2) $cols = 3;
     else $cols = 1;
 
 
@@ -44,12 +44,20 @@ $has_repeating=0;
         <input type="hidden" name="_form" value="<?=$question_url?>">
         <div class='clearfix form_block form-<?=$question_url?>'>
 
-        <?foreach($forms as $k=>$form_group):?>
+        <?
+          $merged = array();
+          foreach($forms as $k=>$form_group) foreach($form_group as $p=>$form) $merged[$form->handler->bound_to_model->table."-".$question_url."-".$k."-".$p] = $form;
+          uasort($merged, function($a, $b){
+            if($a->handler->bound_to_model->id)
+              return ($a->handler->bound_to_model->id < $b->handler->bound_to_model->id) ? -1 : 1;
+            else
+              return ($a->handler->bound_to_model->question_order < $b->handler->bound_to_model->question_order) ? -1 : 1;
+          });
+        ?>
 
-          <?foreach($form_group as $p=>$form):?>
+        <?foreach($merged as $field_prefix=>$form):?>
 
           <?
-          $field_prefix = $form->handler->bound_to_model->table."-".$question_url."-".$k."-".$p;
           $extra_class = "question-".strtolower(get_class($form->answer));
           ?>
           <?if(!$header):?>
@@ -62,15 +70,15 @@ $has_repeating=0;
           </div>
             <?$errors = true;?>
           <?endif?>
-          <div class="wrap<?=$form->extra_class->value?><?=strtolower(get_class($form->answer))?> ec-<?=$form->extra_class->value?>">
+          <div class="wrap<?=$form->extra_class->value?><?=strtolower(get_class($form->answer))?> ec-<?=$form->extra_class->value?>" data-id="<?=$form->handler->bound_to_model->id?>" >
             <?if($form->handler->bound_to_model && $form->handler->bound_to_model->primval > 0):?>
+
             <input type="hidden" name="<?=$field_prefix?>[id]" value="<?=$form->handler->bound_to_model->primval?>">
-            <?else:?>
+            <?endif?>
             <?=$form->application->render(array('name'=>$field_prefix.'[application]'));?>
             <?=$form->question->render(array('name'=>$field_prefix.'[question]', 'id'=>$field_prefix.'-question'));?>
             <?=$form->job->render(array('name'=>$field_prefix.'[job]', 'value'=>$job_primval, 'id'=>$field_prefix.'-job'));?>
             <?=$form->question_order->render(array('name'=>$field_prefix.'[question_order]', 'id'=>$field_prefix.'-question-order'));?>
-            <?endif?>
 
             <fieldset class='clearfix question_set question-set-<?=$sets%$cols?> <?=$extra_class?> q<?=$k?> top<?=$form->extra_class->value?>'>
               <div class='job_content'>
@@ -98,9 +106,8 @@ $has_repeating=0;
           </div>
           <?if($form->extra_class->value != "stacked") $sets++;?>
 
-          <?if($form->field_type->value == "HiddenInput") echo "</div><div class='clearfix form_block form-$question_url'>";?>
+          <?if($form->field_type->value == "HiddenInput" || $form->extra_class->value == "stacked") echo "</div><div class='clearfix form_block form-$question_url'>";?>
 
-          <?endforeach?>
 
         <?endforeach?>
 

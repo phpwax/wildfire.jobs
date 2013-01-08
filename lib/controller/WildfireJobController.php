@@ -80,18 +80,53 @@ class WildfireJobController extends ApplicationController{
     //if form is being posted & its within range
     $this->posted_form = $posted = Request::param('_form');
 
-    foreach($this->answer_forms[$posted] as $i=>$form_group){
-      foreach($form_group as $k=>$to_save){
-        if($to_save && ($saved = $to_save->save())){
-          $application->answers = $saved;
-          $this->answer_forms[$posted][$i][$k] = new WaxForm($saved);
-          $this->saved_forms[$posted] = $saved;
+    $like = "answer-".$posted;
+    foreach($_POST as $k=>$data){
+      $question_id = $data['question'];
+      $answer = new Answer($data['id']);
+      if(strstr($k, $like) ){
+
+        if($answer->primval){
+          $answer->answer = $data['answer'];
+          $question = new Question($answer->question_id);
+        }else if($data['question']) {
+          $answer->question_id = $data['question'];
+          $question = new Question($answer->question_id);
+          //copy data over
+          $answer->session = $this->session_cookie();
+          $answer->application_id = $data['application'];
+          $answer->question_id = $data['question'];
+          $answer->domain_content_id = $data['job'];
+          $answer->question_order = $data['question_order'];
+          $answer->answer = $data['answer'];
+          $answer->field_type = $question->field_type;
+          $answer->question_text = $question->title;
+          $answer->question_subtext = $question->subtext;
+          $answer->extra_class = $question->extra_class;
+          $answer->deadend_copy = $question->deadend_copy;
+          $answer->completed = $answer->deadend = 0;
         }
-        //check for errors - empty fields that are require
-        if($to_save && ($errors = $to_save->errors())) $this->error_forms[$posted] = $errors;
+
+        if($question->required == 1 || $question->required == 2){
+          $answer->columns['answer'][1]['required'] = true;
+          if($question->field_type != "RadioInput") $answer->question_subtext = str_replace("<span class='answer_required'>*</span>", "", $answer->question_subtext) . " <span class='answer_required'>*</span>";
+        }
+        if($question->required == 2) $answer->columns['answer'][1]['deadend'] = "deadend";
+
+        $indexes = explode("-", str_replace("answer-".$posted."-", "", $k));
+        //save!
+        if($saved = $answer->save()){
+          $this->answer_forms[$posted][$indexes[0]][$indexes[1]] = new WaxForm($saved);
+          $this->saved_forms[$posted] = $saved;
+        }else{
+          $this->error_forms[$posted] = $answer->error_message();
+        }
+
         if($dead = $this->deadend($to_save)) $application->update_attributes(array('deadend'=>1));
       }
+
     }
+    //exit;
     return $application;
   }
   //if any dead end question has been answered incorrectly, then flag as a deadend
@@ -122,38 +157,34 @@ class WildfireJobController extends ApplicationController{
     $clone = array();
     if($content && $content->primval && ($questions = $content->fields) && $questions->count()){
       foreach($questions->order('`order` ASC')->all() as $k=>$q){
+
         $answers = $this->setup_answer($q);
+
         foreach($answers as $i=>$a){
           $prefix = "answer-".$q->url()."-".$k."-".$i;
-          $form = new WaxForm($a, false, array('prefix'=>$prefix));
+          $form = new WaxForm($a, $data, array('prefix'=>$prefix));
           $answer_forms[$q->url()][$k][$i] = $form;
         }
+
         if($q->field_type == "HiddenInput") $clone[] = $q->url();
       }
     }
-    //print_r($clone);
 
-
-    foreach($clone as $dup){
-      $cloned =  $answer_forms[$dup];
-
-      $starter = $index = max(array_keys($cloned));
-      $index++;
-      foreach($cloned as $id=>$fg){
-        $copy = $fg[0];
-        if(!is_array($copy)) $copy = array($copy);
-        if($copy[0]->handler->bound_to_model->field_type != "TitleInput"){
-          $copy->handler->bound_to_model->id = "";
-          $copy->handler->bound_to_model->submitted_at ="";
-          $answer_forms[$dup][$index] = $copy;
-          $index++;
-        }
-
-
-      }
-
-
-    }
+    //handle clones for multi saving
+    // foreach($clone as $dup){
+    //   $cloned =  $answer_forms[$dup];
+    //   $starter = $index = max(array_keys($cloned));
+    //   $index++;
+    //   foreach($cloned as $id=>$fg){
+    //     $copy = $fg;
+    //     if($copy[0]->handler->bound_to_model->field_type != "TitleInput"){
+    //       $copy[0]->handler->bound_to_model->id = "";
+    //       $copy[0]->handler->bound_to_model->submitted_at ="";
+    //       $answer_forms[$dup][$index] = $copy;
+    //       $index++;
+    //     }
+    //   }
+    // }
 
     return $answer_forms;
   }
@@ -183,8 +214,8 @@ class WildfireJobController extends ApplicationController{
         $a->columns['question_text'][1]['disabled'] = "disabled";
         $a->columns['answer'][1]['label'] = $a->question_subtext;
         $answers[] = $a;
-
       }
+
     }else{
       $answers[]= $this->empty_answer($q);
     }
@@ -208,6 +239,7 @@ class WildfireJobController extends ApplicationController{
       }
       $a->field_type = $q->field_type;
     }
+
     return $answers;
   }
 

@@ -26,6 +26,13 @@ class Answer extends WaxModel{
     if(!$this->submitted_at) $this->submitted_at = date("Y-m-d H:i:s");
     foreach(array('answer', 'question_text', 'deadend_copy', 'question_subtext') as $col) $this->$col = str_replace("<span class='answer_required'>*</span>", "", stripslashes($this->$col));
   }
+  public function error_message() {
+    if(!$this->errors) return "";
+    $output = "<ul class='user_errors'>";
+    foreach($this->errors as $k=>$error)
+      foreach($error as $err) $output .= "<li class='error_message'>$err</li>";
+    return $output ."</ul>";
+  }
 }
 
 ?>
