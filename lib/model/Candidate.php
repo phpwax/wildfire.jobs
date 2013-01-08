@@ -37,7 +37,7 @@ class Candidate extends WaxModel{
   }
 
   public function scope_admin(){
-    return $this->filter("rejected", 0)->order("date_created DESC");
+    return $this->order("date_created DESC");
   }
 
   public function before_save(){
@@ -70,7 +70,7 @@ class Candidate extends WaxModel{
 
 
   public function hired($template){
-    if($saved = $this->update_attributes(array("is_staff"=>1, 'meeting_id'=>0, 'last_meeting_id'=>$this->meeting_id, 'meeting_slot_start'=>'', 'meeting_slot_end'=>'')) ){
+    if($saved = $this->update_attributes(array("is_staff"=>1, 'meeting_id'=>0, 'last_meeting_id'=>$this->meeting_id)) ){
 
       $notify = new WildfireJobsNotification;
       $notify->send_notification($template, false, $this, false, $this->job);
@@ -88,7 +88,18 @@ class Candidate extends WaxModel{
 
   }
 
-  public function rejected($meeting, $stage="reject"){
+  public function rejected($template){
+    if($saved = $this->update_attributes(array("is_staff"=>0, 'rejected'=>1, 'last_meeting_id'=>$this->meeting_id)) ){
+
+      $notify = new WildfireJobsNotification;
+      $notify->send_notification($template, false, $this, false, $this->job);
+      $saved->update_attributes(array('sent_notification'=>1, 'sent_notification_at'=>date("Y-m-d H:i:s")));
+
+      if($applicant = $saved->application) $applicant->update_attributes(array("is_staff"=>0, 'locked'=>1, 'rejected'=>1));
+      return $saved;
+    }
+    return false;
+
     // $this->copy_to_reject()->applicant_rejection()->update_attributes(array('rejected'=>1, 'meeting_slot_start'=>'', 'meeting_slot_end'=>''));
     // if(!$this->sent_notification && ($emails = $meeting->email_template_get($stage) ) && ($join = $emails->first()) && ($template = new EmailTemplate($join->email_template_id))){
     //   $notify = new WildfireJobsNotification;
