@@ -8,7 +8,8 @@ fieldset.templates .join-option select{
 }
 
 .generic_cms_block .headers,
-.generic_cms_header .scrolling_list{
+.generic_cms_block .scrolling_list,
+.generic_cms_block .global_actions{
   padding:5px 2%;
 }
 
