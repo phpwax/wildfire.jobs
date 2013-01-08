@@ -55,11 +55,11 @@ class Candidate extends WaxModel{
     WaxLog::log('error', '[pdf] '.$command, "pdf");
   }
 
-  public function notification($meeting){
+  public function notification($meeting, $user_id){
     if(!$this->sent_notification){
       if(($template = $meeting->stage)){
         $notify = new WildfireJobsNotification;
-        $notify->send_notification($template, $meeting, $this, false, $this->job);
+        $notify->send_notification($template, $meeting, $this, false, $this->job, $user_id);
         $this->update_attributes(array('sent_notification'=>1, 'sent_notification_at'=>date("Y-m-d H:i:s")));
         return true;
       }

@@ -105,9 +105,9 @@ class Application extends WaxModel{
     }
   }
 
-  public function rejected($template){
+  public function rejected($template, $user){
     $notify = new WildfireJobsNotification;
-    $notify->send_notification($template, false, $this, false, $this->job);
+    $notify->send_notification($template, false, $this, false, $this->job, $user);
     return $this->update_attributes(array('rejected'=>1, 'locked'=>1) );
   }
 
