@@ -9,7 +9,7 @@ jQuery(document).ready(function(){
           ;
       inputs.each(function(){
         var val = jQuery(this).is(":checked");
-        if(val) string += "ids[]="+val+"&";
+        if(val) string += "ids[]="+jQuery(this).val()+"&";
       });
       buttons.each(function(){
         var href = jQuery(this).attr("data-href") + string;
