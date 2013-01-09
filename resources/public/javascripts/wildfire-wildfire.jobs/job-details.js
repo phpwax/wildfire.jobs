@@ -8,7 +8,7 @@ jQuery(document).ready(function(){
           string = "?"
           ;
       inputs.each(function(){
-        var val = jQuery(this).val();
+        var val = jQuery(this).is(":checked");
         if(val) string += "ids[]="+val+"&";
       });
       buttons.each(function(){
