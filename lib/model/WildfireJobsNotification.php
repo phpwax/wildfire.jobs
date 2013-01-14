@@ -40,7 +40,7 @@ class WildfireJobsNotification extends WaxEmail{
     $data_cols = array_keys($data_item->columns);
     foreach($email_cols as $ecol){
       $ecol_i = $template->get_col($ecol);
-      if($ecol != "id" && !$ecol_i->is_association){
+      if($ecol != "id" && !$ecol_i->is_association && $ecol != "rejection_reason"){
         foreach($data_cols as $dcol){
           $dcol_i = $data_item->get_col($dcol);
           if($dcol != "id" && !$dcol_i->is_association){
