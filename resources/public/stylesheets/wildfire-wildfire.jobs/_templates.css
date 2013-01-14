@@ -16,7 +16,7 @@ fieldset.templates .join-option select{
 
 .generic_cms_block .scrolling_list{
   width:96%;
-  max-height:200px;
+  max-height:400px;
   overflow: auto
 }
 
