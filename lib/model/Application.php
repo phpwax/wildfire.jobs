@@ -121,7 +121,9 @@ class Application extends WaxModel{
                           'is_raw_applicant'=>1,
                           'date_created'=>$this->date_completed,
                           'rejected_on'=>date("Y-m-d H:i:s"),
-                          'rejection_reason'=>$this->rejection_reason
+                          'rejection_reason'=>$this->rejection_reason,
+                          'domain_content_id'=>$this->domain_content_id,
+                          'email_template_id'=>$this->email_template_id
                           );
 
     $model->update_attributes($data);
