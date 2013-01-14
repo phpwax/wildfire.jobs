@@ -3,7 +3,7 @@
     <div class='field clearfix multipleselect' data-type="multipleselect" data-origin-class="<?=$model_class?>" data-origin-primval="<?=$model->primval?>" data-destination-class="<?=$join_class?>">
     <h3>Answers</h3>
     <ul class='existing_field'>
-    <?if(($answers = $model->answers) && ($answers = $answers->order("question_order ASC")->all)):?>
+    <?if(($answers = $model->answers) && ($answers = $answers->order("id ASC")->all)):?>
       <?foreach($answers as $i=>$row):?>
 
       <li class='clearfix join-option'>
