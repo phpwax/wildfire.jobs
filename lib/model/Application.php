@@ -53,9 +53,9 @@ class Application extends WaxModel{
     return $complete;
   }
 
-  public function create_pdf($module_name, $server, $hash, $folder, $user){
+  public function create_pdf($module_name, $server, $hash, $folder, $auth_token){
     $file = $folder.$hash."/".$module_name."-".$this->primval.".pdf";
-    $permalink = "/admin/".$module_name."/edit/".$this->primval."/.print?auth_token=".$user->auth_token;
+    $permalink = "/admin/".$module_name."/edit/".$this->primval."/.print?auth_token=".$auth_token;
     $command = '/usr/bin/xvfb-run -a -s "-screen 0 1024x768x16" /usr/bin/wkhtmltopdf --encoding utf-8 -s A4 -T 0mm -B 20mm -L 0mm -R 0mm "'.$server.$permalink.'" '.$file;
     shell_exec($command);
     History::log($this->job, $this->primval, $user->primval, "PDF requested", "Page requested: <a href='".$server . str_replace($user->auth_token, "", $permalink)."'>view</a>");
