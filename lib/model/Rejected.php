@@ -15,5 +15,7 @@ class Rejected extends Candidate{
   public function scope_admin(){
     return $this->order("date_created DESC");
   }
+
+  public function linked(){ return "/admin/rejected/edit/$this->primval/";}
 }
 ?>

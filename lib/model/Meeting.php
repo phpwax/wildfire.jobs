@@ -54,5 +54,15 @@ class Meeting extends WaxModel{
   }
 
 
+  public function main_search($value){
+    $results = array();
+    foreach($this->filter("( `title` LIKE '%$value%' )")->all() as $row) $results["m".$this->id] = $row;
+    return $results;
+  }
+
+  public function named(){return $this->title. "(".date("jS F Y", strtotime($this->email)).")";}
+
+  public function linked(){ return "/admin/meeting/edit/$this->primval/";}
+
 }
 ?>

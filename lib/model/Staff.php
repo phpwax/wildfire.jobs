@@ -14,5 +14,7 @@ class Staff extends Candidate{
     parent::before_insert();
     $this->hired_on = date("Y-m-d H:i:s");
   }
+
+  public function linked(){ return "/admin/staff/edit/$this->primval/";}
 }
 ?>

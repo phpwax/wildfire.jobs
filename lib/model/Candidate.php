@@ -126,5 +126,22 @@ class Candidate extends WaxModel{
     if($app = $this->application) $app->update_attributes(array('rejected'=>1, 'locked'=>1));
     return $this;
   }
+
+  public function main_search($value){
+    if(substr_count($value, " ")){
+      $exploded = explode(" ", $value);
+      $sql = "((";
+      foreach($exploded as $part)  $sql .= "`first_name` like '%$part%' or `last_name` like '%$part%'";
+      $sql .= ") or `email` like '%$value%')";
+      $res = $this->filter($sql)->all();
+    }else $res = $this->filter("( `first_name` LIKE '%$value%' or `last_name` LIKE '%$value%' or `email` LIKE '%$value%' )")->all();
+    $results = array();
+    foreach($res as $row) $results[$row->application_id] = $row;
+    return $results;
+  }
+
+  public function named(){return $this->first_name . " ". $this->last_name. "<br>(".$this->email.")";}
+
+  public function linked(){ return "/admin/candidate/edit/$this->primval/";}
 }
 ?>
