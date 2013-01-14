@@ -32,7 +32,8 @@ class Candidate extends WaxModel{
     //include a stage to track how far the person got
     $this->define("stage", "ForeignKey", array('widget'=>'SelectInput', 'target_model'=>'EmailTemplate', 'choices'=>$choices, 'group'=>'advanced'));
     //an on hold flag
-    $this->define("on_hold", "BooleanField");
+    $this->define("on_hold", "BooleanField", array('group'=>'advanced'));
+    $this->define("hold_notes", "TextField", array('group'=>'advanced'));
 
     $this->define("sent_notification", "BooleanField", array('group'=>'advanced', 'editable'=>false, 'default'=>1)); //set to true by default
     $this->define("sent_notification_at", "DateTimeField", array('group'=>'advanced', 'editable'=>false));
