@@ -96,7 +96,7 @@ class Candidate extends WaxModel{
       $notify->send_notification($template, false, $this, false, $this->job);
       $saved->update_attributes(array('sent_notification'=>1, 'sent_notification_at'=>date("Y-m-d H:i:s")));
 
-      if($applicant = $saved->application) $applicant->update_attributes(array("is_staff"=>0, 'locked'=>1, 'rejected'=>1));
+      if($applicant = $saved->application) $applicant->update_attributes(array("is_staff"=>0, 'locked'=>1, 'rejected'=>1, 'rejection_reason'=>$this->rejection_reason));
       return $saved;
     }
     return false;
