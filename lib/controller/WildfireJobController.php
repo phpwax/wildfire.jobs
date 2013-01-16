@@ -85,7 +85,7 @@ class WildfireJobController extends ApplicationController{
     $this->posted_form = $posted = Request::param('_form');
 
     $like = "answer-".$posted;
-    foreach($_POST as $k=>$data){
+    foreach($_GET as $k=>$data){
       $question_id = $data['question'];
       $answer = new Answer($data['id']);
       if(strstr($k, $like) ){
@@ -104,6 +104,8 @@ class WildfireJobController extends ApplicationController{
           $answer->question_order = $data['question_order'];
           $answer->answer = $data['answer'];
           $answer->field_type = $question->field_type;
+          $answer->required = $question->required;
+          $answer->choices = $question->choices;
           $answer->question_text = $question->title;
           $answer->question_subtext = $question->subtext;
           $answer->extra_class = $question->extra_class;
@@ -125,22 +127,19 @@ class WildfireJobController extends ApplicationController{
         }else{
           $this->error_forms[$posted] = $answer->error_message();
         }
-
-        if($dead = $this->deadend($to_save)) $application->update_attributes(array('deadend'=>1));
+        if($dead = $this->deadend($saved)) $application->update_attributes(array('deadend'=>1));
       }
 
     }
-    //exit;
     return $application;
   }
   //if any dead end question has been answered incorrectly, then flag as a deadend
-  protected function deadend($form){
-    $test = $form->handler->bound_to_model;
-    foreach($test->columns as $col){
-      $setup = $col[1];
-      $choice = array_shift($setup['choices']);
-      //answer has been set, its a deadend and doesnt match
-      if($test->answer && $col[1]['deadend'] && $test->answer != $choice) return true;
+  protected function deadend($model){
+    $test = $model;
+
+    if($model->required == 2){
+      $choice = array_shift(explode("\n", $model->choices));
+      if($choice != $model->answer) return true;
     }
     return false;
   }
