@@ -49,7 +49,7 @@ class WildfireJobController extends ApplicationController{
     else if($posted !== null) $this->active_form = $posted + 1;
 
     //if completed in the post data force it to be
-    if(Request::param("completed_application") && !$this->deadend && $application->complete($content)){
+    if(Request::param("_form") == "declaration-completion" && !$this->deadend && $application->complete($content)){
       $this->completed = 1;
       $application = $application->update_attributes(array('completed'=>1, 'date_completed'=>date("Y-m-d H:i:s")));
       $this->send_application_complete_notification($content, $application);
