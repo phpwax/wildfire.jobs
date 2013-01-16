@@ -244,6 +244,8 @@ class WildfireJobController extends ApplicationController{
     $a->extra_class = $q->extra_class;
     $a->field_type = $q->field_type;
     $a->question_order = $q->order;
+    $a->required = $q->required;
+    $a->choices = $q->choices;
     return $a;
   }
 
