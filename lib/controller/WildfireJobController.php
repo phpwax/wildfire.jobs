@@ -83,7 +83,7 @@ class WildfireJobController extends ApplicationController{
   protected function saving($application){
     //if form is being posted & its within range
     $this->posted_form = $posted = Request::param('_form');
-
+    $deadend_application = 0;
     $like = "answer-".$posted;
     foreach($_GET as $k=>$data){
       $question_id = $data['question'];
@@ -127,18 +127,17 @@ class WildfireJobController extends ApplicationController{
         }else{
           $this->error_forms[$posted] = $answer->error_message();
         }
-        if($dead = $this->deadend($saved)) $application->update_attributes(array('deadend'=>1));
+        if($dead = $this->deadend($answer)) $deadend_application = 1;
       }
 
     }
-    return $application;
+    return $application->update_attributes(array('deadend'=>$deadend_application));
   }
   //if any dead end question has been answered incorrectly, then flag as a deadend
   protected function deadend($model){
     $test = $model;
-
     if($model->required == 2){
-      $choice = array_shift(explode("\n", $model->choices));
+      $choice = trim(array_shift(explode("\n", $model->choices)));
       if($choice != $model->answer) return true;
     }
     return false;
@@ -157,37 +156,17 @@ class WildfireJobController extends ApplicationController{
 
   protected function get_forms($content){
     $answer_forms = array();
-    $clone = array();
     if($content && $content->primval && ($questions = $content->fields) && $questions->count()){
       foreach($questions->order('`order` ASC')->all() as $k=>$q){
-
         $answers = $this->setup_answer($q);
-
         foreach($answers as $i=>$a){
           $prefix = "answer-".$q->url()."-".$k."-".$i;
           $form = new WaxForm($a, $data, array('prefix'=>$prefix));
           $answer_forms[$q->url()][$k][$i] = $form;
         }
 
-        if($q->field_type == "HiddenInput") $clone[] = $q->url();
       }
     }
-
-    //handle clones for multi saving
-    // foreach($clone as $dup){
-    //   $cloned =  $answer_forms[$dup];
-    //   $starter = $index = max(array_keys($cloned));
-    //   $index++;
-    //   foreach($cloned as $id=>$fg){
-    //     $copy = $fg;
-    //     if($copy[0]->handler->bound_to_model->field_type != "TitleInput"){
-    //       $copy[0]->handler->bound_to_model->id = "";
-    //       $copy[0]->handler->bound_to_model->submitted_at ="";
-    //       $answer_forms[$dup][$index] = $copy;
-    //       $index++;
-    //     }
-    //   }
-    // }
 
     return $answer_forms;
   }
