@@ -34,23 +34,21 @@ class Application extends WaxModel{
 
   public function complete($job){
     if($this->deadend) return false;
-    $complete = 1;
     //answers
     $answered = array();
-    foreach($this->answers as $a) $answered[$a->question_id] = trim($a->answer);
+    foreach($this->answers as $a){
+      $answered[$a->question_id] = true;
+      //check requirements of the answer
+      if($a->required == 2){
+        $choice = array_shift(explode("\n", $a->choices));
+        if(trim($choice) != trim($a->answer)) return false;
+      }else if($a->required == 1 && !$a->answer) return false;
+    }
     //no answers
     if(!count($answered)) return false;
-    //check whats been answered
-    foreach($job->fields as $field){
-      //if the field is required then must be in the array
-      if($field->required && !$answered[$field->primval]) return false;
-      //if the field is a deadend then the value must match first
-      $c = explode("\n", $field->choices);
-      //get the first one
-      $should_be = trim(array_shift($c));
-      if($field->required == 2 && $should_be != $answered[$field->primval]) return false;
-    }
-    return $complete;
+    //check whats been answered, if the field is required then must be in the array
+    foreach($job->fields as $field) if($field->required && !$answered[$field->primval]) return false;
+    return true;
   }
 
   public function create_pdf($module_name, $server, $hash, $folder, $auth_token){
