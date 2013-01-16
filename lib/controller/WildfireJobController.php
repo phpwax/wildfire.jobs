@@ -85,7 +85,7 @@ class WildfireJobController extends ApplicationController{
     $this->posted_form = $posted = Request::param('_form');
     $deadend_application = 0;
     $like = "answer-".$posted;
-    foreach($_GET as $k=>$data){
+    foreach($_POST as $k=>$data){
       $question_id = $data['question'];
       $answer = new Answer($data['id']);
       if(strstr($k, $like) ){
