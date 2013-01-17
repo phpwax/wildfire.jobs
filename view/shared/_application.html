@@ -2,13 +2,19 @@
 <div class='joins joins_<?=count($fields)?> clearfix'>
   <div class='existing_fields clearfix' id="custom_form_existing_field">
     <div class='field clearfix multipleselect' data-type="multipleselect" data-origin-class="<?=$model_class?>" data-origin-primval="<?=$model->primval?>" data-destination-class="<?=$join_class?>">
-    <h3>Answers</h3>
+    <?$title = "";?>
     <?if($app = $model->application):?>
     <ul class='existing_field'>
     <?if(($answers = $app->answers) && ($answers = $answers->order("id ASC")->all)):?>
       <?foreach($answers as $i=>$row):?>
         <?if($row->question_text != "Equal Opportunities" && $row->field_type != "TitleInput" && $row->field_type != "HiddenInput"):?>
+
       <li class='clearfix join-option'>
+        <?if($row->question_text != $title):?>
+        <?$title = $row->question_text;?>
+        <h2><?=$title?></h2>
+
+        <?endif?>
         <?=$row->question_subtext?><br>
         <strong class='answer_block'><?=$row->answer?></strong>
       </li>
