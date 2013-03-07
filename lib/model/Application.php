@@ -24,6 +24,10 @@ class Application extends WaxModel{
     $this->define("candidate", "ForeignKey", array('target_model'=>'Candidate', 'editable'=>false, 'scaffold'=>true));
   }
 
+  public function scope_dead(){
+    return $this->filter("rejected", 1);
+  }
+  
   public function before_save(){
     if(!$this->date_start) $this->date_start = date("Y-m-d H:i:s");
     if(!$this->completed) $this->completed = 0;
