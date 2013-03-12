@@ -27,7 +27,7 @@ class Application extends WaxModel{
   public function scope_dead(){
     return $this->filter("rejected", 1);
   }
-  
+
   public function before_save(){
     if(!$this->date_start) $this->date_start = date("Y-m-d H:i:s");
     if(!$this->completed) $this->completed = 0;
@@ -92,6 +92,7 @@ class Application extends WaxModel{
   }
 
   protected function get_candidate_mapped_answer($col="email"){
+    if($this->columns[$col] && $this->$col) return $this->$col;
     if(($job = $this->get_job()) && ($fields = $job->fields) && ($answer_field = $fields->filter("candidate_field", $col)->first()) &&
        ($answers = $this->answers) && ($found = $answers->filter("question_id", $answer_field->primval)->first())){
       return $found->answer;
