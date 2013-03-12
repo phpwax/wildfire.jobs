@@ -32,7 +32,9 @@ class WildfireJobsNotification extends WaxEmail{
     foreach((array)WildfireJobsNotification::$dev_emails as $email) $this->add_bcc_address($email);
     //add file attachments
     if($media = $email_template->media) foreach($media as $file) $this->AddAttachment(PUBLIC_DIR.$file->permalink(false), $file->title.".".$file->ext);
-    History::sent_email($job, $recipient, $this->to, $email_template->title, $user);
+    if(get_class($recipient) == "Application" ) $app_id = $recipient->primval;
+    else $app_id = $recipient->application_id;
+    History::sent_email($job, $app_id, $this->to, $email_template->title, $user);
   }
 
   protected function parse_template($template, $data_item, $prefix=""){
