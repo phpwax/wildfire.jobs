@@ -31,6 +31,11 @@ class Meeting extends WaxModel{
     return $choices;
   }
 
+  public function after_save(){
+    parent::after_save();
+    MeetingHistory::set_records($this);
+  }
+
   public function before_save(){
    parent::before_save();
    if(!$this->date_created) $this->date_created = date("Y-m-d H:i:s");
