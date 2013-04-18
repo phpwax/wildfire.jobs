@@ -21,13 +21,18 @@ class WildfireJobController extends ApplicationController{
     WaxEvent::run("job.session", $this);
 
     $application_ids = Session::get('application');
+    if(!$application_ids[$this->job_primval]) $application_ids[$this->job_primval] = 0;
+
+
     if(param("new_application")){
       $url_params = parse_url($_SERVER['REQUEST_URI']);
       unset($application_ids[$this->job_primval]);
       Session::set('application', $application_ids);
       $this->redirect_to($url_params["path"]);
     }
+
     $this->application_primval = $this->get_application($content, $this->job_primval, $application_ids[$this->job_primval], $this->session_id);
+
     $application = new Application($this->application_primval);
     WaxEvent::run("job.application", $this);
 
@@ -174,12 +179,15 @@ class WildfireJobController extends ApplicationController{
   protected function get_application($content, $job_primval, $application_primval, $session_id){
     //get / set the application model
     $application = new Application($application_primval);
+
     if(!$this->application_primval || !($application->primval == $application_primval) ){
+
       $saved = $application->update_attributes(array('session'=>$session_id, Inflections::underscore(get_class($content))."_".$content->primary_key=>$job_primval));
       $applications = Session::get('application');
       $applications[$job_primval] = $saved->primval;
       Session::set('application', $applications);
       $application_primval = $saved->primval;
+
       return $application_primval;
     }
     $application_ids = Session::get('application');

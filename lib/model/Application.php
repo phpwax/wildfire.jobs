@@ -32,9 +32,9 @@ class Application extends WaxModel{
   public function before_save(){
     if(!$this->date_start) $this->date_start = date("Y-m-d H:i:s");
     if(!$this->completed) $this->completed = 0;
-    if($email_address = $this->email_address()) $this->email = $email_address;
-    if($first_name = $this->first_name()) $this->first_name = $first_name;
-    if($last_name = $this->last_name()) $this->last_name = $last_name;
+    if($this->primval && ($email_address = $this->email_address())) $this->email = $email_address;
+    if($this->primval && ($first_name = $this->first_name())) $this->first_name = $first_name;
+    if($this->primval && ($last_name = $this->last_name())) $this->last_name = $last_name;
   }
 
   public function complete($job){
@@ -94,8 +94,8 @@ class Application extends WaxModel{
 
   protected function get_candidate_mapped_answer($col="email"){
     if($this->columns[$col] && $this->$col) return $this->$col;
-    if(($job = $this->get_job()) && ($fields = $job->fields) && ($answer_field = $fields->filter("candidate_field", $col)->first()) &&
-       ($answers = $this->answers) && ($found = $answers->filter("question_id", $answer_field->primval)->first())){
+    if($this->primval && ($job = $this->get_job()) && ($fields = $job->fields) && ($answer_field = $fields->filter("candidate_field", $col)->first()) &&
+       ($answers = $this->answers) && ($found = $answers->filter("application_id", $this->primval)->filter("question_id", $answer_field->primval)->first())){
       return $found->answer;
     }
     return false;
