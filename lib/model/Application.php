@@ -2,6 +2,7 @@
 class Application extends WaxModel{
 
   public function setup(){
+    $this->define("history", "HasManyField", array('target_model'=>'History', 'group'=>'History', 'editable'=>true) );
     parent::setup();
     $this->define("first_name", "CharField", array('scaffold'=>true));
     $this->define("last_name", "CharField", array('scaffold'=>true));
