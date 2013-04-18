@@ -2,6 +2,7 @@
 class Staff extends Candidate{
 
   public function setup(){
+    $this->define("history", "HasManyField", array('target_model'=>'History', 'group'=>'History', 'editable'=>true) );
     parent::setup();
     unset($this->columns['is_staff'], $this->columns['email_template_id'], $this->columns['meeting'], $this->columns['last_meeting']);
     $this->define("hired_on", "DateTimeField");

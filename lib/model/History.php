@@ -41,5 +41,10 @@ class History extends WaxModel{
     return $model->update_attributes(array('title'=>"Update: ".$title, 'application_id'=>(is_numeric($application)) ? $application : $application->primval, 'content'=>$notes, 'job_id'=>$job->primval, 'wildfire_user_id'=>$user_id));
   }
 
+  public static function get_log($application_id){
+    $model = new History;
+    return $model->filter("application_id", $application_id)->all();
+  }
+
 }
 ?>
