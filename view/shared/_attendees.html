@@ -1,18 +1,19 @@
 <div class='joins joins_<?=count($fields)?> clearfix'>
   <?
   $name = "further actions";
-  $all = $model->candidates;
+  $all = MeetingHistory::get_records($model);
   ?>
   <?if($all && $all->count()):?>
   <div class='field clearfix  '>
     <h3>Attending</h3>
     <ul>
-      <?foreach($all as $i => $row):?>
+      <?foreach($all as $i => $join):?>
+      <?$row = $join->candidate?>
       <li class='clearfix '>
         <strong><?=$row->first_name?> <?=$row->last_name?></strong><br>
         email: <?=$row->email?><br>
         tel:<?=$row->main_telephone?><br>
-        slot: <?=date("jS F Y H:i", strtotime($row->meeting_slot_start))?> - <?=date("jS F Y H:i", strtotime($row->meeting_slot_end))?>
+        slot: <?=date("jS F Y H:i", strtotime($join->meeting_slot_start))?> - <?=date("jS F Y H:i", strtotime($join->meeting_slot_end))?>
         <br>
       </li>
       <?endforeach?>

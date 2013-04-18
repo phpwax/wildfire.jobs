@@ -7,6 +7,9 @@ class MeetingHistory extends WaxModel{
     parent::setup();
     $this->define("candidate", "ForeignKey", array('target_model'=>"Candidate", 'export'=>true, 'group'=>'attendees', 'editable'=>true)) ;
     $this->define("meeting", "ForeignKey", array('target_model'=>"Meeting", 'export'=>true, 'group'=>'attendees', 'editable'=>true)) ;
+    $this->define("meeting_slot_start", "CharField", array('group'=>'advanced'));
+    $this->define("meeting_slot_end", "CharField", array('group'=>'advanced'));
+
     $this->define("date_created", "DateTimeField");
   }
 
@@ -18,10 +21,10 @@ class MeetingHistory extends WaxModel{
 
   public static function set_records($meeting){
     if(($candidates = $meeting->candidates) && $candidates->count() ){
-      foreach($candidates->rowset as $row){
+      foreach($candidates as $row){
         $model = new MeetingHistory;
-        if($f = $model->filter("candidate_id", $row['id'])->filter("meeting_id", $row['id'])->first() ) $model = $f;
-        $model->update_attributes(array('candidate_id'=>$row['id'], 'meeting_id'=>$meeting->primval));
+        if($f = $model->filter("candidate_id", $row->primval)->filter("meeting_id", $meeting->primval)->first() ) $model = $f;
+        $model->update_attributes(array('candidate_id'=>$row->primval, 'meeting_id'=>$meeting->primval, 'meeting_slot_end'=>$row->meeting_slot_end, 'meeting_slot_start'=>$row->meeting_slot_start));
       }
     }
   }
