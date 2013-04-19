@@ -162,6 +162,7 @@ class WildfireJobController extends ApplicationController{
   protected function get_forms($content){
     $answer_forms = array();
     if($content && $content->primval && ($questions = $content->fields) && $questions->count()){
+
       foreach($questions->order('`order` ASC')->all() as $k=>$q){
         $answers = $this->setup_answer($q);
         foreach($answers as $i=>$a){
@@ -169,8 +170,8 @@ class WildfireJobController extends ApplicationController{
           $form = new WaxForm($a, $data, array('prefix'=>$prefix));
           $answer_forms[$q->url()][$k][$i] = $form;
         }
-
       }
+
     }
 
     return $answer_forms;
@@ -198,7 +199,7 @@ class WildfireJobController extends ApplicationController{
     $answer = new Answer;
     $answers = array();
     //see if it exists already
-    if(($found = $answer->filter("question_id", $q->primval)->filter("application_id", $this->application_primval)->all()) && $found->count()){
+    if(($found = $answer->filter("question_id", $q->primval)->filter("application_id", $this->application_primval)->group("question_id")->order("question_order ASC")->all()) && $found->count()){
       foreach($found as $a){
         //set them so they arent editable any more
         $a->columns['question_text'][1]['disabled'] = "disabled";
