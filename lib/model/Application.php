@@ -7,10 +7,18 @@ class Application extends WaxModel{
     $this->define("first_name", "CharField", array('scaffold'=>true));
     $this->define("last_name", "CharField", array('scaffold'=>true));
     $this->define("email", "CharField", array('scaffold'=>true));
+
+    $this->define("main_telephone", "CharField", array('scaffold'=>true));
+    $this->define("secondary_telephone", "CharField");
+    $this->define("mobile_telephone", "CharField");
+    $this->define("address", "TextField");
+    $this->define("postcode", "CharField", array('scaffold'=>true));
+
+
     $this->define("answers", "HasManyField", array('target_model'=>'Answer', 'group'=>'answers', 'editable'=>true));
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'scaffold'=>true));
-    $this->define("date_start", "DateTimeField");
-    $this->define("date_completed", "DateTimeField", array('scaffold'=>true, 'export'=>true));
+    $this->define("date_start", "DateTimeField", array('disabled'=>'disabled'));
+    $this->define("date_completed", "DateTimeField", array('scaffold'=>true, 'export'=>true, 'disabled'=>'disabled'));
     $this->define("session", "CharField", array('editable'=>false));
     $this->define("completed", "BooleanField", array('default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"Not completed",1=>"completed"), 'scaffold'=>true, 'export'=>true));
     //marks the application as a deadend
@@ -35,6 +43,12 @@ class Application extends WaxModel{
     if($this->primval && ($email_address = $this->email_address())) $this->email = $email_address;
     if($this->primval && ($first_name = $this->first_name())) $this->first_name = $first_name;
     if($this->primval && ($last_name = $this->last_name())) $this->last_name = $last_name;
+
+    if($this->primval && ($main_telephone = $this->main_telephone())) $this->main_telephone = $main_telephone;
+    if($this->primval && ($secondary_telephone = $this->secondary_telephone())) $this->secondary_telephone = $secondary_telephone;
+    if($this->primval && ($mobile_telephone = $this->mobile_telephone())) $this->mobile_telephone = $mobile_telephone;
+    if($this->primval && ($address = $this->address())) $this->address = $address;
+    if($this->primval && ($postcode = $this->postcode())) $this->postcode = $postcode;
   }
 
   public function complete($job){
@@ -90,6 +104,22 @@ class Application extends WaxModel{
   }
   public function last_name(){
     return $this->get_candidate_mapped_answer("last_name");
+  }
+
+  public function main_telephone(){
+    return $this->get_candidate_mapped_answer("main_telephone");
+  }
+  public function secondary_telephone(){
+    return $this->get_candidate_mapped_answer("secondary_telephone");
+  }
+  public function mobile_telephone(){
+    return $this->get_candidate_mapped_answer("mobile_telephone");
+  }
+  public function address(){
+    return $this->get_candidate_mapped_answer("address");
+  }
+  public function postcode(){
+    return $this->get_candidate_mapped_answer("postcode");
   }
 
   protected function get_candidate_mapped_answer($col="email"){
