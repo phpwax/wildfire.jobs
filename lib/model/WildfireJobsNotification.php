@@ -6,7 +6,8 @@ class WildfireJobsNotification extends WaxEmail{
   public function application_complete($job, $applicant, $from){
     $template = $job->received_application_template;
     $this->from = $template->from_email;
-    $this->from_name = $job->from_name;
+    $this->from_name = $template->from_name;
+    $this->add_replyto_address($template->from_email, $template->from_name);
     $this->subject = "Job application recieved [".$job->title."]";
     $this->job = $job;
     $this->applicant = $applicant;
@@ -29,6 +30,7 @@ class WildfireJobsNotification extends WaxEmail{
     $this->subject = $email_template->subject;
     $this->email_template = $email_template;
     $this->to = $recipient->email;
+    $this->add_replyto_address($email_template->from_email, $email_template->from_name);
     foreach((array)WildfireJobsNotification::$dev_emails as $email) $this->add_bcc_address($email);
     //add file attachments
     if($media = $email_template->media) foreach($media as $file) $this->AddAttachment(PUBLIC_DIR.$file->permalink(false), $file->title.".".$file->ext);
