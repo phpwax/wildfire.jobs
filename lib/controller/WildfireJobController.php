@@ -199,7 +199,8 @@ class WildfireJobController extends ApplicationController{
     $answer = new Answer;
     $answers = array();
     //see if it exists already
-    if(($found = $answer->filter("question_id", $q->primval)->filter("application_id", $this->application_primval)->group("question_id")->order("question_order ASC")->all()) && $found->count()){
+    if($q->extra_class != "repeating") $answer->group("question_id");
+    if(($found = $answer->filter("question_id", $q->primval)->filter("application_id", $this->application_primval)->order("question_order ASC")->all()) && $found->count()){
       foreach($found as $a){
         //set them so they arent editable any more
         $a->columns['question_text'][1]['disabled'] = "disabled";

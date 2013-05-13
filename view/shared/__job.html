@@ -51,8 +51,9 @@ $i = 0;
           $merged = array();
           foreach($forms as $k=>$form_group) foreach($form_group as $p=>$form) $merged[$form->handler->bound_to_model->table."-".$question_url."-".$k."-".$p] = $form;
           uasort($merged, function($a, $b){
+            if($a->handler->bound_to_model->primval && $b->handler->bound_to_model->primval) return ($a->handler->bound_to_model->primval < $b->handler->bound_to_model->primval) ? -1 : 1;
 
-            return ($a->handler->bound_to_model->question_order < $b->handler->bound_to_model->question_order) ? -1 : 1;
+            else return ($a->handler->bound_to_model->question_order < $b->handler->bound_to_model->question_order) ? -1 : 1;
           });
         ?>
 
