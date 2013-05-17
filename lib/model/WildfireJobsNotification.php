@@ -19,6 +19,22 @@ class WildfireJobsNotification extends WaxEmail{
     History::sent_application_email($job, $applicant, $all_emails);
   }
 
+  public function application_edited($job, $applicant, $from){
+    $template = $job->received_application_template;
+    $this->from = $template->from_email;
+    $this->from_name = $template->from_name;
+    $this->add_replyto_address($template->from_email, $template->from_name);
+    $this->subject = "Job application edited [".$job->title."]";
+    $this->job = $job;
+    $this->applicant = $applicant;
+    $all_emails = $emails = explode(",", trim(str_replace(";", ",", $this->job->send_email_to)));
+    $this->to = array_shift($emails);
+    foreach((array)$emails as $email) $this->add_cc_address($email);
+    foreach((array)WildfireJobsNotification::$dev_emails as $email) $this->add_bcc_address($email);
+
+    History::sent_application_email($job, $applicant, $all_emails);
+  }
+
 
   public function notification($email_template, $data_item, $recipient, $bcc=false, $job=false, $user=0){
     if($data_item) $email_template = $this->parse_template($email_template, $data_item);

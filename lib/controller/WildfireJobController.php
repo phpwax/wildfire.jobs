@@ -62,6 +62,7 @@ class WildfireJobController extends ApplicationController{
     //check for reset params
     if($this->reset_application && !$application->locked){
       History::reset_application($content, $application);
+      $this->send_application_edited_notification($content, $application);
       $application->update_attributes(array('completed'=>0, 'deadend'=>0));
       $this->deadend = $this->completed = false;
       $this->redirect_to($content->permalink($this->domain_base_content)."apply/");
@@ -82,6 +83,15 @@ class WildfireJobController extends ApplicationController{
       $notify->send_application_complete($job, $application, $this->send_application_notification_from);
     }
     $application->notify();
+
+  }
+
+  protected function send_application_edited_notification($job, $application){
+    if($job->send_email_to){
+      $notify = new WildfireJobsNotification;
+      $notify->send_application_edited($job, $application, $this->send_application_notification_from);
+    }
+    $application->notify_edit();
 
   }
 

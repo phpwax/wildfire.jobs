@@ -91,6 +91,18 @@ class Application extends WaxModel{
     }
   }
 
+  public function notify_edit(){
+    //only send if we have found job, questions and the email field
+    if(($email_address = $this->email_address()) && ($job = $this->get_job()) && ($template = $job->edited_application_template)){
+      //now we need to find their answer for this question & send the email
+      $this->email = $email_address;
+      $this->first_name = $this->first_name();
+      $this->last_name = $this->last_name();
+      $notify = new WildfireJobsNotification;
+      $notify->send_notification($template, false, $this, false,$job);
+    }
+  }
+
 
   public function get_job(){
     return $this->job;

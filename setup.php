@@ -25,6 +25,7 @@ WaxEvent::add(CONTENT_MODEL.".setup", function(){
   $model->define("fields", "ManyToManyField", array('scaffold'=>true, 'target_model'=>'Question', 'group'=>'Questions', 'editable'=>true));
   $model->define("send_email_to", "CharField");
   $model->define("received_application_template", "ForeignKey", array('target_model'=>"EmailTemplate", "eager_loading"=>true));
+  $model->define("edited_application_template", "ForeignKey", array('target_model'=>"EmailTemplate", "eager_loading"=>true, 'col_name'=>'edited_application_template_id'));
 
   $model->define("person_responsible_for_job", "CharField", array('label'=>'Person responsible'));
   $model->define("salary", "CharField");
