@@ -32,7 +32,7 @@ class WildfireJobsNotification extends WaxEmail{
     foreach((array)$emails as $email) $this->add_cc_address($email);
     foreach((array)WildfireJobsNotification::$dev_emails as $email) $this->add_bcc_address($email);
 
-    History::sent_application_email($job, $applicant, $all_emails);
+    History::sent_application_edited_email($job, $applicant, $all_emails);
   }
 
 
