@@ -13,7 +13,7 @@ class CMSApplicantController extends AdminComponent{
 
     public $filter_fields=array(
                             'text' => array('columns'=>array('first_name', 'last_name'), 'partial'=>'_filters_text', 'fuzzy'=>true),
-                            'job' => array('columns'=>array('job_id'), 'partial'=>'_filters_select'),
+                            'job' => array('columns'=>array('domain_content_id'), 'partial'=>'_filters_select'),
                             'date_start' => array('columns'=>array('date_start', 'date_completed'), 'partial'=>"_filters_date", 'fuzzy_right'=>true),
                             'completed' => array('columns'=>array('completed'), 'partial'=>"_filters_status"),
                             'deadend' => array('columns'=>array('deadend'), 'partial'=>"_filters_status")
