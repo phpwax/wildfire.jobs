@@ -1,5 +1,5 @@
 <?
-CMSApplication::register_module("applicant", array('plugin_name'=>'wildfire.jobs', 'assets_for_cms'=>true, "display_name"=>"Applications", "link"=>"/admin/applicant/", 'hidden'=>true));
+CMSApplication::register_module("applicant", array('plugin_name'=>'wildfire.jobs', 'assets_for_cms'=>true, "display_name"=>"Applications", "link"=>"/admin/applicant/"));
 CMSApplication::register_module("candidate", array("display_name"=>"Candidate", "link"=>"/admin/candidate/", 'hidden'=>true));
 CMSApplication::register_module("meeting", array("display_name"=>"Meetings", "link"=>"/admin/meeting/", 'hidden'=>true));
 CMSApplication::register_module("answers", array("display_name"=>"Answers", "link"=>"/admin/answers/", 'hidden'=>true));
