@@ -8,9 +8,9 @@
     <h3>Attending</h3>
     <ul>
       <?foreach($all as $i => $join):?>
-      <?$row = $join->candidate?>
+      <?$c = $join->candidate; $row = $c->application;?>
       <li class='clearfix '>
-        <strong><?=$row->first_name?> <?=$row->last_name?></strong><br>
+        <strong><a href="/admin/applicant/edit/<?=$row->primval?>/"><?=$row->first_name?> <?=$row->last_name?></a></strong><br>
         email: <?=$row->email?><br>
         tel:<?=$row->main_telephone?><br>
         slot: <?=date("jS F Y H:i", strtotime($join->meeting_slot_start))?> - <?=date("jS F Y H:i", strtotime($join->meeting_slot_end))?>
