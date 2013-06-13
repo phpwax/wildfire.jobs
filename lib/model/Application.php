@@ -92,6 +92,7 @@ class Application extends WaxModel{
     $contents = str_replace("'/files/", "'\"".$server."/files/", $contents);
     $contents = str_replace("\"/m/", "\"".$server."/m/", $contents);
     $contents = str_replace("'/m/", $server."/m/", $contents);
+    $contents = str_replace("\"/tinymce/", "\"".$server."/tinymce/", $contents);
     $contents = str_replace("\"/javascripts/", "\"".$server."/javascripts/", $contents);
     file_put_contents($file.".html", $contents);
     $pdf->addPage($contents);
