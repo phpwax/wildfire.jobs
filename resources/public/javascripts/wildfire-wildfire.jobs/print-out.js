@@ -1,5 +1,5 @@
 jQuery(document).ready(function(){
-  var pg_height = 800, so_far = 0, pgs=0;
+  var pg_height = 890, so_far = 0, pgs=0;
   if(jQuery("#cms-applications").hasClass("print-view-of-page")){
 
     jQuery(".appfield").each(function(){
