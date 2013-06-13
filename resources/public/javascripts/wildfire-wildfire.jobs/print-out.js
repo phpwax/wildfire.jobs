@@ -4,11 +4,10 @@ jQuery(document).ready(function(){
 
     jQuery(".printing_block .field .field").each(function(){
       var block = jQuery(this), h = block.outerHeight();
-      if((so_far+h) >= pg_height){
-        block.css({"margin-top": ((pg_height - so_far)+20) });
-        so_far = 20;
-      }
-      so_far+=h;
+
+        block.css({"margin-top": 800});
+
+
 
     });
   }
