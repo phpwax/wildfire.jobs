@@ -43,9 +43,9 @@ class Meeting extends WaxModel{
    if(!$this->title) $this->title = "Enter meeting name";
   }
 
-  public function create_pdf($module_name, $server, $hash, $folder, $auth_token){
+  public function create_pdf($module_name, $server, $hash, $folder, $user){
     $file = $folder.$hash."/".$module_name."-".$this->primval.".pdf";
-    $permalink = "/admin/".$module_name."/edit/".$this->primval."/.print?auth_token=".$auth_token;
+    $permalink = "/admin/".$module_name."/edit/".$this->primval."/.print?auth_token=".$user->auth_token;
     $command = '/usr/bin/xvfb-run -a -s "-screen 0 1024x768x16" /usr/bin/wkhtmltopdf --encoding utf-8 -s A4 -T 0mm -B 20mm -L 0mm -R 0mm "'.$server.$permalink.'" '.$file;
     shell_exec($command);
   }
