@@ -86,13 +86,13 @@ class Application extends WaxModel{
     $curl = new WaxBackgroundCurl(array('url'=>$url, 'cache'=>false) );
     $contents = $curl->fetch();
 
-    $contents = str_replace("\"/stylesheets/", "\"http://".$server."/stylesheets/", $contents);
-    $contents = str_replace("\"/images/", "\"http://".$server."/images/", $contents);
-    $contents = str_replace("\"/files/", "\"http://".$server."/files/", $contents);
-    $contents = str_replace("'/files/", "'http://".$server."/files/", $contents);
-    $contents = str_replace("\"/m/", "\"http://".$server."/m/", $contents);
-    $contents = str_replace("'/m/", "'http://".$server."/m/", $contents);
-    $contents = str_replace("\"/javascripts/", "\"http://".$server."/javascripts/", $contents);
+    $contents = str_replace("\"/stylesheets/", "\"".$server."/stylesheets/", $contents);
+    $contents = str_replace("\"/images/", "\"".$server."/images/", $contents);
+    $contents = str_replace("\"/files/", "\"".$server."/files/", $contents);
+    $contents = str_replace("'/files/", "'\"".$server."/files/", $contents);
+    $contents = str_replace("\"/m/", "\"".$server."/m/", $contents);
+    $contents = str_replace("'/m/", $server."/m/", $contents);
+    $contents = str_replace("\"/javascripts/", "\"".$server."/javascripts/", $contents);
     file_put_contents($file.".html", $contents);
     $pdf->addPage($contents);
 
