@@ -45,9 +45,24 @@ class Meeting extends WaxModel{
 
   public function create_pdf($module_name, $server, $hash, $folder, $user){
     $file = $folder.$hash."/".$module_name."-".$this->primval.".pdf";
-    $permalink = "/admin/".$module_name."/edit/".$this->primval."/.print?auth_token=".$user->auth_token;
-    $command = '/usr/bin/xvfb-run -a -s "-screen 0 1024x768x16" /usr/bin/wkhtmltopdf --encoding utf-8 -s A4 -T 0mm -B 20mm -L 0mm -R 0mm "'.$server.$permalink.'" '.$file;
-    shell_exec($command);
+    $url = $server."/admin/".$module_name."/edit/".$this->primval."/.print?auth_token=".$user->auth_token;
+    $pdf_engine_options = array("enableEscaping"=>false, 'javascript-delay'=>3500, "load-error-handling"=>"ignore");
+    $pdf = new WkHtmlToPdf($pdf_engine_options);
+    WaxLog::log("error", $url, "pdf");
+    $curl = new WaxBackgroundCurl(array('url'=>$url, 'cache'=>false) );
+    $contents = $curl->fetch();
+
+    $contents = str_replace("\"/stylesheets/", "\"".$server."/stylesheets/", $contents);
+    $contents = str_replace("\"/images/", "\"".$server."/images/", $contents);
+    $contents = str_replace("\"/files/", "\"".$server."/files/", $contents);
+    $contents = str_replace("'/files/", "'\"".$server."/files/", $contents);
+    $contents = str_replace("\"/m/", "\"".$server."/m/", $contents);
+    $contents = str_replace("'/m/", $server."/m/", $contents);
+    $contents = str_replace("//www.google", "http://www.google", $contents);
+    $contents = str_replace("\"/tinymce/", "\"".$server."/tinymce/", $contents);
+    $contents = str_replace("\"/javascripts/", "\"".$server."/javascripts/", $contents);
+    file_put_contents($file.".html", $contents);
+    $pdf->addPage($contents);
   }
 
 
