@@ -1,6 +1,6 @@
 jQuery(document).ready(function(){
   var pg_height = 890, so_far = 0, pgs=0;
-  if(jQuery("#cms-applications").hasClass("print-view-of-page")){
+  if(jQuery("html").hasClass("print-view-of-page")){
 
     jQuery(".appfield").each(function(){
       var block = jQuery(this),
