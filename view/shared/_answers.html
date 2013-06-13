@@ -6,7 +6,7 @@
       <?foreach($answers as $i=>$row):?>
         <?if($row->question_text != "Equal Opportunities" && $row->field_type != "TitleInput" && $row->field_type != "HiddenInput"):?>
 
-              <li class='clearfix join-option'>
+              <li class='clearfix join-option appfield'>
                 <?if($row->question_text != $title):?>
                 <?$title = $row->question_text;?>
                 <h2><?=$title?></h2>
