@@ -4,6 +4,8 @@ class DeadApplication extends Application{
   public $table = "application";
   public function setup(){
     parent::setup();
+    $this->columns['date_rejected'][1]['scaffold'] = true;
+    $this->columns['rejected'][1]['scaffold'] = false;
     $this->columns['deadend'][1]['scaffold'] = false;
     $this->columns['main_telephone'][1]['scaffold'] = false;
     $this->columns['email'][1]['scaffold'] = false;

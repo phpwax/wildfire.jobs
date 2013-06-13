@@ -24,6 +24,8 @@ class Candidate extends WaxModel{
     $this->define("is_staff", "BooleanField", array('group'=>'advanced', 'editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
     $this->define("rejected", "BooleanField", array('scaffold'=>true,'group'=>'advanced', 'editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
     $this->define("rejection_reason", "TextField", array('group'=>'advanced', 'label'=>'Rejected because'));
+    $this->define("date_rejected", "DateTimeField", array('scaffold'=>false, 'export'=>true, 'disabled'=>'disabled'));
+
     $this->define("date_created", "DateTimeField", array('group'=>'advanced'));
     $this->define("date_modified", "DateTimeField", array('group'=>'advanced'));
     //so can give a person a unique start time
@@ -46,6 +48,7 @@ class Candidate extends WaxModel{
   public function before_save(){
     parent::before_save();
     if(!$this->date_created) $this->date_created = date("Y-m-d H:i:s");
+    if($this->rejected && !$this->date_rejected) $this->date_rejected = date("Y-m-d H:i:s");
     $this->date_modified = date("Y-m-d H:i:s");
   }
 

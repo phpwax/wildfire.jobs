@@ -4,8 +4,8 @@ class Application extends WaxModel{
   public function setup(){
     $this->define("history", "HasManyField", array('target_model'=>'History', 'group'=>'History', 'editable'=>true) );
     parent::setup();
-    $this->define("first_name", "CharField", array('scaffold'=>true));
     $this->define("last_name", "CharField", array('scaffold'=>true));
+    $this->define("first_name", "CharField", array('scaffold'=>true));
     $this->define("email", "CharField", array('scaffold'=>true));
 
     $this->define("main_telephone", "CharField", array('scaffold'=>true));
@@ -26,7 +26,9 @@ class Application extends WaxModel{
     //these will be linked to the candidate models etc
     $this->define("is_candidate", "BooleanField", array('editable'=>false,'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
     $this->define("is_staff", "BooleanField", array('editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
+
     $this->define("rejected", "BooleanField", array('scaffold'=>true, 'editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
+    $this->define("date_rejected", "DateTimeField", array('scaffold'=>false, 'export'=>true, 'disabled'=>'disabled'));
     $this->define("rejection_reason", "TextField", array('group'=>'advanced', 'label'=>'Rejected because', 'scaffold'=>true));
     $this->define("locked", "BooleanField", array('editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
 
@@ -49,6 +51,8 @@ class Application extends WaxModel{
     if($this->primval && ($mobile_telephone = $this->mobile_telephone())) $this->mobile_telephone = $mobile_telephone;
     if($this->primval && ($address = $this->address())) $this->address = $address;
     if($this->primval && ($postcode = $this->postcode())) $this->postcode = $postcode;
+
+    if($this->rejected && !$this->date_rejected) $this->date_rejected = date("Y-m-d H:i:s");
   }
 
   public function complete($job){
