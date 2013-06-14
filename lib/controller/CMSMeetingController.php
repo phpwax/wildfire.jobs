@@ -179,7 +179,7 @@ class CMSMeetingController extends CMSApplicantController{
     $notify = new WildfireJobsNotification;
     $template = new EmailTemplate(param("email_template"));
     $candidate = new Candidate(param("candidate"));
-    $notify->notification($template, $this->model, $candidate->application);
+    $notify->notification($template, $this->model, $candidate);
     $notify->get_templates("notification");
     $this->response->write($notify->body);
   }
