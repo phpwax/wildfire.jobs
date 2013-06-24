@@ -131,7 +131,10 @@ class WildfireJobController extends ApplicationController{
           $answer->completed = $answer->deadend = 0;
         }
 
-        if($data['_file']) $answer->answer = $this->process_upload($data['_file']);
+        if($data['_file']){
+          $file = $this->process_upload($data['_file']);
+          $answer->answer = "<a href='".$file." target='_new'>".$file."</a>";
+        }
 
         if($question->required == 1 || $question->required == 2){
           $answer->columns['answer'][1]['required'] = true;
