@@ -10,7 +10,7 @@ $i = 0;
 
   <?foreach($answer_forms as $question_url=>$forms):?>
     <?
-    $errors = $header = false;
+    $has_file = $errors = $header = false;
     $cols_forms = $total = count($forms);
     $stacked = 0;
     $sets=0;
@@ -19,6 +19,7 @@ $i = 0;
       foreach($fg as $f){
         if($f->extra_class->value == "stacked") $stacked ++;
         if($f->field_type->value == "HiddenInput") $has_repeating++;
+        if($f->field_type->value == "FileInput") $has_file= true;
       }
     }
 
@@ -32,7 +33,7 @@ $i = 0;
     ?>
 
 
-    <form data-total="<?=$total?>" data-stacked="<?=$stacked?>" data-repeat="<?=$has_repeating?>" data-cf="<?=$cols_forms?>" action="#wf_form_<?=$i?>" id="wf_form_<?=$i?>" class='job_form wax_form clearfix <?if($i == $active_form):?>active_form<?endif?> form-<?=(($total > 1) ? "multi" : "single")?> form-has-<?=$cols?>' method="post" enctype="multipart/form-data">
+    <form data-total="<?=$total?>" data-stacked="<?=$stacked?>" data-repeat="<?=$has_repeating?>" data-cf="<?=$cols_forms?>" action="<?=$job_content->permalink($domain_base_content)?>q<?=$i?>/#wf_form_<?=$i?>" id="wf_form_<?=$i?>" class='job_form wax_form clearfix <?if($i == $active_form):?>active_form<?endif?> form-<?=(($total > 1) ? "multi" : "single")?> form-has-<?=$cols?>' method="post" enctype="multipart/form-data">
     <div class='<?if($has_repeating):?>form-has-repeating<?endif?>'>
       <input type="hidden" name="_job" value="<?=$job_primval?>">
       <div class='form_content clearfix'>
