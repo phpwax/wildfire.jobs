@@ -15,6 +15,8 @@ class Candidate extends WaxModel{
     $this->define("email", "CharField", array('group'=>'details', 'label'=>'Email <small>(%person_email%)</small>', 'export'=>true,'scaffold'=>true));
     $this->define("address", "TextField", array('group'=>'details', 'export'=>true,'label'=>'Address <small>(%person_address%)</small>'));
     $this->define("postcode", "CharField", array('group'=>'details', 'export'=>true,'label'=>'Postcode <small>(%person_postcode%)</small>'));
+    $this->define("national_insurance_number", "CharField", array('scaffold'=>false, 'label'=>'NI Number', 'group'=>'details'));
+
     $this->define("gender", "CharField", array('group'=>'details', 'export'=>true,'scaffold'=>true, 'label'=>'Gender <small>(%person_gender%)</small>'));
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'widget'=>'HiddenInput'));
     $this->define("application", "ForeignKey", array('target_model'=>"Application", 'export'=>true, 'group'=>'application', 'widget'=>'HiddenInput'));

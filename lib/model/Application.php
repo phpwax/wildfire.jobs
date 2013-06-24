@@ -14,6 +14,7 @@ class Application extends WaxModel{
     $this->define("address", "TextField");
     $this->define("postcode", "CharField", array('scaffold'=>true));
 
+    $this->define("national_insurance_number", "CharField", array('scaffold'=>false, 'label'=>'NI Number'));
 
     $this->define("answers", "HasManyField", array('target_model'=>'Answer', 'group'=>'answers', 'editable'=>true));
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'scaffold'=>true));
@@ -51,6 +52,7 @@ class Application extends WaxModel{
     if($this->primval && ($mobile_telephone = $this->mobile_telephone())) $this->mobile_telephone = $mobile_telephone;
     if($this->primval && ($address = $this->address())) $this->address = $address;
     if($this->primval && ($postcode = $this->postcode())) $this->postcode = strtoupper($postcode);
+    if($this->primval && ($national_insurance_number = $this->national_insurance_number())) $this->national_insurance_number = strtoupper($national_insurance_number);
 
     if($this->rejected && !$this->date_rejected) $this->date_rejected = date("Y-m-d H:i:s");
   }
@@ -141,6 +143,9 @@ class Application extends WaxModel{
   }
   public function last_name(){
     return $this->get_candidate_mapped_answer("last_name");
+  }
+  public function national_insurance_number(){
+    return $this->get_candidate_mapped_answer("national_insurance_number");
   }
 
   public function main_telephone(){
