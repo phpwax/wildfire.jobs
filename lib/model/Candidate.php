@@ -49,6 +49,7 @@ class Candidate extends WaxModel{
     parent::before_save();
     if(!$this->date_created) $this->date_created = date("Y-m-d H:i:s");
     if($this->rejected && !$this->date_rejected) $this->date_rejected = date("Y-m-d H:i:s");
+    $this->postcode = strtoupper($this->postcode);
     $this->date_modified = date("Y-m-d H:i:s");
   }
 

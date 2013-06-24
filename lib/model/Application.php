@@ -50,7 +50,7 @@ class Application extends WaxModel{
     if($this->primval && ($secondary_telephone = $this->secondary_telephone())) $this->secondary_telephone = $secondary_telephone;
     if($this->primval && ($mobile_telephone = $this->mobile_telephone())) $this->mobile_telephone = $mobile_telephone;
     if($this->primval && ($address = $this->address())) $this->address = $address;
-    if($this->primval && ($postcode = $this->postcode())) $this->postcode = $postcode;
+    if($this->primval && ($postcode = $this->postcode())) $this->postcode = strtoupper($postcode);
 
     if($this->rejected && !$this->date_rejected) $this->date_rejected = date("Y-m-d H:i:s");
   }
