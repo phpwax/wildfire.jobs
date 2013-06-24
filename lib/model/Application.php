@@ -27,9 +27,9 @@ class Application extends WaxModel{
     $this->define("is_candidate", "BooleanField", array('editable'=>false,'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
     $this->define("is_staff", "BooleanField", array('editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
 
-    $this->define("rejected", "BooleanField", array('scaffold'=>false, 'editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
+    $this->define("rejected", "BooleanField", array('scaffold'=>true, 'editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
     $this->define("date_rejected", "DateTimeField", array('scaffold'=>false, 'export'=>true, 'disabled'=>'disabled'));
-    $this->define("rejection_reason", "TextField", array('group'=>'advanced', 'label'=>'Rejected because', 'scaffold'=>true));
+    $this->define("rejection_reason", "TextField", array('group'=>'advanced', 'label'=>'Rejected because', 'scaffold'=>false));
     $this->define("locked", "BooleanField", array('editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
 
     $this->define("candidate", "ForeignKey", array('target_model'=>'Candidate', 'editable'=>false, 'scaffold'=>false));
