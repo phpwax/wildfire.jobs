@@ -100,6 +100,9 @@ class WildfireJobController extends ApplicationController{
     $this->posted_form = $posted = Request::param('_form');
     $deadend_application = 0;
     $like = "answer-".$posted;
+    //merge the file data in to it
+    foreach($_FILES as $k=>$data) $_POST[$k]['_file'] = $data;
+
     foreach($_POST as $k=>$data){
       $question_id = $data['question'];
       $answer = new Answer($data['id']);
@@ -128,6 +131,8 @@ class WildfireJobController extends ApplicationController{
           $answer->completed = $answer->deadend = 0;
         }
 
+        if($data['_file']) $answer->answer = $this->process_upload($data['_file']);
+
         if($question->required == 1 || $question->required == 2){
           $answer->columns['answer'][1]['required'] = true;
           if($question->field_type != "RadioInput") $answer->question_subtext = str_replace("<span class='answer_required'>*</span>", "", $answer->question_subtext) . " <span class='answer_required'>*</span>";
@@ -148,6 +153,26 @@ class WildfireJobController extends ApplicationController{
     }
     return $application->update_attributes(array('deadend'=>$deadend_application));
   }
+
+  protected function process_upload($upload, $sub_dir="uploaded"){
+    if($upload){
+      $filename = $upload['name']['answer'];
+      //from the file name find the extension
+      $ext = (substr(strrchr($filename,'.'),1));
+      $check = strtolower($ext);
+      $setup = WildfireMedia::$allowed;
+      if($setup && ($class= $setup[$check])){
+        $path = PUBLIC_DIR."files/". $sub_dir."/";
+        if(!is_dir($path)) mkdir($path, 0777, true);
+        $filename = File::safe_file_save($path, $filename);
+        $file = $path.$filename;
+        move_uploaded_file($upload['tmp_name']['answer'], $file);
+        return str_replace(PUBLIC_DIR, "/", $file);
+      }
+    }
+    return "";
+  }
+
   //if any dead end question has been answered incorrectly, then flag as a deadend
   protected function deadend($model){
     $test = $model;
