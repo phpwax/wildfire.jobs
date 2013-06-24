@@ -81,7 +81,7 @@ class Application extends WaxModel{
 
     // $command = '/usr/bin/xvfb-run -a -s "-screen 0 1024x768x16" /usr/bin/wkhtmltopdf --encoding utf-8 -s A4 -T 0mm -B 20mm -L 0mm -R 0mm "'.$server.$permalink.'" '.$file;
 
-    $pdf_engine_options = array("enableEscaping"=>false, 'javascript-delay'=>3500, "load-error-handling"=>"ignore");
+    $pdf_engine_options = array("enableEscaping"=>false, 'javascript-delay'=>2500, "load-error-handling"=>"ignore");
     $pdf = new WkHtmlToPdf($pdf_engine_options);
     WaxLog::log("error", $url, "pdf");
     $curl = new WaxBackgroundCurl(array('url'=>$url, 'cache'=>false) );
