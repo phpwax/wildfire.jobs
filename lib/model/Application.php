@@ -8,7 +8,7 @@ class Application extends WaxModel{
     $this->define("first_name", "CharField", array('scaffold'=>true));
     $this->define("email", "CharField", array('scaffold'=>true));
 
-    $this->define("main_telephone", "CharField", array('scaffold'=>true));
+    $this->define("main_telephone", "CharField", array('scaffold'=>false));
     $this->define("secondary_telephone", "CharField");
     $this->define("mobile_telephone", "CharField");
     $this->define("address", "TextField");
@@ -27,7 +27,7 @@ class Application extends WaxModel{
     $this->define("is_candidate", "BooleanField", array('editable'=>false,'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
     $this->define("is_staff", "BooleanField", array('editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
 
-    $this->define("rejected", "BooleanField", array('scaffold'=>true, 'editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
+    $this->define("rejected", "BooleanField", array('scaffold'=>false, 'editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
     $this->define("date_rejected", "DateTimeField", array('scaffold'=>false, 'export'=>true, 'disabled'=>'disabled'));
     $this->define("rejection_reason", "TextField", array('group'=>'advanced', 'label'=>'Rejected because', 'scaffold'=>true));
     $this->define("locked", "BooleanField", array('editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
