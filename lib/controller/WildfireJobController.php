@@ -16,7 +16,7 @@ class WildfireJobController extends ApplicationController{
   public function __job(){
     WaxEvent::run("job.start", $this);
     $content_class = $this->cms_content_class;
-    $content = new $content_class($this->job_primval);
+    $this->job_content = $content = new $content_class($this->job_primval);
     $this->session_id = $this->session_cookie();
     WaxEvent::run("job.session", $this);
 
