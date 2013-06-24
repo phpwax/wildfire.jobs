@@ -2,7 +2,7 @@
   <div class='existing_fields clearfix' id="custom_form_existing_field">
     <div class='field clearfix multipleselect' data-type="multipleselect" data-origin-class="<?=$model_class?>" data-origin-primval="<?=$model->primval?>" data-destination-class="<?=$join_class?>">
     <ul class='existing_field'>
-    <?if(($answers = $model->answers) && ($answers = $answers->order("question_order ASC, id DESC")->group_by("question_text")->all)):?>
+    <?if(($answers = $model->answers) && ($answers = $answers->order("id ASC")->all)):?>
       <?foreach($answers as $i=>$row):?>
         <?if($row->question_text != "Equal Opportunities" && $row->field_type != "TitleInput" && $row->field_type != "HiddenInput"):?>
 
