@@ -130,8 +130,8 @@ class WildfireJobController extends ApplicationController{
           $answer->deadend_copy = $question->deadend_copy;
           $answer->completed = $answer->deadend = 0;
         }
-
-        if($data['_file']){
+        //dont overwrite
+        if($data['_file'] && !$answer->answer){
           $file = $this->process_upload($data['_file']);
           $answer->answer = "<a href='".$file." target='_new'>".$file."</a>";
         }
