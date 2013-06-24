@@ -22,7 +22,7 @@ WaxEvent::add(CONTENT_MODEL.".setup", function(){
   $model = WaxEvent::data();
   if($model->columns['forms']) unset($model->columns['forms']);
   $model->columns['title'][1]['label'] = 'Position <small>%job_title%</small>';
-  $model->define("fields", "ManyToManyField", array('scaffold'=>true, 'target_model'=>'Question', 'group'=>'Questions', 'editable'=>true));
+  $model->define("fields", "ManyToManyField", array('scaffold'=>false, 'target_model'=>'Question', 'group'=>'Questions', 'editable'=>true));
   $model->define("send_email_to", "CharField");
   $model->define("received_application_template", "ForeignKey", array('target_model'=>"EmailTemplate", "eager_loading"=>true));
   $model->define("edited_application_template", "ForeignKey", array('target_model'=>"EmailTemplate", "eager_loading"=>true, 'col_name'=>'edited_application_template_id'));
@@ -31,7 +31,8 @@ WaxEvent::add(CONTENT_MODEL.".setup", function(){
   $model->define("salary", "CharField");
   $model->define("location", "CharField");
   $model->define("role_type", "CharField", array('widget'=>'SelectInput', 'choices'=>array('Permanent'=>'Permanent', 'Temporary'=>'Temporary', 'Part time'=>'Part time')));
-  $model->define("is_job", "BooleanField", array('group'=>'details'));
+  $model->define("is_job", "BooleanField", array('group'=>'details', 'choices'=>array(''=>'-- select --',  0=>'Not a job', 1=>'Is a job') ) );
+  $model->define("job_status", "CharField", array('scaffold'=>true,'group'=>'details', 'widget'=>'SelectInput',  'choices'=>array(''=>'-- select --', 'advertising'=> 'Advertising', 'interviewing'=>'Interviewing', 'completed'=>'Completed'), 'label'=>'Job status <small>(internal only)</small>' ) );
   $model->define("block_edits", "BooleanField", array('group'=>'details'));
 
 });
