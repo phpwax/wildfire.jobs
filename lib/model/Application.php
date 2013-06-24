@@ -76,7 +76,7 @@ class Application extends WaxModel{
 
   public function create_pdf($module_name, $server, $hash, $folder, $user){
     $job = $this->job;
-    $file = $folder.$hash."/".$job->title . " - ".$this->first_name. " " . $this->last_name .".pdf";
+    $file = $folder.$hash."/".$job->title . " - ".$this->first_name. " " . $this->last_name ."(".$this->primval.").pdf";
     $url = $server."/admin/".$module_name."/edit/".$this->primval."/.print?auth_token=".$user->auth_token;
 
     // $command = '/usr/bin/xvfb-run -a -s "-screen 0 1024x768x16" /usr/bin/wkhtmltopdf --encoding utf-8 -s A4 -T 0mm -B 20mm -L 0mm -R 0mm "'.$server.$permalink.'" '.$file;
