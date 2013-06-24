@@ -39,7 +39,6 @@ class Question extends WildfireCustomField{
 
   public function field_types(){
     $data = parent::field_types();
-    unset($data['FileInput']);
     $data['HiddenInput'] = 'Repeat previous';
     return $data;
   }
