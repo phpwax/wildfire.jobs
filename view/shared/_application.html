@@ -6,20 +6,53 @@
     <?if($app = $model->application):?>
     <ul class='existing_field'>
     <?if(($answers = $app->answers) && ($answers = $answers->order("id ASC")->all)):?>
-      <?foreach($answers as $i=>$row):?>
-        <?if($row->question_text != "Equal Opportunities" && $row->field_type != "TitleInput" && $row->field_type != "HiddenInput"):?>
+        <?
+        $sub_questions = $stored_answers = array();
+        /**
+          * this gets complicated.... need to move everything to a new structure to filter out duplicates, but only complete duplicates, you can get partial dups
+          * with the recurring questions (ie you can get a-levels at same place as gcse.. can get promoted at same company)
+          * or it could be accidently entered twice to the db (then they would be totaly the same)
+          */
+        foreach($answers as $i=>$row) $sub_questions[trim($row->question_text)][trim($row->question_subtext)][] = $row;
+        $counters = array();
+        foreach($sub_questions as $section=>$rows){
+          foreach($rows as $q => $ans){
+            foreach($ans as $i => $v){
+              $stored_answers[$section][$i][$q] = $v;
+            }
+          }
+        }
 
-      <li class='clearfix join-option'>
-        <?if($row->question_text != $title):?>
-        <?$title = $row->question_text;?>
-        <h2><?=$title?></h2>
+        ?>
 
-        <?endif?>
-        <?=$row->question_subtext?><br>
-        <strong class='answer_block'><?=$row->answer?></strong>
-      </li>
-        <?endif?>
-      <?endforeach?>
+        <?foreach($stored_answers as $section_name=>$details):?>
+          <li><h2><?=$section_name?></h2></li>
+          <?
+            $done = array();
+            foreach($details as $k=>$group){
+              $lookup = "";
+              foreach($group as $a){
+                if($a->extra_class == "repeating" && $a->answer) $lookup .= strtolower(trim($a->question_text)."|".trim($a->question_subtext)."|".trim($a->answer)."|");
+              }
+              if(in_array($lookup, $done)) unset($stored_answers[$section_name][$k]);
+              $done[] = $lookup;
+            }
+          ?>
+          <?foreach($details as $answers):?>
+            <?foreach($answers as $q => $row):?>
+              <?if($row->question_text != "Equal Opportunities" && $row->field_type != "TitleInput" && $row->field_type != "HiddenInput"):?>
+            <li>
+              <strong data-id="<?=$row->primval?>"><?=$row->question_subtext?><br></strong>
+              <span class='answer_block'><?=$row->answer?></span>
+            </li>
+              <?endif?>
+            <?endforeach?>
+          <?endforeach?>
+        <?endforeach?>
+
+
+
+
     <?endif?>
     </ul>
     <?endif?>
