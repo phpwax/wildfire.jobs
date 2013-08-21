@@ -6,6 +6,7 @@ class History extends WaxModel{
     $this->define("title", "CharField");
     $this->define("content", "TextField");
     $this->define("body_content", "TextField");
+    $this->define("raw_body", "TextField");
     $this->define("applicant", "ForeignKey", array('target_model'=>'Application'));
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'col_name'=>'job_id'));
     $this->define("actioned_by", "ForeignKey", array('target_model'=>'WildfireUser'));
@@ -48,7 +49,7 @@ class History extends WaxModel{
 
   public static function log_email($email, $application, $job, $user_id=false){
     $model = new History;
-    $saved = $model->update_attributes(array('title'=>'Email: '.$email->title, 'application_id'=>(is_numeric($application)) ? $application : $application->primval, 'content'=>'Subject: '.$email->subject.'<br>From: '.$email->from.'<br>From Name: '.$email->from_name.'<br><a href="#" target="_blank" class="em-content">VIEW EMAIL CONTENT</a>', 'body_content'=>$email->email_template->content, 'job_id'=>($job) ? $job->primval : false, 'wildfire_user_id'=>$user_id));
+    $saved = $model->update_attributes(array('title'=>'Email: '.$email->title, 'raw_body'=>$email->body, 'application_id'=>(is_numeric($application)) ? $application : $application->primval, 'content'=>'Subject: '.$email->subject.'<br>To: '.$application->email.'<br>From: '.$email->from.'<br>From Name: '.$email->from_name.'<br><a href="#" target="_blank" class="em-content">VIEW EMAIL CONTENT</a>', 'body_content'=>$email->email_template->content, 'job_id'=>($job) ? $job->primval : false, 'wildfire_user_id'=>$user_id));
     return $saved;
   }
 
