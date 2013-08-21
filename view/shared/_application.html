@@ -4,7 +4,7 @@
     <div class='field clearfix multipleselect' data-type="multipleselect" data-origin-class="<?=$model_class?>" data-origin-primval="<?=$model->primval?>" data-destination-class="<?=$join_class?>">
     <?$title = "";?>
     <?if($app = $model->application):?>
-    <ul class='existing_field'>
+    <ul class=''>
     <?if(($answers = $app->answers) && ($answers = $answers->order("id ASC")->all)):?>
         <?
         $sub_questions = $stored_answers = array();
@@ -26,7 +26,7 @@
         ?>
 
         <?foreach($stored_answers as $section_name=>$details):?>
-          <li><h2><?=$section_name?></h2></li>
+          <li><h2 style="font-size:20px;"><?=$section_name?></h2></li>
           <?
             $done = array();
             foreach($details as $k=>$group){
@@ -43,11 +43,12 @@
               <?if($row->question_text != "Equal Opportunities" && $row->field_type != "TitleInput" && $row->field_type != "HiddenInput"):?>
             <li>
               <strong data-id="<?=$row->primval?>"><?=$row->question_subtext?><br></strong>
-              <span class='answer_block'><?=$row->answer?></span>
+              <span class='answer_block'><?=nl2br($row->answer)?></span>
             </li>
               <?endif?>
             <?endforeach?>
           <?endforeach?>
+          <li><hr></li>
         <?endforeach?>
 
 
