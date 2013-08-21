@@ -114,7 +114,8 @@ class Application extends WaxModel{
       $this->first_name = $this->first_name();
       $this->last_name = $this->last_name();
       $notify = new WildfireJobsNotification;
-      $notify->send_notification($template, false, $this, false,$job);
+      if($template->dont_send) $notify->notification($template, false, $this, false,$job);
+      else $notify->send_notification($template, false, $this, false,$job);
     }
   }
 
@@ -126,7 +127,8 @@ class Application extends WaxModel{
       $this->first_name = $this->first_name();
       $this->last_name = $this->last_name();
       $notify = new WildfireJobsNotification;
-      $notify->send_notification($template, false, $this, false,$job);
+      if($template->dont_send) $notify->notification($template, false, $this, false,$job);
+      else $notify->send_notification($template, false, $this, false,$job);
     }
   }
 
@@ -183,7 +185,8 @@ class Application extends WaxModel{
 
   public function rejected($template, $user){
     $notify = new WildfireJobsNotification;
-    $notify->send_notification($template, false, $this, false, $this->job, $user);
+    if($template->dont_send) $notify->notification($template, false, $this, false, $this->job, $user);
+    else $notify->send_notification($template, false, $this, false, $this->job, $user);
     return $this->update_attributes(array('rejected'=>1, 'locked'=>1) );
   }
 
