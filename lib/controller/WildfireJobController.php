@@ -81,6 +81,7 @@ class WildfireJobController extends ApplicationController{
     if($job->send_email_to){
       $notify = new WildfireJobsNotification;
       $notify->send_application_complete($job, $application, $this->send_application_notification_from);
+      History::log_email($notify, $application, $job, false);
     }
     $application->notify();
 
@@ -90,6 +91,7 @@ class WildfireJobController extends ApplicationController{
     if($job->send_email_to){
       $notify = new WildfireJobsNotification;
       $notify->send_application_edited($job, $application, $this->send_application_notification_from);
+      History::log_email($notify, $application, $job, false);
     }
     $application->notify_edit();
 
