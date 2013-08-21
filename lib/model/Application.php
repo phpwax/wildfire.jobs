@@ -116,6 +116,8 @@ class Application extends WaxModel{
       $notify = new WildfireJobsNotification;
       if($template->dont_send) $notify->notification($template, false, $this, false,$job);
       else $notify->send_notification($template, false, $this, false,$job);
+      //record the email content
+      History::log_email($notify, $this, $job, false);
     }
   }
 
@@ -129,6 +131,10 @@ class Application extends WaxModel{
       $notify = new WildfireJobsNotification;
       if($template->dont_send) $notify->notification($template, false, $this, false,$job);
       else $notify->send_notification($template, false, $this, false,$job);
+      //record the email content
+      History::log_email($notify);
+      //record the email content
+      History::log_email($notify, $this, $job, false);
     }
   }
 
@@ -187,6 +193,10 @@ class Application extends WaxModel{
     $notify = new WildfireJobsNotification;
     if($template->dont_send) $notify->notification($template, false, $this, false, $this->job, $user);
     else $notify->send_notification($template, false, $this, false, $this->job, $user);
+    //record the email content
+    History::log_email($notify, $this, $this->job, $user);
+
+
     return $this->update_attributes(array('rejected'=>1, 'locked'=>1) );
   }
 

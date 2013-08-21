@@ -16,4 +16,11 @@ jQuery(document).ready(function(){
         jQuery(this).attr("href", href);
       });
   });
+
+  jQuery(".em-content").live("click", function(e){
+    e.preventDefault();
+    var show_class = jQuery(this).parents("tr").attr("class").replace("hr-", "em-");
+    jQuery("."+show_class).show();
+  });
+
 });

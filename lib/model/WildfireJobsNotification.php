@@ -2,6 +2,7 @@
 class WildfireJobsNotification extends WaxEmail{
 
   public static $dev_emails = array();
+  public $log_action = true;
 
   public function application_complete($job, $applicant, $from){
     $template = $job->received_application_template;
@@ -16,7 +17,7 @@ class WildfireJobsNotification extends WaxEmail{
     foreach((array)$emails as $email) $this->add_cc_address($email);
     foreach((array)WildfireJobsNotification::$dev_emails as $email) $this->add_bcc_address($email);
 
-    History::sent_application_email($job, $applicant, $all_emails);
+    if($this->log_action) History::sent_application_email($job, $applicant, $all_emails);
   }
 
   public function application_edited($job, $applicant, $from){
@@ -32,7 +33,7 @@ class WildfireJobsNotification extends WaxEmail{
     foreach((array)$emails as $email) $this->add_cc_address($email);
     foreach((array)WildfireJobsNotification::$dev_emails as $email) $this->add_bcc_address($email);
 
-    History::sent_application_edited_email($job, $applicant, $all_emails);
+    if($this->log_action) History::sent_application_edited_email($job, $applicant, $all_emails);
   }
 
 
@@ -61,7 +62,7 @@ class WildfireJobsNotification extends WaxEmail{
     if($media = $email_template->media) foreach($media as $file) $this->AddAttachment(PUBLIC_DIR.$file->permalink(false), $file->title.".".$file->ext);
     if(get_class($recipient) == "Application" ) $app_id = $recipient->primval;
     else $app_id = $recipient->application_id;
-    History::sent_email($job, $app_id, $this->to, $email_template->title, $user, !($email_template->dont_send));
+    if($this->log_action) History::sent_email($job, $app_id, $this->to, $email_template->title, $user, !($email_template->dont_send));
   }
 
   protected function parse_template($template, $data_item, $prefix=""){
