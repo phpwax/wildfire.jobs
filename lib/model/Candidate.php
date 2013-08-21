@@ -110,7 +110,10 @@ class Candidate extends WaxModel{
 
       if($applicant = $saved->application) $applicant->update_attributes(array("is_staff"=>1, 'locked'=>1));
       $row = $this->row;
-      unset($row['stage'], $row['id'], $row['date_created'], $row['date_modified'], $row['last_meeting_id'], $row['meeting_id'], $row['is_staff'], $row['is_candidate'], $row['meeting_slot']);
+      unset($row['date_start'], $row['date_completed'], $row['locked'], $row['deadend'], $row['completed'],
+                $row['session'],$row['stage'], $row['notes'], $row['id'], $row['date_created'], $row['date_modified'],
+                $row['last_meeting_id'], $row['meeting_id'], $row['is_staff'], $row['is_candidate'], $row['meeting_slot']
+                );
       $staff = new Staff;
       $staff->update_attributes($row);
       $staff->candidate = $saved;
