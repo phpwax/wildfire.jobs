@@ -181,6 +181,12 @@ class Application extends WaxModel{
     return false;
   }
 
+  public function get_section_answers($section_title){
+    $model = new Answer;
+    if( $answers = $model->filter("application_id", $this->id)->filter("question_text", $section_title)->all() ) return $answers;
+    return false;
+  }
+
   public function archive(){
     if($this->is_candidate || $this->is_staff || ($c = $this->candidate) ) return false;
     else{
