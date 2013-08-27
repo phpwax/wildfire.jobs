@@ -109,7 +109,7 @@ $i = 0;
           </div>
           <?if($form->extra_class->value != "stacked") $sets++;?>
 
-          <?if($form->field_type->value == "HiddenInput" || $form->extra_class->value == "stacked") echo "</div><div class='clearfix form_block form-$question_url'>";?>
+          <?if($form->field_type->value == "HiddenInput" || $form->extra_class->value == "stacked" || $form->extra_class->value == "repeatingstacked") echo "</div><div class='clearfix form_block form-$question_url'>";?>
 
 
         <?endforeach?>

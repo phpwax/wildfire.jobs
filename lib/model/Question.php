@@ -6,7 +6,7 @@ class Question extends WildfireCustomField{
     $this->define("subtext", "TextField");
     $this->define("required", "IntegerField", array('widget'=>'SelectInput','choices'=>array('Optional', 'Required', 'Deadend')));
     $this->define("deadend_copy", "TextField", array('label'=>'Copy for deadend'));
-    $this->define("extra_class", "CharField", array('widget'=>'SelectInput', 'choices'=>array(''=>'None', 'large'=>'large', 'xlarge'=>'extra large', 'stacked'=>'force stacked', 'repeating'=>'repeating', 'repeatingstacked'=>'stacked & repeating')));
+    $this->define("extra_class", "CharField", array('widget'=>'SelectInput', 'choices'=>array(''=>'None', 'large'=>'large', 'xlarge'=>'extra large', 'stacked'=>'force stacked', 'repeating'=>'repeating')));
     $this->define("candidate_field", "CharField", array('widget'=>'SelectInput', 'choices'=>Question::candidate_mapping()) );
   }
   public function get_column_name($test=false){
