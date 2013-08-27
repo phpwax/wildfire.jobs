@@ -17,7 +17,7 @@ $i = 0;
     $has_repeating=0;
     foreach($forms as $fg){
       foreach($fg as $f){
-        if($f->extra_class->value == "stacked" || $f->extra_class->value == "repeatingstacked") $stacked ++;
+        if($f->extra_class->value == "stacked") $stacked ++;
         if($f->field_type->value == "HiddenInput") $has_repeating++;
         if($f->field_type->value == "FileInput") $has_file= true;
       }
@@ -109,7 +109,7 @@ $i = 0;
           </div>
           <?if($form->extra_class->value != "stacked") $sets++;?>
 
-          <?if($form->field_type->value == "HiddenInput" || $form->extra_class->value == "stacked" || $form->extra_class->value == "repeatingstacked") echo "</div><div class='clearfix form_block form-$question_url'>";?>
+          <?if(($form->field_type->value == "HiddenInput" || $form->extra_class->value == "stacked") && $form->extra_class->value != "repeatingstacked") echo "</div><div class='clearfix form_block form-$question_url'>";?>
 
 
         <?endforeach?>
