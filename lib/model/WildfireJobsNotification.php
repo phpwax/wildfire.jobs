@@ -5,7 +5,7 @@ class WildfireJobsNotification extends WaxEmail{
   public $log_action = true;
 
   public function application_complete($job, $applicant, $from){
-    $template = $job->received_application_template;
+    $this->email_template = $template = $job->received_application_template;
     $this->from = $template->from_email;
     $this->from_name = $template->from_name;
     $this->add_replyto_address($template->from_email, $template->from_name);
@@ -21,7 +21,7 @@ class WildfireJobsNotification extends WaxEmail{
   }
 
   public function application_edited($job, $applicant, $from){
-    $template = $job->received_application_template;
+    $this->email_template = $template = $job->received_application_template;
     $this->from = $template->from_email;
     $this->from_name = $template->from_name;
     $this->add_replyto_address($template->from_email, $template->from_name);
@@ -48,7 +48,8 @@ class WildfireJobsNotification extends WaxEmail{
     if($job = $recipient->job) $cc_emails = explode(",", trim(str_replace(";", ",", $job->cc_invite_email) ) );
     else $cc_emails = array();
 
-
+    $this->applicant = $recipient;
+    $this->email_template = $email_template;
     if($data_item) $email_template = $this->parse_template($email_template, $data_item);
     if($recipient) $email_template = $this->parse_template($email_template, $recipient, "person_");
     if($job) $email_template = $this->parse_template($email_template, $job, "job_");
