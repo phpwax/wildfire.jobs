@@ -33,6 +33,10 @@ class History extends WaxModel{
     $model = new History;
     return $model->update_attributes(array('title'=>'Sent notification of application', 'application_id'=>(is_numeric($application)) ? $application : $application->primval, 'content'=>'Sent notification of  application to: '. implode(", ", $sent_to), 'job_id'=>$job->primval));
   }
+  public static function opened_email($application, $job, $template){
+    $model = new History;
+    return $model->update_attributes(array('title'=>'Opened email', 'application_id'=>(is_numeric($application)) ? $application : $application->primval, 'content'=>'Template: '.$template->title, 'job_id'=>$job->primval));
+  }
   public static function sent_application_edited_email($job, $application, $sent_to){
     $model = new History;
     return $model->update_attributes(array('title'=>'Sent notification of edited application', 'application_id'=>(is_numeric($application)) ? $application : $application->primval, 'content'=>'Sent notification of  application to: '. implode(", ", $sent_to), 'job_id'=>$job->primval));
