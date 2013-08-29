@@ -82,11 +82,11 @@ class Candidate extends WaxModel{
     WaxLog::log('error', '[pdf: '.$file.'] '.$url, "pdf");
   }
 
-  public function notification($meeting, $user_id){
+  public function notification($meeting, $user_id, $dont_send=false){
     if(!$this->sent_notification){
       if(($template = $meeting->stage)){
         $notify = new WildfireJobsNotification;
-        if($template->dont_send) $notify->notification($template, $meeting, $this, false, $this->job, $user_id);
+        if($dont_send) $notify->notification($template, $meeting, $this, false, $this->job, $user_id);
         else $notify->send_notification($template, $meeting, $this, false, $this->job, $user_id);
         History::log_email($notify, $this->application, $this->job, $user_id);
         $this->update_attributes(array('sent_notification'=>1, 'sent_notification_at'=>date("Y-m-d H:i:s")));
@@ -99,11 +99,11 @@ class Candidate extends WaxModel{
   }
 
 
-  public function hired($template, $user_id){
+  public function hired($template, $user_id, $dont_send=false){
     if($saved = $this->update_attributes(array("is_staff"=>1, 'meeting_id'=>0, 'last_meeting_id'=>$this->meeting_id)) ){
 
       $notify = new WildfireJobsNotification;
-      if($template->dont_send) $notify->notification($template, false, $this, false, $this->job, $user_id);
+      if($dont_send) $notify->notification($template, false, $this, false, $this->job, $user_id);
       else $notify->send_notification($template, false, $this, false, $this->job, $user_id);
       History::log_email($notify, $this->application, $this->job, $user_id);
       $saved->update_attributes(array('sent_notification'=>1, 'sent_notification_at'=>date("Y-m-d H:i:s")));
@@ -123,11 +123,11 @@ class Candidate extends WaxModel{
 
   }
 
-  public function rejected($template, $user_id){
+  public function rejected($template, $user_id, $dont_send=false){
     if($saved = $this->update_attributes(array("is_staff"=>0, 'rejected'=>1, 'last_meeting_id'=>$this->meeting_id)) ){
 
       $notify = new WildfireJobsNotification;
-      if($template->dont_send) $notify->notification($template, false, $this, false, $this->job, $user_id);
+      if($dont_send) $notify->notification($template, false, $this, false, $this->job, $user_id);
       else $notify->send_notification($template, false, $this, false, $this->job, $user_id);
       History::log_email($notify, $this->application, $this->job, $user_id);
       $saved->update_attributes(array('sent_notification'=>1, 'sent_notification_at'=>date("Y-m-d H:i:s")));

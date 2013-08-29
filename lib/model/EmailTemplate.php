@@ -13,7 +13,7 @@ class EmailTemplate extends WaxModel{
     $this->define("date_modified", "DateTimeField", array('export'=>true, 'scaffold'=>true, "editable"=>false));
     $this->define("date_created", "DateTimeField", array('export'=>true, "editable"=>false));
     $this->define("media", "ManyToManyField", array('target_model'=>"WildfireMedia", "eager_loading"=>true, "join_model_class"=>"WildfireOrderedTagJoin", "join_order"=>"join_order", 'group'=>'media', 'module'=>'media'));
-    $this->define("dont_send", "BooleanField", array('label'=>"Don't send email notifcation"));
+
   }
 
   public function before_save(){

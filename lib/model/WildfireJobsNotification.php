@@ -37,7 +37,7 @@ class WildfireJobsNotification extends WaxEmail{
   }
 
 
-  public function notification($email_template, $data_item, $recipient, $bcc=false, $job=false, $user=0){
+  public function notification($email_template, $data_item, $recipient, $bcc=false, $job=false, $user=0, $dont_send){
 
     if($recipient instanceOf Candidate){
       $app = $recipient->application;
@@ -66,7 +66,7 @@ class WildfireJobsNotification extends WaxEmail{
     if($media = $email_template->media) foreach($media as $file) $this->AddAttachment(PUBLIC_DIR.$file->permalink(false), $file->title.".".$file->ext);
     if(get_class($recipient) == "Application" ) $app_id = $recipient->primval;
     else $app_id = $recipient->application_id;
-    if($this->log_action) History::sent_email($job, $app_id, $this->to, $email_template->title, $user, !($email_template->dont_send));
+    if($this->log_action) History::sent_email($job, $app_id, $this->to, $email_template->title, $user, $dont_send );
   }
 
   protected function parse_template($template, $data_item, $prefix=""){
