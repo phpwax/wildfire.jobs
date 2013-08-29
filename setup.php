@@ -34,6 +34,7 @@ WaxEvent::add(CONTENT_MODEL.".setup", function(){
   $model->define("is_job", "BooleanField", array('group'=>'details', 'choices'=>array(''=>'-- select --',  0=>'Not a job', 1=>'Is a job') ) );
   $model->define("job_status", "CharField", array('scaffold'=>true,'group'=>'details', 'widget'=>'SelectInput',  'choices'=>array(''=>'-- select --', 'advertising'=> 'Advertising', 'interviewing'=>'Interviewing', 'completed'=>'Completed'), 'label'=>'Job status <small>(internal only)</small>' ) );
   $model->define("block_edits", "BooleanField", array('group'=>'details'));
+  $model->define("cc_invite_email", "CharField", array('group'=>'details'));
 
 });
 

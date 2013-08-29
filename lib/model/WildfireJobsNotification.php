@@ -45,6 +45,8 @@ class WildfireJobsNotification extends WaxEmail{
       unset($copy['id'], $copy['candidate_id']);
       foreach($copy as $col) $recipient->row[$col] = $app->row[$col];
     }
+    if($job = $recipient->job) $cc_emails = explode(",", trim(str_replace(";", ",", $job->cc_invite_email) ) );
+    else $cc_emails = array();
 
 
     if($data_item) $email_template = $this->parse_template($email_template, $data_item);
@@ -58,6 +60,7 @@ class WildfireJobsNotification extends WaxEmail{
     $this->to = $recipient->email;
     $this->add_replyto_address($email_template->from_email, $email_template->from_name);
     foreach((array)WildfireJobsNotification::$dev_emails as $email) $this->add_bcc_address($email);
+    foreach((array)$cc_emails as $em) $this->add_cc_address($em);
     //add file attachments
     if($media = $email_template->media) foreach($media as $file) $this->AddAttachment(PUBLIC_DIR.$file->permalink(false), $file->title.".".$file->ext);
     if(get_class($recipient) == "Application" ) $app_id = $recipient->primval;
