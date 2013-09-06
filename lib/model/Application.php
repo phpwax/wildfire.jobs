@@ -15,6 +15,7 @@ class Application extends WaxModel{
     $this->define("postcode", "CharField", array('scaffold'=>true));
 
     $this->define("national_insurance_number", "CharField", array('scaffold'=>false, 'label'=>'NI Number'));
+    $this->define("user_agent", "CharField", array('scaffold'=>false, 'label'=>'UA', 'widget'=>'HiddenInput'));
 
     $this->define("answers", "HasManyField", array('target_model'=>'Answer', 'group'=>'answers', 'editable'=>true));
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'scaffold'=>true));
