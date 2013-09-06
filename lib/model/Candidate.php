@@ -38,7 +38,7 @@ class Candidate extends WaxModel{
     //an on hold flag
     $this->define("on_hold", "BooleanField", array('group'=>'advanced'));
     $this->define("hold_notes", "TextField", array('group'=>'advanced'));
-
+    $this->define("user_agent", "CharField", array('scaffold'=>false, 'label'=>'UA', 'widget'=>'HiddenInput'));
     $this->define("sent_notification", "BooleanField", array('group'=>'advanced', 'editable'=>false, 'default'=>1)); //set to true by default
     $this->define("sent_notification_at", "DateTimeField", array('group'=>'advanced', 'editable'=>false));
   }
