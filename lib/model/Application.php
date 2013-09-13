@@ -107,7 +107,7 @@ class Application extends WaxModel{
     if(!$pdf->saveAs($file)) throw new Exception('Could not create PDF: '.$pdf->getError());
   }
 
-  public function notify($dont_send = false){
+  public function notify(){
     //only send if we have found job, questions and the email field
     if(($email_address = $this->email_address()) && ($job = $this->get_job()) && ($template = $job->received_application_template)){
       //now we need to find their answer for this question & send the email
@@ -115,14 +115,13 @@ class Application extends WaxModel{
       $this->first_name = $this->first_name();
       $this->last_name = $this->last_name();
       $notify = new WildfireJobsNotification;
-      if($dont_send) $notify->notification($template, false, $this, false,$job);
-      else $notify->send_notification($template, false, $this, false,$job);
+      $notify->send_notification($template, false, $this, false,$job, 0, false);
       //record the email content
       History::log_email($notify, $this, $job, false);
     }
   }
 
-  public function notify_edit($dont_send = false){
+  public function notify_edit(){
     //only send if we have found job, questions and the email field
     if(($email_address = $this->email_address()) && ($job = $this->get_job()) && ($template = $job->edited_application_template)){
       //now we need to find their answer for this question & send the email
@@ -130,10 +129,7 @@ class Application extends WaxModel{
       $this->first_name = $this->first_name();
       $this->last_name = $this->last_name();
       $notify = new WildfireJobsNotification;
-      if($dont_send) $notify->notification($template, false, $this, false,$job);
-      else $notify->send_notification($template, false, $this, false,$job);
-      //record the email content
-      History::log_email($notify);
+      $notify->send_notification($template, false, $this, false,$job, 0, false);
       //record the email content
       History::log_email($notify, $this, $job, false);
     }
@@ -198,7 +194,7 @@ class Application extends WaxModel{
 
   public function rejected($template, $user, $dont_send=false){
     $notify = new WildfireJobsNotification;
-    if($dont_send) $notify->notification($template, false, $this, false, $this->job, $user);
+    if($dont_send) $notify->notification($template, false, $this, false, $this->job, $user, true);
     else $notify->send_notification($template, false, $this, false, $this->job, $user);
     //record the email content
     History::log_email($notify, $this, $this->job, $user);
