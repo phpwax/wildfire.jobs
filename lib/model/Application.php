@@ -270,11 +270,12 @@ class Application extends WaxModel{
   public function main_search($value){
     if(substr_count($value, " ")){
       $exploded = explode(" ", $value);
+
       $sql = "((";
-      foreach($exploded as $part)  $sql .= "`first_name` like '%$part%' or `last_name` like '%$part%'";
-      $sql .= ") or `email` like '%$value%')";
+      foreach($exploded as $i=>$part)  $sql .= (($i>0) ? " or ": "") ."`first_name` like '%$part%' or `last_name` like '%$part%' ";
+      $sql .= ") or `email` like '%$value%' or CONCAT_WS(' ', `first_name`, `last_name`) LIKE '%$value%')";
       $res = $this->filter($sql)->all();
-    }else $res = $this->filter("( `first_name` LIKE '%$value%' or `last_name` LIKE '%$value%' or `email` LIKE '%$value%' )")->all();
+    }else $res = $this->filter("( `first_name` LIKE '%$value%' or `last_name` LIKE '%$value%' or `email` LIKE '%$value%' or CONCAT_WS(' ', `first_name`, `last_name`) LIKE '%$value%')")->all();
     $results = array();
     foreach($res as $row) $results[$row->id] = $row;
     return $results;
