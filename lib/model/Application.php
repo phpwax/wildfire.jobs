@@ -58,6 +58,14 @@ class Application extends WaxModel{
     if($this->rejected && !$this->date_rejected) $this->date_rejected = date("Y-m-d H:i:s");
   }
 
+  public function reinstate($user){
+    if($saved = $this->update_attributes(array("rejected"=>0, "date_rejected"=>"1970-01-01 00:00:00") ) ){
+      History::log($this->job, $this->primval, $user->primval, "Reinstated application");
+      return $saved;
+    }
+    return false;
+  }
+
   public function complete($job){
     if($this->deadend) return false;
     //answers
