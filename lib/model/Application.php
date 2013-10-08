@@ -60,6 +60,20 @@ class Application extends WaxModel{
 
   public function reinstate($user){
     if($saved = $this->update_attributes(array("rejected"=>0, "date_rejected"=>"1970-01-01 00:00:00") ) ){
+
+      //remove any rejections
+      $r = new Rejected;
+      if($reject = $r->filter("application_id", $this->primval)->first()){
+        History::log($this->job, $this->primval, $user->primval, "Removing previous rejection");
+        $reject->delete();
+      }
+      //reset any candidate flag
+      $c = new Candidate;
+      if($candidate = $c->filter("application_id", $this->primval)->first()){
+        History::log($this->job, $this->primval, $user->primval, "Reinstated candidate");
+        $candidate->update_attributes( array("rejected"=>0, "date_rejected"=>"1970-01-01 00:00:00")  );
+      }
+
       History::log($this->job, $this->primval, $user->primval, "Reinstated application");
       return $saved;
     }
