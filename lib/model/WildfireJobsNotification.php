@@ -41,9 +41,9 @@ class WildfireJobsNotification extends WaxEmail{
 
     if($recipient instanceOf Candidate){
       $app = $recipient->application;
-      $copy = array_keys($app->row);
+      $copy = array_flip(array_keys($app->row));
       unset($copy['id'], $copy['candidate_id']);
-      foreach($copy as $col) $recipient->row[$col] = $app->row[$col];
+      foreach($copy as $col=>$x) $recipient->row[$col] = $app->row[$col];
     }
     if($job = $recipient->job) $cc_emails = explode(",", trim(str_replace(";", ",", $job->cc_invite_email) ) );
     else $cc_emails = array();
