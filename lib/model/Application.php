@@ -35,6 +35,7 @@ class Application extends WaxModel{
     $this->define("locked", "BooleanField", array('editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
 
     $this->define("candidate", "ForeignKey", array('target_model'=>'Candidate', 'editable'=>false, 'scaffold'=>false));
+    $this->define("need_fix", "BooleanField");
   }
 
   public function scope_dead(){
