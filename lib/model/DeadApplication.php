@@ -16,5 +16,9 @@ class DeadApplication extends Application{
     $this->columns['date_completed'][1]['scaffold'] = false;
   }
 
+  public function scope_dead(){
+    return $this->filter("rejected", 1)->order("date_rejected DESC");
+  }
+
 }
 ?>
