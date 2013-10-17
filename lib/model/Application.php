@@ -36,6 +36,8 @@ class Application extends WaxModel{
 
     $this->define("candidate", "ForeignKey", array('target_model'=>'Candidate', 'editable'=>false, 'scaffold'=>false));
     $this->define("need_fix", "BooleanField");
+
+    $this->define("media", "ManyToManyField", array('target_model'=>"WildfireMedia", "eager_loading"=>true, "join_model_class"=>"WildfireOrderedTagJoin", "join_order"=>"join_order", 'group'=>'media', 'module'=>'media'));
   }
 
   public function scope_dead(){
