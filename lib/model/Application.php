@@ -1,6 +1,13 @@
 <?
 class Application extends WaxModel{
 
+  public static $hold_options = array(
+    "no",
+    "Reference Requested",
+    "DDC TBA",
+    "New Date DDC"
+  );
+
   public function setup(){
     $this->define("history", "HasManyField", array('target_model'=>'History', 'group'=>'History', 'editable'=>true) );
     parent::setup();
@@ -36,6 +43,8 @@ class Application extends WaxModel{
 
     $this->define("candidate", "ForeignKey", array('target_model'=>'Candidate', 'editable'=>false, 'scaffold'=>false));
     $this->define("need_fix", "BooleanField", array('editable'=>false));
+    $this->define("on_hold", "IntegerField", array('group'=>'advanced', 'choices'=>self::$hold_options));
+
 
     $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true,  'scaffold'=>true, 'choices'=>self::live_jobs() ));
     $this->define("media", "ManyToManyField", array('target_model'=>"WildfireMedia", "eager_loading"=>true, "join_model_class"=>"WildfireOrderedTagJoin", "join_order"=>"join_order", 'group'=>'media', 'module'=>'media'));

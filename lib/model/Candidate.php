@@ -8,12 +8,9 @@ class Candidate extends WaxModel{
     "New Date DA",
     "New Date INT",
     "New Date Med",
-    "New Date DDC (for Succeed Jobs)",
     "DA TBA",
     "INT TBA",
-    "Med TBA",
-    "Reference Requested, in the Applicants tab",
-    "DDC TBA (for Succeed Jobs), in the Applicants tab"
+    "Med TBA"
   );
 
   //no required fields as we need to create empty
