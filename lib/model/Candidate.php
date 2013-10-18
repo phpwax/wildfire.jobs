@@ -1,6 +1,21 @@
 <?
 class Candidate extends WaxModel{
 
+  public static $hold_options = array(
+    'No',
+    "On Hold",
+    "New Date WA",
+    "New Date DA",
+    "New Date INT",
+    "New Date Med",
+    "New Date DDC (for Succeed Jobs)",
+    "DA TBA",
+    "INT TBA",
+    "Med TBA",
+    "Reference Requested, in the Applicants tab",
+    "DDC TBA (for Succeed Jobs), in the Applicants tab"
+  );
+
   //no required fields as we need to create empty
   public function setup(){
 
@@ -36,7 +51,7 @@ class Candidate extends WaxModel{
     //include a stage to track how far the person got
     $this->define("stage", "ForeignKey", array('widget'=>'SelectInput', 'target_model'=>'EmailTemplate', 'choices'=>$choices, 'group'=>'advanced'));
     //an on hold flag
-    $this->define("on_hold", "BooleanField", array('group'=>'advanced'));
+    $this->define("on_hold", "IntegerField", array('group'=>'advanced', 'choices'=>self::$hold_options));
     $this->define("hold_notes", "TextField", array('group'=>'advanced'));
     $this->define("user_agent", "CharField", array('scaffold'=>false, 'label'=>'UA', 'widget'=>'HiddenInput'));
     $this->define("sent_notification", "BooleanField", array('group'=>'advanced', 'editable'=>false, 'default'=>1)); //set to true by default
