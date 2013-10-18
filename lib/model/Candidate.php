@@ -6,6 +6,7 @@ class Candidate extends WaxModel{
     "On Hold",
     "New Date WA",
     "New Date DA",
+    "New Date DDC",
     "New Date INT",
     "New Date Med",
     "DA TBA",

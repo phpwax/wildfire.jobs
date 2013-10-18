@@ -5,7 +5,7 @@ class Application extends WaxModel{
     "no",
     "Reference Requested",
     "DDC TBA",
-    "New Date DDC"
+    "WA TBA"
   );
 
   public function setup(){
