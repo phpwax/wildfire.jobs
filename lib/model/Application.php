@@ -18,7 +18,7 @@ class Application extends WaxModel{
     $this->define("user_agent", "CharField", array('scaffold'=>false, 'label'=>'UA', 'widget'=>'HiddenInput'));
 
     $this->define("answers", "HasManyField", array('target_model'=>'Answer', 'group'=>'answers', 'editable'=>true));
-    $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'relationships', 'scaffold'=>true));
+
     $this->define("date_start", "DateTimeField", array('disabled'=>'disabled'));
     $this->define("date_completed", "DateTimeField", array('scaffold'=>true, 'export'=>true, 'disabled'=>'disabled'));
     $this->define("session", "CharField", array('editable'=>false));
@@ -35,13 +35,20 @@ class Application extends WaxModel{
     $this->define("locked", "BooleanField", array('editable'=>false, 'default'=>0, 'maxlength'=>2, "widget"=>"SelectInput", "choices"=>array(0=>"No",1=>"Yes")));
 
     $this->define("candidate", "ForeignKey", array('target_model'=>'Candidate', 'editable'=>false, 'scaffold'=>false));
-    $this->define("need_fix", "BooleanField");
+    $this->define("need_fix", "BooleanField", array('editable'=>false));
 
+    $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'advanced', 'scaffold'=>true, 'choices'=>self::live_jobs() ));
     $this->define("media", "ManyToManyField", array('target_model'=>"WildfireMedia", "eager_loading"=>true, "join_model_class"=>"WildfireOrderedTagJoin", "join_order"=>"join_order", 'group'=>'media', 'module'=>'media'));
   }
 
   public function scope_dead(){
     return $this->filter("rejected", 1);
+  }
+
+  public static function live_jobs(){
+    $nm = constant("CONTENT_MODEL");
+    $model = new $nm;
+    return $model->scope("live")->filter("is_job", 1)->order("title ASC")->all();
   }
 
   public function before_save(){
