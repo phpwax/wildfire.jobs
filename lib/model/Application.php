@@ -37,7 +37,7 @@ class Application extends WaxModel{
     $this->define("candidate", "ForeignKey", array('target_model'=>'Candidate', 'editable'=>false, 'scaffold'=>false));
     $this->define("need_fix", "BooleanField", array('editable'=>false));
 
-    $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true, 'group'=>'advanced', 'scaffold'=>true, 'choices'=>self::live_jobs() ));
+    $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true,  'scaffold'=>true, 'choices'=>self::live_jobs() ));
     $this->define("media", "ManyToManyField", array('target_model'=>"WildfireMedia", "eager_loading"=>true, "join_model_class"=>"WildfireOrderedTagJoin", "join_order"=>"join_order", 'group'=>'media', 'module'=>'media'));
   }
 
