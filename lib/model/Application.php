@@ -43,6 +43,7 @@ class Application extends WaxModel{
 
     $this->define("candidate", "ForeignKey", array('target_model'=>'Candidate', 'editable'=>false, 'scaffold'=>false));
     $this->define("need_fix", "BooleanField", array('editable'=>false));
+    $this->define("archived", "BooleanField", array('editable'=>false));
     $this->define("on_hold", "IntegerField", array('group'=>'advanced', 'choices'=>self::$hold_options));
 
 
