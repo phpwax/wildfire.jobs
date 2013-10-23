@@ -224,6 +224,24 @@ class Application extends WaxModel{
     return false;
   }
 
+  public function possible_other_applications(){
+    $data = false;
+    $model = new Application;
+    //check for other applications on this job based on session token
+    if($this->email && ($same = $model->clear()->filter("id != ".$this->primval)->filter("domain_content_id", $this->domain_content_id)->filter("session", $this->session)->first() ) ) $data['same job, matching session'] = $same->primval;
+    //check for other applications on this job based on email
+    if($this->session && ($same = $model->clear()->filter("id != ".$this->primval)->filter("domain_content_id", $this->domain_content_id)->filter("LENGTH(email) > 0")->filter("email", $this->email)->first() ) ) $data['same job, matching email'] = $same->primval;
+    //check for same job, on postcode
+    if($this->postcode && ($same = $model->clear()->filter("id != ".$this->primval)->filter("domain_content_id", $this->domain_content_id)->filter("LENGTH(postcode) > 0")->filter("postcode", $this->postcode)->first() ) ) $data['same job, matching postcode'] = $same->primval;
+
+    if($this->email && ($same = $model->clear()->filter("id != ".$this->primval)->filter("domain_content_id != $this->domain_content_id")->filter("session", $this->session)->first() ) ) $data['different job, matching session'] = $same->primval;
+
+    if($this->session && ($same = $model->clear()->filter("id != ".$this->primval)->filter("domain_content_id != $this->domain_content_id")->filter("LENGTH(email) > 0")->filter("email", $this->email)->first() ) ) $data['different job, matching email'] = $same->primval;
+
+    if($this->postcode && ($same = $model->clear()->filter("id != ".$this->primval)->filter("domain_content_id != $this->domain_content_id")->filter("LENGTH(postcode) > 0")->filter("postcode", $this->postcode)->first() ) ) $data['different job, matching postcode'] = $same->primval;
+
+    return $data;
+  }
 
   protected function get_candidate_mapped_answer($col="email"){
     if($this->columns[$col] && $this->$col) return $this->$col;
