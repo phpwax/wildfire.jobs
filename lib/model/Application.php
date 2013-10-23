@@ -211,11 +211,17 @@ class Application extends WaxModel{
 
     $data = $this->get_section_answers("Convictions & County Court Judgements");
     foreach($data as $row){
-      $answer = trim(strtolower($row->answer) );
+      $answer = str_replace("'", "", trim(strtolower($row->answer) ) );
       $sub = trim(strtolower($row->question_subtext));
-      if($sub == "conviction" && $answer != "not applicable"  && $answer != "na" && $answer != "n/a") $convictions[] = $answer;
+      if($sub == "conviction" && $answer != "not applicable"  && $answer != "not aplicable" && $answer != "na" && $answer != "n/a") $convictions[] = $answer;
     }
     return $convictions;
+  }
+
+  public function self_previous_applications(){
+    $data = $this->get_section_answers("Previous Applications");
+    if($pre = $data->filter("question_subtext", "Have you applied for employment with us in the past?")->filter("answer", "Yes")->first() ) return $data;
+    return false;
   }
 
 
