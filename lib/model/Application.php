@@ -205,6 +205,20 @@ class Application extends WaxModel{
     return $this->get_candidate_mapped_answer("postcode");
   }
 
+
+  public function convictions(){
+    $convictions = false;
+
+    $data = $this->get_section_answers("Convictions & County Court Judgements");
+    foreach($data as $row){
+      $answer = trim(strtolower($row->answer) );
+      $sub = trim(strtolower($row->question_subtext));
+      if($sub == "conviction" && $answer != "not applicable"  && $answer != "na" && $answer != "n/a") $convictions[] = $answer;
+    }
+    return $convictions;
+  }
+
+
   protected function get_candidate_mapped_answer($col="email"){
     if($this->columns[$col] && $this->$col) return $this->$col;
     if($this->primval && ($job = $this->get_job()) && ($fields = $job->fields) && ($answer_field = $fields->filter("candidate_field", $col)->first()) &&
