@@ -1,5 +1,7 @@
+if(typeof pg_height == "undefined" ) pg_height = 890;
+
 jQuery(document).ready(function(){
-  var pg_height = 890, so_far = 0, pgs=0;
+  var so_far = 0, pgs=0;
   if(jQuery("html").hasClass("print-view-of-page")){
 
     jQuery(".appfield").each(function(){
