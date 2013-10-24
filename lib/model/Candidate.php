@@ -68,9 +68,10 @@ class Candidate extends WaxModel{
     $this->date_modified = date("Y-m-d H:i:s");
   }
 
-  public function create_pdf($module_name, $server, $hash, $folder, $user){
+  public function create_pdf($module_name, $server, $hash, $folder, $user, $url=false){
     $file = $folder.$hash."/".$module_name."-".$this->primval.".pdf";
-    $url = $server."/admin/applicant/edit/".$this->application_id."/.print?auth_token=".$user->auth_token;
+    if(!$url) $url = $server."/admin/applicant/edit/".$this->application_id;
+    $url .= "/.print?auth_token=".$user->auth_token;
 
     $pdf_engine_options = array("enableEscaping"=>false, 'javascript-delay'=>3500, "load-error-handling"=>"ignore");
     $pdf = new WkHtmlToPdf($pdf_engine_options);

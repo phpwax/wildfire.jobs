@@ -43,9 +43,10 @@ class Meeting extends WaxModel{
    if(!$this->title) $this->title = "Enter meeting name";
   }
 
-  public function create_pdf($module_name, $server, $hash, $folder, $user){
+  public function create_pdf($module_name, $server, $hash, $folder, $user, $url=false){
     $file = $folder.$hash."/".$module_name."-".$this->primval.".pdf";
-    $url = $server."/admin/".$module_name."/edit/".$this->primval."/.print?auth_token=".$user->auth_token;
+    if(!$url) $url = $server."/admin/".$module_name."/edit/".$this->primval;
+    $url .= "/.print?auth_token=".$user->auth_token;
     $pdf_engine_options = array("enableEscaping"=>false, 'javascript-delay'=>3500, "load-error-handling"=>"ignore");
     $pdf = new WkHtmlToPdf($pdf_engine_options);
     WaxLog::log("error", $url, "pdf");
