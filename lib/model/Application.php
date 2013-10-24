@@ -354,6 +354,12 @@ class Application extends WaxModel{
     return false;
   }
 
+  public function initials(){
+    $str = "";
+    foreach(explode(" ",$this->first_name) as $part) $str .= $part[0];
+    return $str;
+  }
+
 
 
   public function main_search($value){
