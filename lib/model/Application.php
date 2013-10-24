@@ -224,6 +224,36 @@ class Application extends WaxModel{
     return false;
   }
 
+  public function bus_meeting_history(){
+    $history = new History;
+    $data = array(
+      'WRITTEN ASSESSMENT'=> "",
+      'DRIVING ASSESSMENT'=> "",
+      'GENERAL ASSESSMENT'=> "",
+      'MEDICAL ASSESSMENT'=> "",
+      'MODULE 1A+ 1B' =>'',
+      'MODULE 2'=>'',
+      'MODULE 3'=>'',
+      'MODULE 4'=>'',
+      );
+    $ids = array();
+    foreach($history->filter("application_id", $this->primval)->filter("title LIKE '%Invite to meeting%'")->order("id ASC")->all() as $h){
+      $info = explode("<br>", $h->content);
+      preg_match("#<a href='/admin/meeting/([0-9]+)/'>#i", $info[0], $meeting);
+      if(is_numeric($meeting[1])){
+        $m = new Meeting($meeting[1]);
+        $ids[] = $m->email_template_id;
+      }
+      $title = trim(strtoupper(substr(str_ireplace(array("Bus - "), "", $info[1]), 0, -1)) );
+      $data[$title] = $info[2];
+    }
+    $m = new EmailTemplate;
+    $stages = array();
+
+
+    return $data;
+  }
+
   public function possible_other_applications(){
     $data = false;
     $model = new Application;
