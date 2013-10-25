@@ -109,7 +109,7 @@ class Candidate extends WaxModel{
       }
     }
     //return true as they have already recieved this notification
-    else if($this->meeting_id = $meeting->primval) return true;
+    else if($this->meeting_id == $meeting->primval) return true;
     return false;
   }
 
