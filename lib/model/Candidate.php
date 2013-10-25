@@ -140,14 +140,14 @@ class Candidate extends WaxModel{
 
   public function rejected($template, $user_id, $dont_send=false){
     if($saved = $this->update_attributes(array("is_staff"=>0, 'rejected'=>1, 'last_meeting_id'=>$this->meeting_id)) ){
-
       $notify = new WildfireJobsNotification;
       if($dont_send) $notify->notification($template, false, $this, false, $this->job, $user_id, true);
       else $notify->send_notification($template, false, $this, false, $this->job, $user_id);
+
       History::log_email($notify, $this->application, $this->job, $user_id);
       $saved->update_attributes(array('sent_notification'=>1, 'sent_notification_at'=>date("Y-m-d H:i:s")));
 
-      if($applicant = $saved->application) $applicant->update_attributes(array("is_staff"=>0, 'locked'=>1, 'rejected'=>1, 'rejection_reason'=>$this->rejection_reason));
+      if($applicant = $saved->application) $applicant->update_attributes(array("is_staff"=>0, 'locked'=>1, 'rejected'=>1, 'rejection_reason'=>$saved->rejection_reason));
       return $saved;
     }
     return false;
@@ -167,7 +167,7 @@ class Candidate extends WaxModel{
     $data['rejected'] = 1;
     $saved = $model->update_attributes($data);
 
-    return $this;
+    return $this->update_attributes(array('rejected'=>1));
   }
 
   public function applicant_rejection(){
