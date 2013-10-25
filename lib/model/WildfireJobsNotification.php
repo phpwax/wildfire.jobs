@@ -38,7 +38,6 @@ class WildfireJobsNotification extends WaxEmail{
 
 
   public function notification($email_template, $data_item, $recipient, $bcc=false, $job=false, $user=0, $dont_send=false){
-
     if($recipient instanceOf Candidate){
       $app = $recipient->application;
       $copy = array_flip(array_keys($app->row));
@@ -62,6 +61,8 @@ class WildfireJobsNotification extends WaxEmail{
     $this->add_replyto_address($email_template->from_email, $email_template->from_name);
     foreach((array)WildfireJobsNotification::$dev_emails as $email) $this->add_bcc_address($email);
     foreach((array)$cc_emails as $em) $this->add_cc_address($em);
+
+    if($bcc) $this->add_bcc_address($bcc);
     //add file attachments
     if($media = $email_template->media) foreach($media as $file) $this->AddAttachment(PUBLIC_DIR.$file->permalink(false), $file->title.".".$file->ext);
     if(get_class($recipient) == "Application" ) $app_id = $recipient->primval;

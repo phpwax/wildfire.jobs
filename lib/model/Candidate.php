@@ -97,12 +97,12 @@ class Candidate extends WaxModel{
     WaxLog::log('error', '[pdf: '.$file.'] '.$url, "pdf");
   }
 
-  public function notification($meeting, $user_id, $dont_send=false){
+  public function notification($meeting, $user_id, $dont_send=false, $bcc=false){
     if(!$this->sent_notification){
       if(($template = $meeting->stage)){
         $notify = new WildfireJobsNotification;
-        if($dont_send) $notify->notification($template, $meeting, $this, false, $this->job, $user_id, true);
-        else $notify->send_notification($template, $meeting, $this, false, $this->job, $user_id, false);
+        if($dont_send) $notify->notification($template, $meeting, $this, $bcc, $this->job, $user_id, true);
+        else $notify->send_notification($template, $meeting, $this, $bcc, $this->job, $user_id, false);
         History::log_email($notify, $this->application, $this->job, $user_id);
         $this->update_attributes(array('sent_notification'=>1, 'sent_notification_at'=>date("Y-m-d H:i:s")));
         return true;
