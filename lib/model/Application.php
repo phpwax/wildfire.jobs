@@ -79,7 +79,7 @@ class Application extends WaxModel{
   }
 
   public function reinstate($user){
-    if($saved = $this->update_attributes(array("rejected"=>0, "date_rejected"=>"1970-01-01 00:00:00") ) ){
+    if($saved = $this->update_attributes(array("rejected"=>0, "date_rejected"=>"1970-01-01 00:00:00", "deadend"=>0) ) ){
 
       //reset any candidate flag
       $c = new Candidate;
