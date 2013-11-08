@@ -83,7 +83,7 @@ class Meeting extends WaxModel{
     return $results;
   }
 
-  public function named(){return $this->title. "(".date("jS F Y", strtotime($this->email)).")";}
+  public function named(){return $this->title. "(".date("jS F Y", strtotime($this->date_start)).")";}
 
   public function linked(){ return "/admin/meeting/edit/$this->primval/";}
 
