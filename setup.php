@@ -30,7 +30,7 @@ WaxEvent::add(CONTENT_MODEL.".setup", function(){
   $model->define("person_responsible_for_job", "CharField", array('label'=>'Person responsible'));
   $model->define("salary", "CharField");
   $model->define("location", "CharField");
-  $model->define("role_type", "CharField", array('widget'=>'SelectInput', 'choices'=>array('Permanent'=>'Permanent', 'Temporary'=>'Temporary', 'Part time'=>'Part time')));
+  $model->define("role_type", "CharField", array('widget'=>'SelectInput', 'choices'=>array('Permanent'=>'Permanent', 'Temporary'=>'Temporary', 'Part time'=>'Part time', 'Apprentice'=>'Apprentice')));
   $model->define("is_job", "BooleanField", array('group'=>'details', 'choices'=>array(''=>'-- select --',  0=>'Not a job', 1=>'Is a job') ) );
   $model->define("job_status", "CharField", array('scaffold'=>true,'group'=>'details', 'widget'=>'SelectInput',  'choices'=>array(''=>'-- select --', 'advertising'=> 'Advertising', 'interviewing'=>'Interviewing', 'completed'=>'Completed'), 'label'=>'Job status <small>(internal only)</small>' ) );
   $model->define("block_edits", "BooleanField", array('group'=>'details'));
