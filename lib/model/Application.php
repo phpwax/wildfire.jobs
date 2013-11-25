@@ -115,7 +115,7 @@ class Application extends WaxModel{
 
   public function create_pdf($module_name, $server, $hash, $folder, $user, $url=false, $settings=false){
     $job = $this->job;
-    $file = $folder.$hash."/".$job->title . " - ".$this->first_name. " " . $this->last_name ."(".$this->primval.").pdf";
+    $file = $folder.$hash."/". str_replace(array("/", ".", "#"), "", $job->title . " - ".$this->first_name. " " . $this->last_name ."(".$this->primval.")" ). ".pdf";
     if(!$url) $url = $server."/admin/".$module_name."/edit/".$this->primval;
     $url .= "/.print?auth_token=".$user->auth_token;
 
