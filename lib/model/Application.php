@@ -47,7 +47,7 @@ class Application extends WaxModel{
     $this->define("on_hold", "IntegerField", array('group'=>'advanced', 'choices'=>self::$hold_options));
 
 
-    $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true,  'scaffold'=>true, 'choices'=>self::live_jobs() ));
+    $this->define("job", "ForeignKey", array('target_model'=>CONTENT_MODEL, 'scaffold'=>true, 'export'=>true,  'scaffold'=>true, 'choices'=>self::all_jobs() ));
     $this->define("media", "ManyToManyField", array('target_model'=>"WildfireMedia", "eager_loading"=>true, "join_model_class"=>"WildfireOrderedTagJoin", "join_order"=>"join_order", 'group'=>'media', 'module'=>'media'));
   }
 
@@ -55,6 +55,11 @@ class Application extends WaxModel{
     return $this->filter("rejected", 1);
   }
 
+  public static function all_jobs(){
+    $nm = constant("CONTENT_MODEL");
+    $model = new $nm;
+    return $model->filter("is_job", 1)->order("title ASC")->all();
+  }
   public static function live_jobs(){
     $nm = constant("CONTENT_MODEL");
     $model = new $nm;
