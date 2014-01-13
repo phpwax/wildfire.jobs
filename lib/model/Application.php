@@ -58,7 +58,7 @@ class Application extends WaxModel{
   public static function all_jobs(){
     $nm = constant("CONTENT_MODEL");
     $model = new $nm;
-    return $model->filter("is_job", 1)->order("title ASC")->all();
+    return $model->filter("is_job", 1)->filter("revision", 0)->order("title ASC")->all();
   }
   public static function live_jobs(){
     $nm = constant("CONTENT_MODEL");
