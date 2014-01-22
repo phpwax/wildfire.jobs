@@ -128,7 +128,7 @@ class Candidate extends WaxModel{
       unset($row['date_start'], $row['date_completed'], $row['locked'], $row['deadend'], $row['completed'],
                 $row['session'],$row['stage'], $row['notes'], $row['id'], $row['date_created'], $row['date_modified'],
                 $row['last_meeting_id'], $row['meeting_id'], $row['is_staff'], $row['is_candidate'], $row['meeting_slot'],
-                $row['need_fix']
+                $row['need_fix'], $row['archived']
                 );
       $staff = new Staff;
 
