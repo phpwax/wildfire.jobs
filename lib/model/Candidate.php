@@ -49,7 +49,7 @@ class Candidate extends WaxModel{
     //include a stage to track how far the person got
     $this->define("stage", "ForeignKey", array('widget'=>'SelectInput', 'target_model'=>'EmailTemplate', 'choices'=>$choices, 'group'=>'advanced'));
     //an on hold flag
-    $this->define("on_hold", "IntegerField", array('group'=>'advanced', 'choices'=>self::$hold_options));
+    $this->define("on_hold", "IntegerField", array('group'=>'advanced', 'choices'=>self::$hold_options, 'default'=>0));
     $this->define("hold_notes", "TextField", array('group'=>'advanced'));
     $this->define("user_agent", "CharField", array('scaffold'=>false, 'label'=>'UA', 'widget'=>'HiddenInput'));
     $this->define("sent_notification", "BooleanField", array('group'=>'advanced', 'editable'=>false, 'default'=>1)); //set to true by default
@@ -66,6 +66,7 @@ class Candidate extends WaxModel{
     if($this->rejected && !$this->date_rejected) $this->date_rejected = date("Y-m-d H:i:s");
     $this->postcode = strtoupper($this->postcode);
     $this->date_modified = date("Y-m-d H:i:s");
+    if(!$this->on_hold) $this->on_hold = 0;
   }
 
   public function create_pdf($module_name, $server, $hash, $folder, $user, $url=false, $settings=false){
