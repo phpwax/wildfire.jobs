@@ -29,8 +29,50 @@ class CMSApplicantController extends AdminComponent{
     protected function events(){
       $this->export_group = Inflections::underscore(CONTENT_MODEL)."_id";
       parent::events();
+      WaxEvent::clear("cms.model.filters");
+      WaxEvent::add("cms.model.filters", function(){
+        $obj = WaxEvent::data();
+        if(!$obj->model_filters) $obj->model_filters = Request::param('filters');
+        $filterstring = "";
+
+        foreach((array)$obj->model_filters as $name=>$value){
+          $col_filter = "";
+          if(strlen($value) && ($filter = $obj->filter_fields[$name])){
+            $col_count = count($filter['columns']);
+            foreach($filter['columns'] as $col_index=>$col){
+              $terms = explode(" ",$value);
+              if($name == "text" && count($terms)>1){
+
+                $filter_string = "";
+                foreach($terms as $term){
+                  if($filter['fuzzy']) $filter_string .= "`$col` LIKE '%".($term)."%' OR";
+                  else $filter_string .= "`$col`='".($term)."' OR";
+                }
+                $col_filter .= "(".trim($filter_string, " OR").") AND ";
+                if($col_count == $col_index+1) $col_filter = trim($col_filter," AND ")." OR";
+
+              }
+              elseif($opp = $filter['opposite_join_column']){
+                $target = $obj->model->columns[$col][1]['target_model'];
+                $join = new $target($value);
+                $ids = array();
+                foreach($join->$opp as $opposite) $ids[] = $opposite->primval;
+                $col_filter .= "(`".$obj->model->primary_key."` IN(".implode(",",$ids).")) OR";
+              }
+              elseif($filter['fuzzy']) $col_filter .= "`$col` LIKE '%".($value)."%' OR";
+              elseif($filter['fuzzy_right']) $col_filter .= "`$col` LIKE '".($value)."%' OR";
+              elseif($filter['fuzzy_left']) $col_filter .= "`$col` LIKE '%".($value)."' OR";
+              else $col_filter .= "`$col`='".($value)."' OR";
+            }
+            $filterstring .= "(".trim($col_filter, " OR").") AND ";
+          }
+        }
+
+        if($filterstring) $obj->model->filter(trim($filterstring, " AND "));
+      });
 
     }
+
     // public function _list(){
     //   parent::_list();
     //   $this->use_view = "_selectable_list";
