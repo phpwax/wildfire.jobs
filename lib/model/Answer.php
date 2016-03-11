@@ -35,6 +35,23 @@ class Answer extends WaxModel{
       foreach($error as $err) $output .= "<li class='error_message'>$err</li>";
     return $output ."</ul>";
   }
+
+  //custom email validation on EmailInput
+  public function validate(){
+    parent::validate();
+
+    if($this->field_type == "EmailInput"){
+      $field = $this->get_col("answer");
+      $field->validations[] = "email";
+      $field->is_valid();
+
+      if($field->errors) {
+        $this->errors["answer"] = $field->errors;
+      }
+    }
+    if(count($this->errors)) return false;
+    return true;
+  }
 }
 
 ?>
