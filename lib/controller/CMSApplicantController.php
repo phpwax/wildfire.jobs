@@ -42,7 +42,6 @@ class CMSApplicantController extends AdminComponent{
             foreach($filter['columns'] as $col_index=>$col){
               $terms = explode(" ",$value);
               if($name == "text" && count($terms)>1){
-
                 $filter_string = "";
                 foreach($terms as $term){
                   if($filter['fuzzy']) $filter_string .= "`$col` LIKE '%".($term)."%' OR";
@@ -50,7 +49,6 @@ class CMSApplicantController extends AdminComponent{
                 }
                 $col_filter .= "(".trim($filter_string, " OR").") AND ";
                 if($col_count == $col_index+1) $col_filter = trim($col_filter," AND ")." OR";
-
               }
               elseif($opp = $filter['opposite_join_column']){
                 $target = $obj->model->columns[$col][1]['target_model'];
@@ -69,6 +67,10 @@ class CMSApplicantController extends AdminComponent{
         }
 
         if($filterstring) $obj->model->filter(trim($filterstring, " AND "));
+        if($obj->model_filters && $obj->model_filters['job'] && is_numeric($obj->model_filters['job'])){
+            $obj->model->order("last_name ASC");
+        }
+
       });
 
     }
