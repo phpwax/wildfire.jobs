@@ -147,7 +147,7 @@ class Application extends WaxModel{
 
     History::log($this->job, $this->primval, $user->primval, "PDF requested", "Page requested: <a href='".$server . str_replace($user->auth_token, "", $permalink)."'>view</a>");
     WaxLog::log('error', '[pdf: '.$file.'] '.$url, "pdf");
-    if(!$pdf->saveAs($file)) throw new Exception('Could not create PDF: '.$pdf->getError());
+    if(!$pdf->saveAs($file)) throw new WaxException('Could not create PDF: '.$pdf->getError());
   }
 
   public function notify(){
