@@ -94,7 +94,7 @@ class WildfireJobsNotification extends WaxEmail{
    */
   function MailSend($header, $body) {
       $header = preg_replace('#(?<!\r)\n#si', "\n", $header);
-      $additional_parameters = "-f".$this->from;
+      if($this->from) $additional_parameters = "-f".$this->from;
       if($rt = mail($to, $this->EncodeHeader($this->subject), $body, $header, $additional_parameters)) {
           return true;
       } else {
