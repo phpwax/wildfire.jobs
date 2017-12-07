@@ -109,7 +109,7 @@ class Application extends WaxModel{
       if($a->required == 2){
         $choice = array_shift(explode("\n", $a->choices));
         if(trim($choice) != trim($a->answer)) return false;
-      }else if($a->required == 1 && !$a->answer) return false;
+      }else if($a->required == 1 && strlen($a->answer)<1) return false;
     }
     //no answers
     if(!count($answered)) return false;
